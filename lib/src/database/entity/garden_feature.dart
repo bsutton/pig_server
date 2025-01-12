@@ -1,1 +1,3 @@
-abstract class GardenFeature {}
+abstract class GardenFeature {
+  int get id;
+}

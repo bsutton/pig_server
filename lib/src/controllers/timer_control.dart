@@ -1,68 +1,61 @@
+// timer_control.dart
+
 import 'dart:async';
 
 import '../database/entity/garden_feature.dart';
+import 'irrigation_timer.dart';
 import 'timer_notification.dart';
 
-/// Timer class to manage delayed actions for a [GardenFeature].
+/// Manages a list of running [IrrigationTimer] instances for [GardenFeature] objects.
 class TimerControl {
-  TimerControl({
-    required this.feature,
-    required this.description,
-    required this.duration,
-    required this.completionAction,
-    this.timerNotification,
-  });
-  final GardenFeature feature;
-  final String description;
-  final Duration duration;
-  final Future<void> Function(GardenFeature feature) completionAction;
-  final TimerNotification? timerNotification;
+  static final Map<int, IrrigationTimer> _timers = {};
 
-  DateTime? _startTimer;
-  Timer? _timer;
+  /// Starts a timer for [feature] with [description], [duration],
+  /// and [completionAction]. It removes any existing timer for the same [feature] first.
+  static Future<void> startTimer(
+    GardenFeature feature,
+    String description,
+    Duration duration,
+    Future<void> Function(GardenFeature) completionAction, {
+    TimerNotification? timerNotification,
+  }) async {
+    removeTimer(feature);
 
-  /// Start the timer.
-  void start() {
-    print("Starting Timer '$description' for: $feature");
-    _startTimer = DateTime.now();
+    final irrigationTimer = IrrigationTimer(
+      feature: feature,
+      description: description,
+      duration: duration,
+      completionAction: completionAction,
+      timerNotification: timerNotification,
+    );
 
-    _timer = Timer(duration, () async {
-      await applyCompletionAction();
-    });
+    _timers[feature.id] = irrigationTimer;
+    await irrigationTimer.start();
   }
 
-  /// Apply the completion action when the timer finishes normally.
-  Future<void> applyCompletionAction() async {
-    _timer = null;
-    TimerControl.removeTimer(feature);
-    await completionAction(feature);
-  }
-
-  /// Cancel the timer prematurely. Does not call the completion action.
-  void cancel() {
-    if (_timer != null) {
-      print("Cancelling Timer '$description' for: $feature");
-      _timer?.cancel();
-      _timer = null;
-
-      TimerControl.removeTimer(feature);
-      timerNotification?.timerFinished(feature);
+  /// Removes the timer associated with [feature], if any.
+  static void removeTimer(GardenFeature feature) {
+    final timer = getTimer(feature);
+    if (timer != null) {
+      _timers.remove(feature.id);
+      timer.cancel();
     }
   }
 
-  /// Check if the timer is currently running.
-  bool isTimerRunning() => _timer != null;
+  /// Retrieves the timer associated with [feature], or null if none exists.
+  static IrrigationTimer? getTimer(GardenFeature feature) =>
+      _timers[feature.id];
 
-  /// Get the remaining time for the timer.
-  Duration timeRemaining() {
-    if (_startTimer == null) return Duration.zero;
-    final expectedEndTime = _startTimer!.add(duration);
-    return expectedEndTime.difference(DateTime.now());
+  /// Checks if a timer is running for [feature].
+  static bool isTimerRunning(GardenFeature feature) {
+    final timer = getTimer(feature);
+    return timer?.isTimerRunning() ?? false;
   }
 
-  /// Get the description of the timer.
-  String getDescription() => description;
-
-  /// Get the associated [GardenFeature].
-  GardenFeature getFeature() => feature;
+  /// Returns the remaining duration of the timer for [feature],
+  /// or [Duration.zero] if no timer is running.
+  static Duration timeRemaining(GardenFeature feature) {
+    final timer = getTimer(feature);
+    return timer?.timeRemaining() ?? Duration.zero;
+  }
 }

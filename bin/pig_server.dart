@@ -9,6 +9,10 @@ import 'package:dcli/dcli.dart';
 import 'package:dnsolve/dnsolve.dart';
 import 'package:path/path.dart';
 import 'package:pig_server/src/config.dart';
+import 'package:pig_server/src/handle_booking.dart';
+import 'package:pig_server/src/handle_static.dart';
+import 'package:pig_server/src/logger.dart';
+import 'package:pig_server/src/mailer.dart';
 import 'package:pig_server/src/pi/gpio_manager.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart';
@@ -56,7 +60,7 @@ Future<void> _initPins() async {
 
 /// TODO: call shutdown as the web server stops.
 void shutdown() {
-  logger.info('Irrigation Manager is shutting down.');
+  qlog('Irrigation Manager is shutting down.');
   // stop all GPIO activity/threads by shutting down the GPIO controller
   // (this method will forcefully shutdown all GPIO monitoring threads and
   // scheduled tasks)
