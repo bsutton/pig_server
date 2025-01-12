@@ -7,12 +7,9 @@ import 'dart:io';
 import 'package:cron/cron.dart';
 import 'package:dcli/dcli.dart';
 import 'package:dnsolve/dnsolve.dart';
-import 'package:ihserver/src/config.dart';
-import 'package:ihserver/src/handle_booking.dart';
-import 'package:ihserver/src/handle_static.dart';
-import 'package:ihserver/src/logger.dart';
-import 'package:ihserver/src/mailer.dart';
 import 'package:path/path.dart';
+import 'package:pig_server/src/config.dart';
+import 'package:pig_server/src/pi/gpio_manager.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart';
 import 'package:shelf_letsencrypt/shelf_letsencrypt.dart';
@@ -35,6 +32,8 @@ void main() async {
 
   final domain = Domain(name: config.fqdn, email: config.domainEmail);
 
+  await _initPins();
+
   final letsEncrypt = build(
       mode: Config().production
           ? CertificateMode.production
@@ -48,6 +47,20 @@ void main() async {
   }
 
   await _sendTestEmail();
+}
+
+Future<void> _initPins() async {
+  // Provision pins at application startup.
+  await GpioManager().provisionPins();
+}
+
+/// TODO: call shutdown as the web server stops.
+void shutdown() {
+  logger.info('Irrigation Manager is shutting down.');
+  // stop all GPIO activity/threads by shutting down the GPIO controller
+  // (this method will forcefully shutdown all GPIO monitoring threads and
+  // scheduled tasks)
+  GpioManager().shutdown();
 }
 
 Future<void> _checkFQDNResolved(String fqdn) async {
