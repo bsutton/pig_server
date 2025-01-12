@@ -5,7 +5,7 @@ import 'package:sqflite_common/sqlite_api.dart';
 import '../factory/hmb_database_factory.dart';
 import '../versions/db_upgrade.dart';
 import '../versions/script_source.dart';
-import 'backup_providers/backup_provider.dart';
+import 'backup_provider.dart';
 
 class DatabaseHelper {
   factory DatabaseHelper() => instance;

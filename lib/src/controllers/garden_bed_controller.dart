@@ -1,4 +1,6 @@
 // ignore_for_file: avoid_classes_with_only_static_members
+import 'package:collection/collection.dart';
+
 import '../database/dao/dao_endpoint.dart';
 import '../database/entity/garden_bed.dart';
 import '../database/types/endpoint_type.dart';
@@ -19,7 +21,7 @@ class GardenBedController {
     _masterValveControllers.clear();
 
     for (final masterValve in masterValves) {
-      final controller = MasterValveController(masterValve);
+      final controller = await MasterValveController.create(masterValve);
       _masterValveControllers.add(controller);
     }
   }
@@ -34,7 +36,7 @@ class GardenBedController {
       await masterValveController.softOff(gardenBed);
     } else {
       final valve = await DaoEndPoint().getById(gardenBed.valveId);
-      await valve.hardOff();
+      await DaoEndPoint().hardOff(valve!);
     }
   }
 
@@ -47,7 +49,7 @@ class GardenBedController {
     if (masterValveController != null) {
       await masterValveController.softOn(gardenBed);
     } else {
-      await gardenBed.valve.hardOn();
+      await DaoEndPoint().hardOffById(gardenBed.valveId);
     }
   }
 
@@ -70,8 +72,7 @@ class GardenBedController {
 
   /// Get the master valve controller for a specified garden bed.
   static MasterValveController? _getMasterValveForBed(GardenBed gardenBed) =>
-      _masterValveControllers.firstWhere(
-        (controller) => controller.masterValve.id == gardenBed.masterValve?.id,
-        orElse: () => null,
+      _masterValveControllers.firstWhereOrNull(
+        (controller) => controller.masterValve.id == gardenBed.masterValveId,
       );
 }

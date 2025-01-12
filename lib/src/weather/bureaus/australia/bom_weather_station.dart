@@ -5,6 +5,8 @@ import '../../../util/irrigation_exception.dart';
 import '../../weather_forecast.dart';
 import '../weather_station.dart';
 import 'bom_observations.dart';
+import 'bom_weather_forecast.dart';
+import 'json/json_weather_stastion_data.dart';
 
 /// Represents BOM weather stations with observation and forecast capabilities.
 enum BOMWeatherStation implements WeatherStation {
@@ -15,35 +17,32 @@ enum BOMWeatherStation implements WeatherStation {
   );
 
   final String identifier;
-  final Uri observationSource;
-  final Uri forecastSource;
+  final String observationSource;
+  final String forecastSource;
 
   const BOMWeatherStation({
     required this.identifier,
-    required String observationSource,
-    required String forecastSource,
-  })  : observationSource = Uri.parse(observationSource),
-        forecastSource = Uri.parse(forecastSource);
+    required this.observationSource,
+    required this.forecastSource,
+  });
 
   @override
-  WeatherForecast fetchForecast(DateTime date) {
-    // Placeholder: Implement actual forecast fetching logic here
-    return WeatherForecast();
-  }
+  // Placeholder: Implement actual forecast fetching logic here
+  WeatherForecast fetchForecast(DateTime date) => BomWeatherForecast();
 
   /// Fetches observations for the given [date].
   Future<BOMObservations> fetchObservations(DateTime date) async {
     try {
       // Download the observation data
       final response = await HttpClient()
-          .getUrl(observationSource)
+          .getUrl(Uri.parse(observationSource))
           .then((request) => request.close());
 
       final result = await response.transform(utf8.decoder).join();
       print('Raw JSON data: $result');
 
       // Parse JSON data
-      final Map<String, dynamic> jsonData = jsonDecode(result);
+      final jsonData = jsonDecode(result) as Map<String, dynamic>;
       final jsonWeatherStationData = JSONWeatherStationData.fromJson(jsonData);
 
       return BOMObservations(jsonWeatherStationData.observations);

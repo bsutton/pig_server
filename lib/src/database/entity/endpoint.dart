@@ -7,7 +7,7 @@ import 'entities.dart';
 class EndPoint extends Entity<EndPoint> {
   EndPoint({
     required super.id,
-    required this.endPointName,
+    required this.name,
     required this.endPointType,
     required this.activationType,
     required this.pinNo,
@@ -20,7 +20,7 @@ class EndPoint extends Entity<EndPoint> {
   }) : super();
 
   EndPoint.forInsert({
-    required this.endPointName,
+    required this.name,
     required this.endPointType,
     required this.activationType,
     required this.pinNo,
@@ -32,7 +32,7 @@ class EndPoint extends Entity<EndPoint> {
 
   EndPoint.forUpdate({
     required super.entity,
-    required this.endPointName,
+    required this.name,
     required this.endPointType,
     required this.activationType,
     required this.pinNo,
@@ -44,7 +44,7 @@ class EndPoint extends Entity<EndPoint> {
 
   factory EndPoint.fromMap(Map<String, dynamic> map) => EndPoint(
         id: map['id'] as int,
-        endPointName: map['end_point_name'] as String,
+        name: map['end_point_name'] as String,
         endPointType:
             EndPointType.values.byName(map['end_point_type'] as String),
         activationType:
@@ -67,7 +67,7 @@ class EndPoint extends Entity<EndPoint> {
   @override
   Map<String, dynamic> toMap() => {
         'id': id,
-        'end_point_name': endPointName,
+        'end_point_name': name,
         'end_point_type': endPointType.name,
         'activation_type': activationType.name,
         'pin_no': pinNo,
@@ -79,7 +79,7 @@ class EndPoint extends Entity<EndPoint> {
         'modified_date': modifiedDate.toIso8601String(),
       };
 
-  String endPointName;
+  String name;
   EndPointType endPointType;
   PinActivationType activationType;
   int pinNo;
@@ -87,4 +87,6 @@ class EndPoint extends Entity<EndPoint> {
   Fixed? startAmps;
   Fixed? runningAmps;
   Duration? startupInterval;
+
+  bool get isDrainingLine => drainLine;
 }

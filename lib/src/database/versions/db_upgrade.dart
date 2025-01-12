@@ -1,11 +1,11 @@
-import 'package:sqflite/sqlite_api.dart';
+import 'package:dcli/dcli.dart';
+import 'package:sqflite_common/sqlite_api.dart';
 import 'package:strings/strings.dart';
 
-import '../../entity/version.dart';
-import '../../src/version/version.g.dart' as code;
-import '../management/backup_providers/backup_provider.dart';
+import '../../../src/version/version.g.dart' as code;
+import '../entity/version.dart';
+import '../management/backup_provider.dart';
 import '../management/db_utility.dart';
-import 'post_upgrade_77.dart';
 import 'script_source.dart';
 
 /// Upgrade the database by applying each upgrade script in order
@@ -61,9 +61,7 @@ Future<void> upgradeDb(
   }
 }
 
-final upgradeActions = <int, Future<void> Function(Database)>{
-  77: postv77Upgrade
-};
+final upgradeActions = <int, Future<void> Function(Database)>{};
 
 /// We can't use the Dao layer as it uses June which assumes
 /// data:ui is available which from the CLI it isn't.
@@ -91,8 +89,8 @@ Future<int> getLatestVersion(ScriptSource src) async {
 }
 
 Future<void> _executeScript(
-    Database db, ScriptSource src, String pathToScript) async {
-  final sql = await src.loadSQL(pathToScript);
+    Database db, ScriptSource src, PackedResource packedScript) async {
+  final sql = await src.loadSQL(packedScript);
 
   print('running $src.pathToScript');
   final statements = await parseSqlFile(sql);

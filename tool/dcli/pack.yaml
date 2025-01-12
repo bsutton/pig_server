@@ -1,22 +1,14 @@
 externals:
-  - external:
-    path: www_root
-    mount: www_root
   
-  # hidden files are ignored so add it explicitly.
   - external:
-    path: www_root/.well-known/assetlinks.json
-    mount: www_root/.well-known/assetlinks.json
-
+    path: bin/pig_server
+    mount: altbin/pig_server
   - external:
-    path: bin/ihserver
-    mount: altbin/ihserver
+    path: bin/pig_launch
+    mount: altbin/pig_launch
   - external:
-    path: bin/ihlaunch
-    mount: altbin/ihlaunch
-  - external:
-    path: bin/ihlaunch.sh
-    mount: altbin/ihlaunch.sh    
+    path: bin/pig_launch.sh
+    mount: altbin/pig_launch.sh    
 
 
   - external:

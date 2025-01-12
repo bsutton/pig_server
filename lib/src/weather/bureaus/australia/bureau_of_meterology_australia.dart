@@ -1,15 +1,21 @@
-import 'dart:convert';
-
 import 'package:intl/intl.dart';
 
+import '../../units/humidity.dart';
+import '../../units/latitude.dart';
+import '../../units/longitude.dart';
+import '../../units/millimetres.dart';
+import '../../units/pressure.dart';
+import '../../units/speed.dart';
+import '../../units/tempurature.dart';
+import '../../units/wind_direction.dart';
 import '../../weather_forecast.dart';
 import '../weather_bureau.dart';
 import '../weather_station.dart';
+import 'bom_weather_forecast.dart';
 import 'bom_weather_station.dart';
 
 /// Implementation for access to the Australian Bureau of Meteorology.
 class BureauOfMeterologyAustralia implements WeatherBureau {
-  static const String countryName = 'Australia';
   WeatherStation? _defaultStation;
 
   static final DateFormat _dateFormat = DateFormat('yyyyMMddHHmmss');
@@ -20,13 +26,13 @@ class BureauOfMeterologyAustralia implements WeatherBureau {
   }
 
   @override
-  String get countryName => countryName;
+  String get countryName => 'Australia';
 
   @override
   List<WeatherStation> get stations => BOMWeatherStation.values;
 
   WeatherForecast fetchForecast(DateTime date) =>
-      _defaultStation?.fetchForecast(date) ?? WeatherForecast();
+      _defaultStation?.fetchForecast(date) ?? BomWeatherForecast();
 
   /// Deserialization helpers to parse JSON data.
   static T? _parseJsonField<T>(dynamic value, T Function(String) converter) {

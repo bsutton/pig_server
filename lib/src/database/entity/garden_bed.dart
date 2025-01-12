@@ -1,7 +1,6 @@
-import '../types/pin_status.dart';
-import 'garden_feature.dart';
+import 'entity.dart';
 
-class GardenBed extends GardenFeature<GardenBed> {
+class GardenBed extends Entity<GardenBed> {
   GardenBed({
     required super.id,
     required this.name,
@@ -67,7 +66,4 @@ class GardenBed extends GardenFeature<GardenBed> {
   int moistureContent;
   int valveId; // Foreign key for the valve
   int? masterValveId;
-  
-
-
 }

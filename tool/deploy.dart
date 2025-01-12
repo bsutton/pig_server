@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
 import 'package:dcli/posix.dart';
-import 'package:ihserver/src/dcli/resource/generated/resource_registry.g.dart';
+import 'package:pig_server/src/dcli/resource/generated/resource_registry.g.dart';
 import 'package:path/path.dart';
 
 final pathToHandyman = join(rootPath, 'opt', 'handyman');

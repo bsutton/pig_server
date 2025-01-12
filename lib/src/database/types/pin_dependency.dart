@@ -31,33 +31,32 @@ class PinDependency {
   final Duration interval;
 
   /// Activates the pins based on the dependency type and interval.
-  void setOn() {
+  Future<void> setOn() async {
     switch (dependency) {
       case DependencyType.lagDelay:
-        _lagDelayActivation();
+        await _lagDelayActivation();
       case DependencyType.leadingDelay:
-        _leadingDelayActivation();
+        await _leadingDelayActivation();
     }
   }
 
   /// Handles activation with a lag delay.
   Future<void> _lagDelayActivation() async {
-    DaoEndPoint().hardOn(primaryPin);
-    primaryPin.hardOn();
-    await Future.delayed(interval);
+    await DaoEndPoint().hardOn(primaryPin);
+    await Future.delayed(interval, () {});
 
     for (final pin in relatedPins) {
-      pin.hardOn();
+      await DaoEndPoint().hardOn(pin);
     }
   }
 
   /// Handles activation with a leading delay.
   Future<void> _leadingDelayActivation() async {
     for (final pin in relatedPins) {
-      pin.hardOn();
+      await DaoEndPoint().hardOn(pin);
     }
 
-    await Future.delayed(interval);
-    primaryPin.hardOn();
+    await Future.delayed(interval, () {});
+    await DaoEndPoint().hardOn(primaryPin);
   }
 }

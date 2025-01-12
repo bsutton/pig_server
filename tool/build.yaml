@@ -1,3 +1,3 @@
-target_server:  handyman
-target_directory: /opt/handyman
+target_server:  irrigation
+target_directory: /opt/pigation
 scp_command: op-scp

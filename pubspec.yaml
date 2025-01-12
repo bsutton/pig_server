@@ -13,6 +13,7 @@ dependencies:
   collection: ^1.19.1
   cron: ^0.6.0
   dart_periphery: ^0.9.12
+  date_time_format: ^2.0.1
   dcli: ^6.0.5
   dcli_core: ^6.1.0
   dnsolve: ^1.0.0
@@ -25,6 +26,7 @@ dependencies:
   mime_type: ^1.0.0
   path: ^1.9.0
   pointycastle: ^3.9.1
+  sentry: ^8.12.0
   settings_yaml: ^8.1.0-alpha.2
   shelf: ^1.4.1
   shelf_letsencrypt:
@@ -35,6 +37,8 @@ dependencies:
   shelf_router: ^1.1.4
   shelf_static: ^1.1.2
   sqflite_common: ^2.5.4+6
+  sqflite_common_ffi: ^2.3.4+4
+  strings: ^3.1.2
   timezone: ^0.10.0
 
  

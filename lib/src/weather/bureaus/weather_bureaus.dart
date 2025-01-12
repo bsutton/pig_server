@@ -1,3 +1,4 @@
+import 'australia/bureau_of_meterology_australia.dart';
 import 'weather_bureau.dart';
 
 /// Manages a collection of weather bureaus.
@@ -12,7 +13,7 @@ class WeatherBureaus {
   static void initialize() {
     // Register your bureau here.
     // Ensure minimal initialization logic to avoid early runtime issues.
-    register(BureauOfMeteorologyAustralia());
+    register(BureauOfMeterologyAustralia());
   }
 
   /// Registers a [WeatherBureau].

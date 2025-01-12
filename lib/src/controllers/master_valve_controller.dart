@@ -6,85 +6,101 @@ import '../database/entity/endpoint.dart';
 import '../database/entity/garden_bed.dart';
 import 'end_point_bus.dart';
 
-
 /// A controller for managing a master valve and its associated garden beds.
 class MasterValveController {
+  // Private constructor
+  MasterValveController._(this.masterValve, this.controlledBeds);
+
+  // Static factory method
+  static Future<MasterValveController> create(EndPoint masterValve) async {
+    final controlledBeds = await DaoGardenBed().getControlledBy(masterValve);
+    return MasterValveController._(masterValve, controlledBeds);
+  }
+
   final EndPoint masterValve;
   final List<GardenBed> controlledBeds;
   GardenBed? drainOutVia;
   Timer? drainOutTimer;
 
-  MasterValveController(this.masterValve)
-      : controlledBeds = await DaoGardenBed().getControlledBy(masterValve);
-
   /// Turn off the specified garden bed's valve with additional master valve logic.
   Future<void> softOff(GardenBed gardenBed) async {
-    assert(gardenBed.masterValveId == masterValve.id);
+    assert(gardenBed.masterValveId == masterValve.id,
+        'Garden Bed is not associated with this master valve');
 
-    final gardenBedValve = DaoEndPoint().getById(gardenBed.valveId);
+    final gardenBedValve = (await DaoEndPoint().getById(gardenBed.valveId))!;
 
     if (masterValve.isDrainingLine) {
-      assert(drainOutVia == null);
+      assert(drainOutVia == null, 'DrainOutVia must be set');
 
-      if (!isOtherValveRunning(gardenBed)) {
+      if (!await isOtherValveRunning(gardenBed)) {
         // Enter drain mode
         drainOutVia = gardenBed;
 
         // Turn off the master valve
-        await masterValve.hardOff();
+        await DaoEndPoint().hardOff(masterValve);
 
         // Let the line drain for 30 seconds, then turn off the garden bed valve
-        print("Draining Line via Valve: $gardenBedValve");
-        drainOutTimer = Timer(Duration(seconds: 30), drainLineCompleted);
+        print('Draining Line via Valve: $gardenBedValve');
+        drainOutTimer = Timer(const Duration(seconds: 30), drainLineCompleted);
         EndPointBus.instance.timerStarted(gardenBedValve);
       } else {
         // Other valves are running, turn off the garden bed valve directly
-        await gardenBedValve.hardOff();
+        await DaoEndPoint().hardOff(gardenBedValve);
       }
     } else {
       // Turn off the master valve if no other valves are running
-      if (!isOtherValveRunning(gardenBed)) {
-        await masterValve.hardOff();
+      if (!await isOtherValveRunning(gardenBed)) {
+        await DaoEndPoint().hardOff(masterValve);
       }
-      await gardenBedValve.hardOff();
+      DaoEndPoint().hardOff(gardenBedValve);
     }
   }
 
   /// Completes the drain process by turning off the drain valve.
-  void drainLineCompleted() {
-    final drainOutValve = drainOutVia?.valve;
-    drainOutValve?.hardOff();
-    print("Drain process completed. Setting drainOutVia to null.");
+  Future<void> drainLineCompleted() async {
+    final drainOutValve = await DaoEndPoint().getById(drainOutVia?.valveId);
+    await DaoEndPoint().hardOff(drainOutValve!);
+    print('Drain process completed. Setting drainOutVia to null.');
     drainOutVia = null;
     drainOutTimer = null;
     EndPointBus.instance.timerFinished(drainOutValve);
   }
 
+// ... other imports
+
   /// Check if any other valve associated with the master valve is running.
-  bool isOtherValveRunning(GardenBed gardenBed) {
-    return controlledBeds.any(
-      (current) => current.id != gardenBed.id && current.isOn,
-    );
+  Future<bool> isOtherValveRunning(GardenBed gardenBed) async {
+    final daoGardenBed = DaoGardenBed();
+
+    for (final current in controlledBeds) {
+      if (current.id != gardenBed.id && await daoGardenBed.isOn(current)) {
+        return true; // Found another valve that's on, so return true immediately
+      }
+    }
+
+    return false; // No other valve was found to be on
   }
 
   /// Turn on the specified garden bed's valve and manage master valve logic.
   Future<void> softOn(GardenBed gardenBed) async {
-    assert(gardenBed.masterValveId == masterValve.id);
+    assert(gardenBed.masterValveId == masterValve.id,
+        'Garden bed is not assocaited with this master valve');
 
-    final gardenBedValve = gardenBed.valve;
+    final gardenBedValve = await DaoEndPoint().getById(gardenBed.valveId);
 
     // Turn on the garden bed valve first to avoid pressure buildup
-    await gardenBedValve.hardOn();
+    await DaoEndPoint().hardOn(gardenBedValve!);
 
-    if (!masterValve.isOn) {
+    if (!DaoEndPoint().isOn(masterValve)) {
       if (masterValve.isDrainingLine && drainOutVia != null) {
         // Cancel the current drain process
-        drainOutVia?.valve.hardOff();
-        print("Cancelling drain process due to new valve activation.");
+        final drainOutValve = await DaoEndPoint().getById(drainOutVia!.valveId);
+        await DaoEndPoint().hardOff(drainOutValve!);
+        print('Cancelling drain process due to new valve activation.');
         drainOutTimer?.cancel();
         drainOutVia = null;
       }
-      await masterValve.hardOn();
+      await DaoEndPoint().hardOn(masterValve);
     }
   }
 
@@ -92,7 +108,6 @@ class MasterValveController {
   EndPoint getMasterValve() => masterValve;
 
   @override
-  String toString() {
-    return 'MasterValveController { masterValve: $masterValve, controlledBeds: $controlledBeds, drainOutVia: $drainOutVia }';
-  }
+  String toString() => '''
+MasterValveController { masterValve: $masterValve, controlledBeds: $controlledBeds, drainOutVia: $drainOutVia }''';
 }
