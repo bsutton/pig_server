@@ -2,7 +2,8 @@ import 'package:timezone/timezone.dart' as tz;
 
 /// Provides utility methods for date and time conversions.
 class Conversions {
-  /// Converts a Unix timestamp (seconds since epoch) to a `DateTime` in the system's local timezone.
+  /// Converts a Unix timestamp (seconds since epoch) to a `DateTime` 
+  /// in the system's local timezone.
   /// If `timestamp` is 0, returns `DateTime(1970, 1, 1)`.
   static DateTime toLocalDateTime(int timestamp) {
     if (timestamp == 0) {
@@ -12,7 +13,8 @@ class Conversions {
         .toLocal();
   }
 
-  /// Converts a Unix timestamp (seconds since epoch) to a `DateTime` (date only) in the system's local timezone.
+  /// Converts a Unix timestamp (seconds since epoch) to a `DateTime` 
+  /// (date only) in the system's local timezone.
   /// If `timestamp` is 0, returns `DateTime(1970, 1, 1)`.
   static DateTime toLocalDate(int timestamp) {
     final dateTime = toLocalDateTime(timestamp);

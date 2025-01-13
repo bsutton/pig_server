@@ -9,8 +9,13 @@ import 'package:dcli/dcli.dart';
 import 'package:dnsolve/dnsolve.dart';
 import 'package:path/path.dart';
 import 'package:pig_server/src/config.dart';
+import 'package:pig_server/src/database/factory/cli_database_factory.dart';
+import 'package:pig_server/src/database/management/database_helper.dart';
+import 'package:pig_server/src/database/management/local_backup_provider.dart';
+import 'package:pig_server/src/database/versions/asset_script_source.dart';
 import 'package:pig_server/src/handle_booking.dart';
 import 'package:pig_server/src/handle_static.dart';
+import 'package:pig_server/src/handlers/lighting_handler.dart';
 import 'package:pig_server/src/logger.dart';
 import 'package:pig_server/src/mailer.dart';
 import 'package:pig_server/src/pi/gpio_manager.dart';
@@ -36,6 +41,8 @@ void main() async {
 
   final domain = Domain(name: config.fqdn, email: config.domainEmail);
 
+  await _initDb();
+
   await _initPins();
 
   final letsEncrypt = build(
@@ -58,7 +65,7 @@ Future<void> _initPins() async {
   await GpioManager().provisionPins();
 }
 
-/// TODO: call shutdown as the web server stops.
+// TODO(bsutton): call shutdown as the web server stops.
 void shutdown() {
   qlog('Irrigation Manager is shutting down.');
   // stop all GPIO activity/threads by shutting down the GPIO controller
@@ -174,7 +181,11 @@ Router _buildRouter() {
 
     /// validates deep links used by the hmb app.
     ..get('/.well-known/assetlinks.json', handleStatic)
-    ..post('/booking', (Request request) async => handleBooking(request));
+    ..post('/booking', (Request request) async => handleBooking(request))
+    ..post('/lighting/toggle',
+        (Request request) async => handleLightingToggle(request))
+    ..post('/lighting/list',
+        (Request request) async => handleLightingList(request));
   return router;
 }
 
@@ -223,6 +234,22 @@ Future<void> _sendTestEmail() async {
     qlogerr(red(
         '''Failed to send startup email: check the configuration at ${Config().loadedFrom}'''));
     exit(33);
+  }
+}
+
+Future<void> _initDb() async {
+  final backupProvider = LocalBackupProvider(CliDatabaseFactory());
+  try {
+    await DatabaseHelper().initDatabase(
+        src: AssetScriptSource(),
+        backupProvider: backupProvider,
+        backup: true,
+        databaseFactory: CliDatabaseFactory());
+    print('Database located at: ${await backupProvider.databasePath}');
+    // ignore: avoid_catches_without_on_clauses
+  } catch (e) {
+    qlogerr('Db open failed. Try rebooting your phone or restore the db $e');
+    rethrow;
   }
 }
 

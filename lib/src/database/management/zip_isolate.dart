@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:archive/archive_io.dart';
-import 'package:dcli_core/dcli_core.dart';
 import 'package:path/path.dart';
 import 'package:sentry/sentry.dart';
 
@@ -29,9 +28,6 @@ Future<void> zipBackup(
       sendPort: receivePort.sendPort,
       pathToZip: pathToZip,
       pathToBackupFile: pathToBackupFile,
-      includePhotos: includePhotos,
-      photosRootPath: await provider.photosRootPath,
-      zipPhotoRoot: zipPhotoRoot,
       progressStageStart: 3,
       progressStageEnd: 5,
     ),
@@ -93,47 +89,6 @@ Future<void> _zipFiles(_ZipParams params) async {
 
     await encoder.addFile(File(params.pathToBackupFile));
 
-    if (params.includePhotos) {
-      sendPort.send(ProgressUpdate('Adding photos ${params.photosRootPath}',
-          params.progressStageStart, params.progressStageEnd));
-      var processedPhotos = 0;
-      final photos =
-          await findAsync('*.jpg', workingDirectory: params.photosRootPath)
-              .toList();
-      final totalPhotos = photos.length;
-      sendPort.send(ProgressUpdate('Found $totalPhotos photos',
-          params.progressStageStart, params.progressStageEnd));
-
-      for (final item in photos) {
-        // sendPort.send(ProgressUpdate('Adding photo $processedPhotos/$totalPhotos photos',
-        //     params.progressStageStart, params.progressStageEnd));
-
-        final relativePhotoPath =
-            relative(item.pathTo, from: params.photosRootPath);
-        final zipPath = join(params.zipPhotoRoot, relativePhotoPath);
-
-        // sendPort.send(ProgressUpdate('Calling add file ${item.pathTo}',
-        //     params.progressStageStart, params.progressStageEnd));
-
-        await encoder.addFile(File(item.pathTo), zipPath);
-
-        // sendPort.send(ProgressUpdate('add file completed ${item.pathTo}',
-        //     params.progressStageStart, params.progressStageEnd));
-
-        processedPhotos++;
-
-        // Emit progress for each photo
-        final stageNo = params.progressStageStart +
-            ((processedPhotos / totalPhotos) *
-                    (params.progressStageEnd - params.progressStageStart))
-                .toInt();
-        sendPort.send(ProgressUpdate(
-            'Zipping photos ($processedPhotos/$totalPhotos)',
-            stageNo,
-            params.progressStageEnd));
-      }
-    }
-
     await encoder.close();
 
     // Notify completion
@@ -168,20 +123,11 @@ Future<String?> extractFiles(BackupProvider provider, File backupFile,
         'Restoring  $restored/${archive.length}', stageNo, stageCount);
 
     if (file.isFile) {
-      // If the file is the database extact it
+      // If the file is the database, extract it
       // to a temp dir and return the path.
       if (filename.endsWith('.db')) {
         dbPath = filePath;
         await _expandZippedFileToDisk(filePath, file);
-      }
-
-      // Write files to the temporary directory
-      if (filename.startsWith(zipPhotoRoot)) {
-        final parts = split(filename);
-        final photoDestPath =
-            joinAll([await provider.photosRootPath, ...parts.sublist(1)]);
-
-        await _expandZippedFileToDisk(photoDestPath, file);
       }
     }
   }
@@ -201,18 +147,12 @@ class _ZipParams {
     required this.sendPort,
     required this.pathToZip,
     required this.pathToBackupFile,
-    required this.includePhotos,
-    required this.photosRootPath,
-    required this.zipPhotoRoot,
     required this.progressStageStart,
     required this.progressStageEnd,
   });
   final SendPort sendPort;
   final String pathToZip;
   final String pathToBackupFile;
-  final bool includePhotos;
-  final String photosRootPath;
-  final String zipPhotoRoot;
   final int progressStageStart;
   final int progressStageEnd;
 }

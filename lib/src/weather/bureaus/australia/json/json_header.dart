@@ -1,12 +1,4 @@
 class JSONHeader {
-  final String? refreshMessage;
-  final String? id;
-  final String? mainID;
-  final String? name;
-  final String? stateTimeZone;
-  final String? timeZone;
-  final String? productName;
-  final String? state;
 
   JSONHeader({
     this.refreshMessage,
@@ -20,8 +12,7 @@ class JSONHeader {
   });
 
   /// Factory constructor to create a `JSONHeader` from a map.
-  factory JSONHeader.fromJson(Map<String, dynamic> json) {
-    return JSONHeader(
+  factory JSONHeader.fromJson(Map<String, dynamic> json) => JSONHeader(
       refreshMessage: json['refresh_message'] as String?,
       id: json['ID'] as String?,
       mainID: json['main_ID'] as String?,
@@ -31,11 +22,17 @@ class JSONHeader {
       productName: json['product_name'] as String?,
       state: json['state'] as String?,
     );
-  }
+  final String? refreshMessage;
+  final String? id;
+  final String? mainID;
+  final String? name;
+  final String? stateTimeZone;
+  final String? timeZone;
+  final String? productName;
+  final String? state;
 
   /// Converts the `JSONHeader` instance to a map.
-  Map<String, dynamic> toJson() {
-    return {
+  Map<String, dynamic> toJson() => {
       'refresh_message': refreshMessage,
       'ID': id,
       'main_ID': mainID,
@@ -45,11 +42,9 @@ class JSONHeader {
       'product_name': productName,
       'state': state,
     };
-  }
 
   @override
-  String toString() {
-    return '''
+  String toString() => '''
 JSONHeader {
   refreshMessage: $refreshMessage,
   id: $id,
@@ -61,5 +56,4 @@ JSONHeader {
   state: $state
 }
 ''';
-  }
 }

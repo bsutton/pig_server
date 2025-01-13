@@ -7,7 +7,7 @@ class WeatherBureaus {
   static final List<WeatherBureau> _bureaus = [];
 
   /// The default weather bureau.
-  static WeatherBureau? _defaultBureau;
+  static WeatherBureau? defaultBureau;
 
   /// Static initializer to register the default bureaus.
   static void initialize() {
@@ -21,18 +21,7 @@ class WeatherBureaus {
     _bureaus.add(bureau);
   }
 
-  /// Sets the default weather bureau.
-  static void setDefaultBureau(WeatherBureau bureau) {
-    _defaultBureau = bureau;
-  }
-
-  /// Gets the default weather bureau.
-  static WeatherBureau? getDefaultBureau() {
-    return _defaultBureau;
-  }
 
   /// Gets the list of all registered weather bureaus.
-  static List<WeatherBureau> getBureaus() {
-    return _bureaus;
-  }
+  static List<WeatherBureau> getBureaus() => _bureaus;
 }

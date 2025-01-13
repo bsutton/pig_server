@@ -1,6 +1,7 @@
 import 'entity.dart';
+import 'garden_feature.dart';
 
-class GardenBed extends Entity<GardenBed> {
+class GardenBed extends Entity<GardenBed> implements GardenFeature {
   GardenBed({
     required super.id,
     required this.name,
@@ -64,6 +65,16 @@ class GardenBed extends Entity<GardenBed> {
   String description;
   DateTime? nextWatering;
   int moistureContent;
-  int valveId; // Foreign key for the valve
+
+  /// The id of the EndPoint for the value that
+  /// waters this garden bed.
+  int valveId;
+
+  /// The id of the EndPoint for the master value
+  /// which must be open for this garden bed's
+  /// valve to operate.
   int? masterValveId;
+
+  @override
+  int getPrimaryEndPoint() => valveId;
 }

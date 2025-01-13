@@ -7,9 +7,15 @@ import '../util/delay.dart';
 import 'timer_control.dart';
 import 'timer_notification.dart';
 
-
 /// A controller that manages a timed operation for a [GardenFeature].
 class IrrigationTimer {
+  IrrigationTimer({
+    required this.feature,
+    required this.description,
+    required this.duration,
+    required this.completionAction,
+    this.timerNotification,
+  });
   final GardenFeature feature;
   final String description;
   final Duration duration;
@@ -18,14 +24,6 @@ class IrrigationTimer {
 
   DateTime? _startTime;
   Delay<GardenFeature>? _timerFuture;
-
-  IrrigationTimer({
-    required this.feature,
-    required this.description,
-    required this.duration,
-    required this.completionAction,
-    this.timerNotification,
-  });
 
   /// Starts the timer and schedules the completion action.
   Future<void> start() async {
@@ -59,9 +57,7 @@ class IrrigationTimer {
   }
 
   /// Checks if the timer is still running.
-  bool isTimerRunning() {
-    return _timerFuture != null;
-  }
+  bool isTimerRunning() => _timerFuture != null;
 
   /// Calculates the remaining time before the timer completes.
   Duration timeRemaining() {
@@ -76,4 +72,3 @@ class IrrigationTimer {
     return expectedEndTime.difference(now);
   }
 }
-

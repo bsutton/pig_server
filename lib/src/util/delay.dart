@@ -1,6 +1,7 @@
 import 'dart:async';
 
-/// A utility class for handling delays with optional cancellation and callbacks.
+/// A utility class for handling delays with optional cancellation
+/// and callbacks.
 class Delay<F> {
   /// Constructor to initialize the delay.
   Delay({
@@ -25,15 +26,16 @@ class Delay<F> {
   /// A flag to indicate whether the delay has been canceled.
   bool _isCancelled = false;
 
-  /// Starts the delay and executes the callback after the duration, unless canceled.
+  /// Starts the delay and executes the callback after the duration,
+  /// unless canceled.
   Future<void> start() async {
     print("Delay starting '$description'. Duration: $duration for: $feature");
 
     try {
-      await Future.delayed(duration);
+      await Future.delayed(duration, () {});
       if (!_isCancelled) {
-        print(
-            "Delay completing normally '$description'. Duration: $duration for: $feature");
+        print("""
+Delay completing normally '$description'. Duration: $duration for: $feature""");
         await callback(feature);
       } else {
         print(

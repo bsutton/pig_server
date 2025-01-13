@@ -7,7 +7,8 @@ import 'units/tempurature.dart';
 import 'units/wind_direction.dart';
 import 'weather_interval_type.dart';
 
-/// Represents a weather interval, which can be a forecast or a historic observation.
+/// Represents a weather interval, which can be a forecast or a
+///  historic observation.
 abstract class WeatherInterval {
   /// The type of interval, e.g., FORECAST or OBSERVATION.
   WeatherIntervalType get weatherIntervalType;
@@ -15,7 +16,8 @@ abstract class WeatherInterval {
   /// The air temperature.
   Temperature? get temperature;
 
-  /// The apparent temperature, sometimes referred to as the 'feels like' temperature.
+  /// The apparent temperature, sometimes referred to as the 
+  /// 'feels like' temperature.
   Temperature? get apparentTemperature;
 
   /// Rainfall in millimeters during this interval.

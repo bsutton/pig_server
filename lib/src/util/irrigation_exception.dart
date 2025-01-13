@@ -16,17 +16,17 @@ class IrrigationException implements Exception {
 }
 
 class BackupException extends IrrigationException {
-  BackupException(super.message);
+  BackupException(super.cause);
 }
 
 class InvoiceException extends IrrigationException {
-  InvoiceException(super.message);
+  InvoiceException(super.cause);
 }
 
 class XeroException extends IrrigationException {
-  XeroException(super.message);
+  XeroException(super.cause);
 }
 
 class InvalidPathException extends IrrigationException {
-  InvalidPathException(super.message);
+  InvalidPathException(super.cause);
 }

@@ -1,9 +1,7 @@
 import 'package:sqflite_common/sqlite_api.dart';
 
-import '../../pi/gpio_manager.dart';
 import '../entity/endpoint.dart';
 import '../entity/garden_bed.dart';
-import '../types/pin_status.dart';
 import 'dao.dart';
 import 'dao_endpoint.dart';
 
@@ -47,18 +45,6 @@ class DaoGardenBed extends Dao<GardenBed> {
     return List.generate(data.length, (i) => fromMap(data[i]));
   }
 
-  /// Get EndPoints by pin number
-  Future<List<EndPoint>> getByPin(int pinNo) async {
-    final db = withoutTransaction();
-    final data = await db.query(
-      'end_point',
-      where: 'pin_no = ?',
-      whereArgs: [pinNo],
-      orderBy: 'LOWER(end_point_name)',
-    );
-    return List.generate(data.length, (i) => EndPoint.fromMap(data[i]));
-  }
-
   /// Delete all GardenBeds
   @override
   Future<int> deleteAll([Transaction? transaction]) async {
@@ -94,11 +80,11 @@ class DaoGardenBed extends Dao<GardenBed> {
     );
   }
 
+  Future<EndPoint> getEndPoint(GardenBed gardenBed) async =>
+      (await DaoEndPoint().getById(gardenBed.valveId))!;
+
   Future<bool> isOn(GardenBed gardenBed) async {
-    final valve = (await DaoEndPoint().getById(gardenBed.valveId))!;
-
-    final pinStatus = GpioManager().getCurrentStatus(valve);
-
-    return pinStatus == PinStatus.on;
+    final endPoint = await getEndPoint(gardenBed);
+    return DaoEndPoint().isOn(endPoint);
   }
 }

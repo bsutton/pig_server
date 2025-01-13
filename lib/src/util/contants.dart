@@ -4,7 +4,7 @@ class Constants {
   static  DateTime date1970 = DateTime(1970);
 
   /// Represents the datetime 1/1/1970 00:00:00.
-  static  DateTime dateTime1970 = DateTime(1970, 1);
+  static  DateTime dateTime1970 = DateTime(1970);
 
   /// Represents a zero-equivalent date (1/1/1970).
   static  DateTime dateZero = date1970;

@@ -51,4 +51,6 @@ class History extends Entity<History> {
   void markEventComplete() {
     eventDuration = DateTime.now().difference(eventStart);
   }
+
+  bool get isComplete => eventDuration != null;
 }

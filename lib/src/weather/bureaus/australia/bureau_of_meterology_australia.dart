@@ -1,3 +1,5 @@
+// ignore_for_file: unused_element
+
 import 'package:intl/intl.dart';
 
 import '../../units/humidity.dart';
@@ -63,7 +65,9 @@ class BureauOfMeterologyAustralia implements WeatherBureau {
 
   /// Parses JSON into specific types.
   static T fromJson<T>(dynamic json, T Function(dynamic) factory) {
-    if (json == null) throw ArgumentError('JSON cannot be null');
+    if (json == null) {
+      throw ArgumentError('JSON cannot be null');
+    }
     return factory(json);
   }
 }

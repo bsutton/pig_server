@@ -1,6 +1,7 @@
 import 'package:dart_periphery/dart_periphery.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 
+import '../../controllers/end_point_bus.dart';
 import '../../pi/gpio_manager.dart';
 import '../entity/endpoint.dart';
 import '../types/endpoint_type.dart';
@@ -61,19 +62,6 @@ class DaoEndPoint extends Dao<EndPoint> {
     return List.generate(data.length, (i) => fromMap(data[i]));
   }
 
-  /// Delete all EndPoints
-  @override
-  Future<int> deleteAll([Transaction? transaction]) async {
-    final db = withinTransaction(transaction);
-    return db.delete(tableName);
-  }
-
-  /// Persist a new EndPoint
-  Future<int> persist(EndPoint endPoint) async {
-    final db = withoutTransaction();
-    return db.insert(tableName, endPoint.toMap());
-  }
-
   /// Delete a specific EndPoint
   @override
   Future<int> delete(int id, [Transaction? transaction]) async {
@@ -82,17 +70,6 @@ class DaoEndPoint extends Dao<EndPoint> {
       tableName,
       where: 'id = ?',
       whereArgs: [id],
-    );
-  }
-
-  /// Update (merge) an existing EndPoint
-  Future<int> merge(EndPoint endPoint) async {
-    final db = withoutTransaction();
-    return db.update(
-      tableName,
-      endPoint.toMap(),
-      where: 'id = ?',
-      whereArgs: [endPoint.id],
     );
   }
 
@@ -151,8 +128,7 @@ class DaoEndPoint extends Dao<EndPoint> {
     // Check if the pin has been provisioned
     if (!_gpioMap.containsKey(pinNo)) {
       print('Error: GPIO pin $pinNo has not been provisioned.');
-      return PinStatus
-          .off; // Or throw an exception, depending on your error handling strategy
+      return PinStatus.off;
     }
 
     try {
@@ -188,6 +164,7 @@ class DaoEndPoint extends Dao<EndPoint> {
     } else {
       _setPinHigh(pinNo);
     }
+    EndPointBus.instance.notifyHardOff(endPoint);
     print('Pin $pinNo for EndPoint: ${endPoint.name} set Off.');
   }
 
@@ -199,8 +176,7 @@ class DaoEndPoint extends Dao<EndPoint> {
     }
 
     try {
-      final gpio = _gpioMap[pinNo]!;
-      gpio.write(true);
+      _gpioMap[pinNo]!.write(true);
     } catch (e) {
       print('Error setting GPIO pin $pinNo to high: $e');
     }
@@ -214,8 +190,7 @@ class DaoEndPoint extends Dao<EndPoint> {
     }
 
     try {
-      final gpio = _gpioMap[pinNo]!;
-      gpio.write(false);
+      _gpioMap[pinNo]!.write(false);
     } catch (e) {
       print('Error setting GPIO pin $pinNo to low: $e');
     }
@@ -226,8 +201,12 @@ class DaoEndPoint extends Dao<EndPoint> {
     await DaoEndPoint().hardOff(valve!);
   }
 
-bool isOn(EndPoint endPoint) =>
+  Future<bool> isOnById(int endPointId) async {
+    final endPoint = await DaoEndPoint().getById(endPointId);
+
+    return isOn(endPoint!);
+  }
+
+  bool isOn(EndPoint endPoint) =>
       GpioManager().getCurrentStatus(endPoint) == PinStatus.on;
-
-
 }

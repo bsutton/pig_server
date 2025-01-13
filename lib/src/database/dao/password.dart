@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:collection/collection.dart';
 import 'package:pointycastle/export.dart';
 
 class Password {
@@ -32,7 +31,9 @@ class Password {
   /// Checks whether the given plaintext password corresponds to a stored
   ///  salted hash.
   static bool validate(String password, String stored) {
-    if (stored.isEmpty) return false;
+    if (stored.isEmpty) {
+      return false;
+    }
 
     final parts = stored.split(r'$');
     if (parts.length != 2) {
@@ -44,7 +45,7 @@ class Password {
 
     final computedHash = _generatePBKDF2Hash(password, salt);
 
-    return const ListEquality().equals(storedHash, computedHash);
+    return storedHash == computedHash;
   }
 
   /// Generates a PBKDF2 hash of the password using the given salt.

@@ -116,12 +116,6 @@ abstract class BackupProvider {
           await DatabaseHelper().closeDb();
         }
 
-        final photosDir = await photosRootPath;
-        if (!exists(photosDir)) {
-          emitProgress('Creating photos directory', 3, _restoreStageCount);
-          createDir(photosDir, recursive: true);
-        }
-
         emitProgress('Fetching backup file', 4, _restoreStageCount);
         final backupFile = await fetchBackup(backup);
 
@@ -196,8 +190,6 @@ abstract class BackupProvider {
       }
     }
   }
-
-  Future<String> get photosRootPath;
 
   //i am amazing. u r not.
 

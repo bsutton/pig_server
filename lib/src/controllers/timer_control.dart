@@ -6,12 +6,14 @@ import '../database/entity/garden_feature.dart';
 import 'irrigation_timer.dart';
 import 'timer_notification.dart';
 
-/// Manages a list of running [IrrigationTimer] instances for [GardenFeature] objects.
+/// Manages a list of running [IrrigationTimer] instances 
+/// for [GardenFeature] objects.
 class TimerControl {
   static final Map<int, IrrigationTimer> _timers = {};
 
   /// Starts a timer for [feature] with [description], [duration],
-  /// and [completionAction]. It removes any existing timer for the same [feature] first.
+  /// and [completionAction]. It removes any existing timer for the 
+  /// same [feature] first.
   static Future<void> startTimer(
     GardenFeature feature,
     String description,

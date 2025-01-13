@@ -1,7 +1,5 @@
 import 'dart:io';
 
-import 'package:sqflite_common/sqflite.dart';
-import 'package:sqflite_common/sqlite_api.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'hmb_database_factory.dart' as local;
@@ -31,5 +29,5 @@ class CliDatabaseFactory implements local.HMBDatabaseFactory {
   @override
   Future<Database> openDatabase(String path,
           {required OpenDatabaseOptions options}) async =>
-      databaseFactory.openDatabase(path, options: options);
+    databaseFactory.openDatabase(path, options: options);
 }

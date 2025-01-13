@@ -1,6 +1,6 @@
 import 'package:sqflite_common/sqlite_api.dart';
 
-import '../entity/garden_bed.dart';
+import '../entity/garden_feature.dart';
 import '../entity/history.dart';
 import 'dao.dart';
 
@@ -23,23 +23,37 @@ class DaoHistory extends Dao<History> {
   }
 
   /// Get History records by a specific GardenBed
-  Future<List<History>> getByGardenBed(GardenBed gardenBed) async {
+  Future<List<History>> getByGardenFeature(GardenFeature gardenFeature) async =>
+      getByGardenFeatureId(gardenFeature.id);
+
+  Future<List<History>> getByGardenFeatureId(int featureId) async {
     final db = withoutTransaction();
     final data = await db.query(
       tableName,
       where: 'garden_feature_id = ?',
-      whereArgs: [gardenBed.id],
+      whereArgs: [featureId],
     );
     return List.generate(data.length, (i) => fromMap(data[i]));
   }
 
+  /// Returns the most recent [History] record for [feature],
+  /// or `null` if none exist.
+  Future<History?> getLastRecord(GardenFeature feature) async {
+    // fetch all records sorted by most recent first
+    final records = await getByGardenFeatureId(feature.id);
+    if (records.isEmpty) {
+      return null;
+    }
+    return records.first;
+  }
+
   /// Delete History records by a specific GardenBed
-  Future<int> deleteByGardenBed(GardenBed gardenBed) async {
+  Future<int> deleteByGardenFeature(GardenFeature gardenFeature) async {
     final db = withoutTransaction();
     return db.delete(
       tableName,
       where: 'garden_feature_id = ?',
-      whereArgs: [gardenBed.id],
+      whereArgs: [gardenFeature.id],
     );
   }
 

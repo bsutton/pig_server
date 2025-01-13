@@ -15,5 +15,6 @@ class WateringEvent {
   /// Converts the [WateringEvent] to a string representation.
   @override
   String toString() =>
-      'WateringEvent(watered: $watered, duration: ${duration.inMinutes} minutes)';
+      '''
+WateringEvent(watered: $watered, duration: ${duration.inMinutes} minutes)''';
 }

@@ -5,8 +5,8 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
 import 'package:dcli/posix.dart';
-import 'package:pig_server/src/dcli/resource/generated/resource_registry.g.dart';
 import 'package:path/path.dart';
+import 'package:pig_server/src/dcli/resource/generated/resource_registry.g.dart';
 
 final pathToHandyman = join(rootPath, 'opt', 'handyman');
 final pathToHandymanBin = join(rootPath, 'opt', 'handyman', 'bin');

@@ -18,7 +18,9 @@ class Formatters {
 
   /// Formats a [Duration] to a string in H:mm or seconds format.
   static String formatDuration(Duration? duration) {
-    if (duration == null) return '';
+    if (duration == null) {
+      return '';
+    }
 
     if (duration.inMilliseconds >= 60000) {
       final hours = duration.inHours;
@@ -34,7 +36,9 @@ class Formatters {
   /// Supported format: "H:mm:ss", "H:mm", etc.
   static String formatDurationCustom(Duration? duration,
       {String format = 'H:mm:ss'}) {
-    if (duration == null) return '';
+    if (duration == null) {
+      return '';
+    }
 
     final hours = duration.inHours;
     final minutes = duration.inMinutes % 60;
@@ -42,7 +46,7 @@ class Formatters {
 
     switch (format) {
       case 'H:mm:ss':
-        return '$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+        return '''$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}''';
       case 'H:mm':
         return '$hours:${minutes.toString().padLeft(2, '0')}';
       default:

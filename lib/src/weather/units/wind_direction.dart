@@ -18,10 +18,10 @@ enum WindDirection {
   eastNorthEast('ENE'),
   eastSouthEast('ESE');
 
-  final String abbreviation;
-
   /// Constructor for each wind direction with an associated abbreviation.
   const WindDirection(this.abbreviation);
+
+  final String abbreviation;
 
   /// Returns a [WindDirection] based on its abbreviation.
   /// Defaults to [WindDirection.calm] if no match is found.

@@ -1,6 +1,8 @@
+import 'endpoint.dart';
 import 'entity.dart';
+import 'garden_feature.dart';
 
-class Lighting extends Entity<Lighting> {
+class Lighting extends Entity<Lighting> implements GardenFeature {
   Lighting({
     required super.id,
     required this.lightSwitchId,
@@ -32,8 +34,12 @@ class Lighting extends Entity<Lighting> {
         'modified_date': modifiedDate.toIso8601String(),
       };
 
-  int lightSwitchId; // References an EndPoint
+  /// id of [EndPoint] for this light
+  int lightSwitchId;
 
   @override
-  String get name => 'Lighting $id'; // Replace with a meaningful name logic
+  String get name => 'Lighting $id';
+
+  @override
+  int getPrimaryEndPoint() => lightSwitchId;
 }

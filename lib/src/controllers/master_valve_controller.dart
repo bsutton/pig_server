@@ -22,7 +22,8 @@ class MasterValveController {
   GardenBed? drainOutVia;
   Timer? drainOutTimer;
 
-  /// Turn off the specified garden bed's valve with additional master valve logic.
+  /// Turn off the specified garden bed's valve with additional master
+  /// valve logic.
   Future<void> softOff(GardenBed gardenBed) async {
     assert(gardenBed.masterValveId == masterValve.id,
         'Garden Bed is not associated with this master valve');
@@ -52,7 +53,7 @@ class MasterValveController {
       if (!await isOtherValveRunning(gardenBed)) {
         await DaoEndPoint().hardOff(masterValve);
       }
-      DaoEndPoint().hardOff(gardenBedValve);
+      await DaoEndPoint().hardOff(gardenBedValve);
     }
   }
 
@@ -74,7 +75,8 @@ class MasterValveController {
 
     for (final current in controlledBeds) {
       if (current.id != gardenBed.id && await daoGardenBed.isOn(current)) {
-        return true; // Found another valve that's on, so return true immediately
+        // Found another valve that's on, so return true immediately
+        return true;
       }
     }
 

@@ -5,8 +5,8 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "ihserver",
-            "program": "bin/ihserver.dart",
+            "name": "pig_server",
+            "program": "bin/pig_server.dart",
             "request": "launch",
             "type": "dart"
         }

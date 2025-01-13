@@ -16,15 +16,15 @@ enum BOMWeatherStation implements WeatherStation {
     forecastSource: '',
   );
 
-  final String identifier;
-  final String observationSource;
-  final String forecastSource;
-
   const BOMWeatherStation({
     required this.identifier,
     required this.observationSource,
     required this.forecastSource,
   });
+
+  final String identifier;
+  final String observationSource;
+  final String forecastSource;
 
   @override
   // Placeholder: Implement actual forecast fetching logic here

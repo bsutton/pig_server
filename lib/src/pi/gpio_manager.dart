@@ -89,8 +89,7 @@ class GpioManager {
     // Check if the pin has been provisioned
     if (!_gpioMap.containsKey(pinNo)) {
       print('Error: GPIO pin $pinNo has not been provisioned.');
-      return PinStatus
-          .off; // Or throw an exception, depending on your error handling strategy
+      return PinStatus.off;
     }
 
     try {

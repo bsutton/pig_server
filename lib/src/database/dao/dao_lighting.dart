@@ -1,8 +1,11 @@
 import 'package:sqflite_common/sqlite_api.dart';
 
+import '../../controllers/end_point_bus.dart';
 import '../entity/endpoint.dart';
 import '../entity/lighting.dart';
 import 'dao.dart';
+import 'dao_endpoint.dart';
+import 'dao_garden_feature.dart';
 
 class DaoLighting extends Dao<Lighting> {
   @override
@@ -45,12 +48,6 @@ class DaoLighting extends Dao<Lighting> {
     return List.generate(data.length, (i) => EndPoint.fromMap(data[i]));
   }
 
-  /// Delete all Lighting entities
-  Future<int> deleteAll([Transaction? transaction]) async {
-    final db = withinTransaction(transaction);
-    return db.delete(tableName);
-  }
-
   /// Delete Lighting entities associated with a specific EndPoint
   Future<int> deleteByEndPoint(EndPoint endPoint) async {
     final db = withoutTransaction();
@@ -87,5 +84,24 @@ class DaoLighting extends Dao<Lighting> {
       where: 'id = ?',
       whereArgs: [lighting.id],
     );
+  }
+
+  Future<void> softOff(Lighting lighting) async {
+    await DaoGardenFeature().softOff(lighting);
+
+    await DaoEndPoint().hardOffById(lighting.lightSwitchId);
+  }
+
+  Future<bool> isOn(Lighting light) async =>
+      DaoEndPoint().isOnById(light.lightSwitchId);
+
+  Future<void> softOn(Lighting lighting) async {
+    await DaoGardenFeature().softOff(lighting);
+
+    final endPoint = await DaoEndPoint().getById(lighting.lightSwitchId);
+
+    await DaoEndPoint().hardOff(endPoint!);
+
+    EndPointBus.instance.notifyHardOff(endPoint);
   }
 }

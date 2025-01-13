@@ -2,7 +2,6 @@ import 'package:sqflite_common/sqlite_api.dart';
 
 import '../entity/entities.dart';
 
-
 class DaoBase<T extends Entity<T>> {
   DaoBase(this.db, this._notify);
 
@@ -92,6 +91,11 @@ class DaoBase<T extends Entity<T>> {
     );
     _notify(this);
     return rowsDeleted;
+  }
+
+  Future<int> deleteAll([Transaction? transaction]) async {
+    final db = withinTransaction(transaction);
+    return db.delete(_tableName);
   }
 
   List<T> toList(List<Map<String, Object?>> data) {
