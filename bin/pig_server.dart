@@ -188,7 +188,7 @@ LetsEncrypt build({CertificateMode mode = CertificateMode.staging}) {
 }
 
 Future<void> _checkConfiguration(String pathToStaticContent) async {
-  qlog(green('Starting Handyman Server'));
+  qlog(green('PiGation Server'));
   qlog(blue('Loading config.yaml from ${truepath(Config().loadedFrom)}'));
   qlog(blue('Path to static content: $pathToStaticContent'));
   final pathToIndexHtml = join(pathToStaticContent, 'index.html');

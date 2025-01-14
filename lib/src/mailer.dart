@@ -18,7 +18,7 @@ Future<bool> sendEmail(
   final message = Message()
     ..from = Address(
       from,
-      'Ivanhoe Handyman Services',
+      'PiGation Services',
     )
     ..recipients.add(to)
     ..subject = subject

@@ -9,7 +9,7 @@ import 'package:path/path.dart';
 /// Used to recreate the assetlinks.json file from the current
 /// key store.
 /// The keystore should be in the hmb project which needs
-/// to sit in the same parent directory as the handyman project.
+/// to sit in the same parent directory as the pigation project.
 void main() async {
   const releaseKeystorePath = '../../hmb/hmb-key.keystore';
   const releaseAlias = 'hmbkey';
@@ -40,7 +40,7 @@ void main() async {
     ],
     "target": {
       "namespace": "android_app",
-      "package_name": "dev.onepub.handyman",
+      "package_name": "dev.onepub.pigation",
       "sha256_cert_fingerprints": [
         "$releaseFingerprint"
       ]
@@ -52,7 +52,7 @@ void main() async {
     ],
     "target": {
       "namespace": "android_app",
-      "package_name": "dev.onepub.handyman.debug",
+      "package_name": "dev.onepub.pigation.debug",
       "sha256_cert_fingerprints": [
         "$debugFingerprint"
       ]

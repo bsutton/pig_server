@@ -1,4 +1,4 @@
-# Ivanhoe Handyman Services Web server.
+# PiGation
 
 This is a complete web server with a builtin letsencrypt client that obtains certs
 and serves static content.

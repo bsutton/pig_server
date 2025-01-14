@@ -61,7 +61,7 @@ abstract class BackupProvider {
         final pathToZip = join(tmpDir, 'hmb-backup-$datePart.zip');
 
         try {
-          final pathToBackupFile = join(tmpDir, 'handyman-$datePart.db');
+          final pathToBackupFile = join(tmpDir, 'pigation-$datePart.db');
           final pathToDatabase = await databasePath;
 
           if (!exists(pathToDatabase)) {

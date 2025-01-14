@@ -76,5 +76,5 @@ class LocalBackupProvider extends BackupProvider {
 
   @override
   Future<String> get databasePath async =>
-      join(await getDatabasesPath(), 'handyman.db');
+      join(await getDatabasesPath(), 'pigation.db');
 }

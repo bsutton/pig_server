@@ -8,16 +8,16 @@ import 'package:dcli/posix.dart';
 import 'package:path/path.dart';
 import 'package:pig_server/src/dcli/resource/generated/resource_registry.g.dart';
 
-final pathToHandyman = join(rootPath, 'opt', 'handyman');
-final pathToHandymanBin = join(rootPath, 'opt', 'handyman', 'bin');
+final pathToPigation = join(rootPath, 'opt', 'pigation');
+final pathToPigationBin = join(rootPath, 'opt', 'pigation', 'bin');
 
 /// when deploying we copy the executable to an alternate location as the
 /// existing execs will be running and therefore locked.
-final pathToHandymanAltBin = join(rootPath, 'opt', 'handyman', 'altbin');
-final pathToWwwRoot = join(pathToHandyman, 'www_root');
-final pathToPigServer = join(pathToHandymanBin, 'pig_server');
-final pathToLauncher = join(pathToHandymanBin, 'pig_launch');
-final pathToLauncherScript = join(pathToHandymanBin, 'pig_launch.sh');
+final pathToPigationAltBin = join(rootPath, 'opt', 'pigation', 'altbin');
+final pathToWwwRoot = join(pathToPigation, 'www_root');
+final pathToPigServer = join(pathToPigationBin, 'pig_server');
+final pathToLauncher = join(pathToPigationBin, 'pig_launch');
+final pathToLauncherScript = join(pathToPigationBin, 'pig_launch.sh');
 
 void main(List<String> args) {
   final argParser = ArgParser()..addFlag('verbose', abbr: 'v');
@@ -28,12 +28,12 @@ void main(List<String> args) {
   _createDirectory(pathToWwwRoot);
 
   Shell.current.withPrivileges(() {
-    print(green('unpacking resources to: $pathToHandyman'));
+    print(green('unpacking resources to: $pathToPigation'));
 
-    unpackResources(pathToHandyman);
+    unpackResources(pathToPigation);
 
     /// Create the dir to store letsencrypt files
-    final pathToLetsEncrypt = join(pathToHandyman, 'letsencrypt', 'live');
+    final pathToLetsEncrypt = join(pathToPigation, 'letsencrypt', 'live');
     _createDir(pathToLetsEncrypt);
 
     _addCronBoot(pathToLauncherScript);
@@ -51,11 +51,11 @@ void _restart() {
   killProcess('dart:pig_server');
 
   // on first time install the bin directory won't exist.
-  if (!exists(pathToHandymanBin)) {
-    createDir(pathToHandymanBin, recursive: true);
+  if (!exists(pathToPigationBin)) {
+    createDir(pathToPigationBin, recursive: true);
   }
 
-  copyTree(pathToHandymanAltBin, pathToHandymanBin, overwrite: true);
+  copyTree(pathToPigationAltBin, pathToPigationBin, overwrite: true);
 
   // set execute priviliged
   makeExecutable(pathToPigServer, pathToLauncher, pathToLauncherScript);
@@ -82,9 +82,9 @@ void makeExecutable(String pathToPigServer, String pathToLauncher,
   chmod(pathToLauncherScript, permission: '710');
 }
 
-void unpackResources(String pathToHandyman) {
+void unpackResources(String pathToPigation) {
   for (final resource in ResourceRegistry.resources.values) {
-    final localPathTo = join(pathToHandyman, resource.originalPath);
+    final localPathTo = join(pathToPigation, resource.originalPath);
     final resourceDir = dirname(localPathTo);
     _createDir(resourceDir);
 
