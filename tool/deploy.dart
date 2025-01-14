@@ -28,7 +28,7 @@ void main(List<String> args) {
   _createDirectory(pathToWwwRoot);
 
   print(green('unpacking resources to: $pathToPigation'));
-  final user = Shell.current.loggedInUser;
+  final user = Shell.current.loggedInUser!;
   Shell.current.withPrivileges(() {
     chown(pathToPigation, user: user, group: user);
     chmod(pathToPigation, permission: '755');
@@ -52,13 +52,13 @@ void main(List<String> args) {
     _addCronBoot(pathToLauncherScript);
 
     // restart t
-    _restart();
+    _restart(user);
   });
 }
 
 /// Restart the the pig_server by killing the existing processes
 /// and spawning them detached.
-void _restart() {
+void _restart(String owner) {
   killProcess('pig_launch.sh');
   killProcess('dart:pig_launch');
   killProcess('dart:pig_server');
@@ -69,6 +69,11 @@ void _restart() {
   }
 
   copyTree(pathToPigationAltBin, pathToPigationBin, overwrite: true);
+
+  chown(pathToPigationAltBin, user: owner, group: owner);
+  chmod(pathToPigationAltBin, permission: '755');
+  chown(pathToPigationBin, user: owner, group: owner);
+  chmod(pathToPigationBin, permission: '755');
 
   // set execute priviliged
   makeExecutable(pathToPigServer, pathToLauncher, pathToLauncherScript);
