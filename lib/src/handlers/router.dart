@@ -3,7 +3,6 @@ import 'package:shelf_router/shelf_router.dart';
 
 import 'end_point_handler.dart';
 import 'garden_bed_handler.dart';
-import 'handle_booking.dart';
 import 'handle_static.dart';
 import 'lighting_handler.dart';
 import 'overview_handler.dart';
@@ -11,7 +10,6 @@ import 'overview_handler.dart';
 Router buildRouter() {
   final router = Router()
     ..get('/', reject) // attempt to block spam.
-    ..post('/booking', (Request request) async => handleBooking(request))
     ..post('/lighting/toggle', handleLightingToggle)
     ..post('/garden_bed/list', handleGardenBedList)
     ..post('/garden_bed/toggle', handleGardenBedToggle)

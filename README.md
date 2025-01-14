@@ -90,7 +90,7 @@ https_port: 443
 http_port: 80
 production: true
 binding_address: 0.0.0.0
-logger_path: /var/log/ihserver.log
+logger_path: /var/log/pigserver.log
 
 ```
 
@@ -144,7 +144,7 @@ certificate for 48 hrs.
 
 
 # Email
-The IHServer has a '/booking' end-point which can send an email.
+The pig_servver has a '/booking' end-point which can send an email.
 It does this by connection to gmail. You will need a gmail app password
 for this to work.
 
@@ -180,7 +180,7 @@ and NAT are set up correctly.
 
 ## Run the service locally
 
-To debug the IAHServer you can simply launch bin/ihserver.dart in your favourite IDE.
+To debug the pig_server you can simply launch bin/pig_server.dart in your favourite IDE.
 
 
 
