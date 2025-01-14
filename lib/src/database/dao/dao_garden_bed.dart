@@ -1,11 +1,14 @@
 import 'package:sqflite_common/sqlite_api.dart';
 
+import '../../controllers/end_point_bus.dart';
 import '../entity/endpoint.dart';
 import '../entity/garden_bed.dart';
 import 'dao.dart';
 import 'dao_endpoint.dart';
+import 'dao_garden_feature.dart';
+import 'dao_history.dart';
 
-class DaoGardenBed extends Dao<GardenBed> {
+class DaoGardenBed extends Dao<GardenBed> with DaoGardenFeature {
   @override
   String get tableName => 'garden_bed';
 
@@ -21,6 +24,13 @@ class DaoGardenBed extends Dao<GardenBed> {
       orderBy: orderByClause ?? 'id ASC',
     );
     return List.generate(data.length, (i) => fromMap(data[i]));
+  }
+
+  @override
+  Future<int> delete(int id, [Transaction? transaction]) async {
+    DaoHistory().deleteByGardenBed(id);
+
+    return super.delete(id, transaction);
   }
 
   /// Get all GardenBeds controlled by a specific master valve
@@ -45,46 +55,33 @@ class DaoGardenBed extends Dao<GardenBed> {
     return List.generate(data.length, (i) => fromMap(data[i]));
   }
 
-  /// Delete all GardenBeds
-  @override
-  Future<int> deleteAll([Transaction? transaction]) async {
-    final db = withinTransaction(transaction);
-    return db.delete(tableName);
-  }
-
-  /// Persist a new GardenBed
-  Future<int> persist(GardenBed gardenBed) async {
-    final db = withoutTransaction();
-    return db.insert(tableName, gardenBed.toMap());
-  }
-
-  /// Delete a specific GardenBed
-  @override
-  Future<int> delete(int id, [Transaction? transaction]) async {
-    final db = withinTransaction(transaction);
-    return db.delete(
-      tableName,
-      where: 'id = ?',
-      whereArgs: [id],
-    );
-  }
-
-  /// Update (merge) an existing GardenBed
-  Future<int> merge(GardenBed gardenBed) async {
-    final db = withoutTransaction();
-    return db.update(
-      tableName,
-      gardenBed.toMap(),
-      where: 'id = ?',
-      whereArgs: [gardenBed.id],
-    );
-  }
-
   Future<EndPoint> getEndPoint(GardenBed gardenBed) async =>
       (await DaoEndPoint().getById(gardenBed.valveId))!;
 
   Future<bool> isOn(GardenBed gardenBed) async {
     final endPoint = await getEndPoint(gardenBed);
     return DaoEndPoint().isOn(endPoint);
+  }
+
+  @override
+  Future<void> softOn(covariant GardenBed feature) async {
+    await super.softOn(feature);
+
+    final endPoint = await DaoEndPoint().getById(feature.valveId);
+
+    await DaoEndPoint().hardOn(endPoint!);
+
+    EndPointBus.instance.notifyHardOn(endPoint);
+  }
+
+  @override
+  Future<void> softOff(covariant GardenBed feature) async {
+    await super.softOff(feature);
+
+    final endPoint = await DaoEndPoint().getById(feature.valveId);
+
+    await DaoEndPoint().hardOff(endPoint!);
+
+    EndPointBus.instance.notifyHardOff(endPoint);
   }
 }

@@ -13,9 +13,7 @@ import 'package:pig_server/src/database/factory/cli_database_factory.dart';
 import 'package:pig_server/src/database/management/database_helper.dart';
 import 'package:pig_server/src/database/management/local_backup_provider.dart';
 import 'package:pig_server/src/database/versions/asset_script_source.dart';
-import 'package:pig_server/src/handle_booking.dart';
-import 'package:pig_server/src/handle_static.dart';
-import 'package:pig_server/src/handlers/lighting_handler.dart';
+import 'package:pig_server/src/handlers/router.dart';
 import 'package:pig_server/src/logger.dart';
 import 'package:pig_server/src/mailer.dart';
 import 'package:pig_server/src/pi/gpio_manager.dart';
@@ -23,7 +21,6 @@ import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart';
 import 'package:shelf_letsencrypt/shelf_letsencrypt.dart';
 import 'package:shelf_rate_limiter/shelf_rate_limiter.dart';
-import 'package:shelf_router/shelf_router.dart';
 
 enum CertificateMode { staging, production }
 
@@ -110,7 +107,7 @@ Future<void> refreshIfRequired(
 }
 
 Future<void> _startWebServer() async {
-  final router = _buildRouter();
+  final router = buildRouter();
 
   final handler = const Pipeline()
       .addMiddleware(logRequests(logger: _log))
@@ -126,7 +123,7 @@ Future<void> _startWebServer() async {
 }
 
 Future<void> _startHttpsServer(LetsEncrypt letsEncrypt, Domain domain) async {
-  final router = _buildRouter();
+  final router = buildRouter();
 
   final redirectToHttps = createMiddleware(requestHandler: _redirectToHttps);
 
@@ -168,25 +165,6 @@ FutureOr<Response?> _redirectToHttps(Request request) async {
 
 void _log(String message, bool isError) {
   qlog(orange(message));
-}
-
-Router _buildRouter() {
-  final router = Router()
-    ..get('/', handleDefault)
-    ..get('/<.*>', handleStatic)
-    ..get('/css/<.*>', handleStatic)
-    ..get('/js/<.*>', handleStatic)
-    ..get('/images/<.*>', handleStatic)
-    ..get('/images/samples/<.*>', handleStatic)
-
-    /// validates deep links used by the hmb app.
-    ..get('/.well-known/assetlinks.json', handleStatic)
-    ..post('/booking', (Request request) async => handleBooking(request))
-    ..post('/lighting/toggle',
-        (Request request) async => handleLightingToggle(request))
-    ..post('/lighting/list',
-        (Request request) async => handleLightingList(request));
-  return router;
 }
 
 // [fqdn] is the fqdn for the HTTPS certificate

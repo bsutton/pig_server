@@ -7,7 +7,7 @@ import 'dao.dart';
 import 'dao_endpoint.dart';
 import 'dao_garden_feature.dart';
 
-class DaoLighting extends Dao<Lighting> {
+class DaoLighting extends Dao<Lighting> with DaoGardenFeature {
   @override
   String get tableName => 'lighting';
 
@@ -86,22 +86,28 @@ class DaoLighting extends Dao<Lighting> {
     );
   }
 
-  Future<void> softOff(Lighting lighting) async {
-    await DaoGardenFeature().softOff(lighting);
+  @override
+  Future<void> softOff(covariant Lighting feature) async {
+    await super.softOff(feature);
 
-    await DaoEndPoint().hardOffById(lighting.lightSwitchId);
+    final endPoint = await DaoEndPoint().getById(feature.lightSwitchId);
+
+    await DaoEndPoint().hardOff(endPoint!);
+
+    EndPointBus.instance.notifyHardOff(endPoint);
   }
 
   Future<bool> isOn(Lighting light) async =>
       DaoEndPoint().isOnById(light.lightSwitchId);
 
-  Future<void> softOn(Lighting lighting) async {
-    await DaoGardenFeature().softOff(lighting);
+  @override
+  Future<void> softOn(covariant Lighting feature) async {
+    await super.softOff(feature);
 
-    final endPoint = await DaoEndPoint().getById(lighting.lightSwitchId);
+    final endPoint = await DaoEndPoint().getById(feature.lightSwitchId);
 
-    await DaoEndPoint().hardOff(endPoint!);
+    await DaoEndPoint().hardOn(endPoint!);
 
-    EndPointBus.instance.notifyHardOff(endPoint);
+    EndPointBus.instance.notifyHardOn(endPoint);
   }
 }

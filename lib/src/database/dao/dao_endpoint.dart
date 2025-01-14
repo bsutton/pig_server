@@ -1,20 +1,15 @@
-import 'package:dart_periphery/dart_periphery.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 
 import '../../controllers/end_point_bus.dart';
 import '../../pi/gpio_manager.dart';
 import '../entity/endpoint.dart';
 import '../types/endpoint_type.dart';
-import '../types/pin_activation_type.dart';
 import '../types/pin_status.dart';
 import 'dao.dart';
 
 class DaoEndPoint extends Dao<EndPoint> {
   @override
   String get tableName => 'end_point';
-
-  /// Map to manage GPIO pin instances
-  final Map<int, GPIO> _gpioMap = {};
 
   @override
   EndPoint fromMap(Map<String, dynamic> map) => EndPoint.fromMap(map);
@@ -73,85 +68,36 @@ class DaoEndPoint extends Dao<EndPoint> {
     );
   }
 
-  /// Provision GPIO pins based on the database configuration.
-  Future<void> provisionPins() async {
-    // Fetch all configured pins from the database.
-    final configuredPins = await getAll();
+  // /// Provision GPIO pins based on the database configuration.
+  // Future<void> provisionPins() async {
+  //   // Fetch all configured pins from the database.
+  //   final configuredPins = await getAll();
 
-    for (final endPoint in configuredPins) {
-      final pinNo = endPoint.pinNo;
+  //   for (final endPoint in configuredPins) {
+  //     final pinNo = endPoint.pinNo;
 
-      // Determine the initial state based on activation type
-      final offState = endPoint.activationType == PinActivationType.highIsOn
-          ? GPIOdirection.gpioDirOutHigh
-          : GPIOdirection.gpioDirOutLow;
-
-      // Open the GPIO pin using dart_periphery
-      try {
-        final gpio = GPIO(pinNo, offState);
-
-        // Add the provisioned pin to the map
-        _gpioMap[pinNo] = gpio;
-        print('Provisioned GPIO pin $pinNo with initial state: $offState');
-      } catch (e) {
-        print('Error provisioning GPIO pin $pinNo: $e');
-        // Handle the error appropriately (e.g., log, retry, skip the pin)
-      }
-    }
-  }
-
-  /// Release GPIO resources and shut down gracefully.
-  void shutdown() {
-    print('Shutting down GPIO Manager.');
-
-    // Close all GPIO pins.
-    for (final pinNo in _gpioMap.keys) {
-      final gpio = _gpioMap[pinNo];
-      try {
-        // Ensure the pin is set to low before closing.
-        gpio?.setGPIOdirection(GPIOdirection.gpioDirOutLow);
-      } catch (e) {
-        print('Error setting pin $pinNo to low during shutdown: $e');
-      } finally {
-        gpio?.dispose();
-        print('Closed GPIO pin $pinNo.');
-      }
-    }
-
-    _gpioMap.clear();
-    print('GPIO Manager shutdown complete.');
-  }
+  //     // Open the GPIO pin using dart_periphery
+  //     try {
+  //       // Add the provisioned pin to the map
+  //       GpioManager().setEndPointState(endPoint: endPoint, turnOn: false);
+  //       print('Provisioned GPIO pin $pinNo with initial state: off');
+  //     } catch (e) {
+  //       print('Error provisioning GPIO pin $pinNo: $e');
+  //       // Handle the error appropriately (e.g., log, retry, skip the pin)
+  //     }
+  //   }
+  // }
 
   /// Get the current status of a GPIO pin.
-  PinStatus getCurrentStatus(EndPoint endPoint) {
-    final pinNo = endPoint.pinNo;
-    // Check if the pin has been provisioned
-    if (!_gpioMap.containsKey(pinNo)) {
-      print('Error: GPIO pin $pinNo has not been provisioned.');
-      return PinStatus.off;
-    }
-
-    try {
-      final gpio = _gpioMap[pinNo]!;
-
-      // Read the current state of the pin
-      final isHigh = gpio.read();
-      return PinStatus.getStatus(endPoint, isHigh: isHigh);
-    } catch (e) {
-      print('Error reading GPIO pin $pinNo: $e');
-      return PinStatus.off; // Or throw an exception
-    }
-  }
+  PinStatus getCurrentStatus(EndPoint endPoint) =>
+      GpioManager().getCurrentStatus(endPoint);
 
   /// Activates a pin associated with an [EndPoint].
   Future<void> hardOn(EndPoint endPoint) async {
     final pinNo = endPoint.pinNo;
 
-    if (endPoint.activationType == PinActivationType.highIsOn) {
-      _setPinHigh(pinNo);
-    } else {
-      _setPinLow(pinNo);
-    }
+    GpioManager().setEndPointState(endPoint: endPoint, turnOn: true);
+
     print('Pin $pinNo for EndPoint: ${endPoint.name} set On.');
   }
 
@@ -159,41 +105,10 @@ class DaoEndPoint extends Dao<EndPoint> {
   Future<void> hardOff(EndPoint endPoint) async {
     final pinNo = endPoint.pinNo;
 
-    if (endPoint.activationType == PinActivationType.highIsOn) {
-      _setPinLow(pinNo);
-    } else {
-      _setPinHigh(pinNo);
-    }
+    GpioManager().setEndPointState(endPoint: endPoint, turnOn: false);
+
     EndPointBus.instance.notifyHardOff(endPoint);
     print('Pin $pinNo for EndPoint: ${endPoint.name} set Off.');
-  }
-
-  // Sets a GPIO pin to high.
-  void _setPinHigh(int pinNo) {
-    if (!_gpioMap.containsKey(pinNo)) {
-      print('Error: GPIO pin $pinNo has not been provisioned.');
-      return;
-    }
-
-    try {
-      _gpioMap[pinNo]!.write(true);
-    } catch (e) {
-      print('Error setting GPIO pin $pinNo to high: $e');
-    }
-  }
-
-// Sets a GPIO pin to low.
-  void _setPinLow(int pinNo) {
-    if (!_gpioMap.containsKey(pinNo)) {
-      print('Error: GPIO pin $pinNo has not been provisioned.');
-      return;
-    }
-
-    try {
-      _gpioMap[pinNo]!.write(false);
-    } catch (e) {
-      print('Error setting GPIO pin $pinNo to low: $e');
-    }
   }
 
   Future<void> hardOffById(int valveId) async {

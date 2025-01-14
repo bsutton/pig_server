@@ -6,3 +6,4 @@
 tool/build
 tool/deploy
 config/config.yaml
+release/config.yaml

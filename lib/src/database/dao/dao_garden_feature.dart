@@ -14,7 +14,7 @@ import 'dao_history.dart';
 /// approach.
 /// The [GardenFeature] entity is now a simple data class, and any logic that
 /// modifies or creates [History] records or triggers [TimerControl] goes here.
-class DaoGardenFeature {
+mixin DaoGardenFeature {
   /// Marks a [GardenFeature] as turned on, creating a new [History] record.
   Future<void> softOn(GardenFeature feature) async {
     // Create a transient History record

@@ -1,0 +1,1 @@
+ALTER TABLE end_point DROP COLUMN version;

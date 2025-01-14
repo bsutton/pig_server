@@ -84,4 +84,9 @@ class DaoHistory extends Dao<History> {
       whereArgs: [history.id],
     );
   }
+
+  void deleteByGardenBed(int id) {
+    /// TODO: I think we need to add a 'feature' type to the history records
+    /// as garden bed and lighting have overlapping ids.
+  }
 }
