@@ -7,7 +7,6 @@ import 'dart:io';
 import 'package:cron/cron.dart';
 import 'package:dcli/dcli.dart';
 import 'package:dnsolve/dnsolve.dart';
-import 'package:path/path.dart';
 import 'package:pig_server/src/config.dart';
 import 'package:pig_server/src/database/factory/cli_database_factory.dart';
 import 'package:pig_server/src/database/management/database_helper.dart';
@@ -190,13 +189,7 @@ LetsEncrypt build({CertificateMode mode = CertificateMode.staging}) {
 Future<void> _checkConfiguration(String pathToStaticContent) async {
   qlog(green('PiGation Server'));
   qlog(blue('Loading config.yaml from ${truepath(Config().loadedFrom)}'));
-  qlog(blue('Path to static content: $pathToStaticContent'));
-  final pathToIndexHtml = join(pathToStaticContent, 'index.html');
 
-  if (!exists(pathToIndexHtml)) {
-    qlogerr(red('Missing index.html in $pathToIndexHtml'));
-    exit(32);
-  }
   qlog(blue('Starting web server'));
 }
 
@@ -205,8 +198,8 @@ Future<void> _sendTestEmail() async {
   final result = await sendEmail(
       from: 'startup@onepub.dev',
       to: 'bsutton@onepub.dev',
-      subject: 'Handy Server Starting',
-      body: 'The Handy Server has been restarted');
+      subject: 'PiGation',
+      body: 'The PiGation Server has been restarted');
 
   if (!result) {
     qlogerr(red(
