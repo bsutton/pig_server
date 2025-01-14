@@ -215,3 +215,46 @@ $ docker image ls email_server
 REPOSITORY   TAG       IMAGE ID       CREATED          SIZE
 email_server        latest    3f23c737877b   1 minute ago     11.6MB
 ```
+
+
+# Build on the PI
+
+
+
+```bash
+git clone https://github.com/bsutton/pig_server.git
+
+touch !~/pig_server/release/config.yaml
+```
+
+Edit the config.yaml and add contents as follows making the necessary changes:
+
+```yaml
+# pig_server sends an email each time it starts up via
+# gmail account.
+# To obtain a gmail app password:
+# https://myaccount.google.com/apppasswords
+# TODO: we need to allow this to be disabled.
+
+gmail_app_username: bsutton@onepub.dev
+gmail_app_password: xeae mrqw mhuk sxbo
+path_to_static_content: /opt/pigation/www_root
+lets_encrypt_live: /opt/pigation/letsencrypt/live
+fqdn: ivanhoehandyman.com.au
+domain_email: bsutton@onepub.dev
+https_port: 443
+http_port: 80
+use_https: false
+production: true
+binding_address: 0.0.0.0
+logger_path: /var/log/pig_server.log
+
+```
+
+```
+
+cd pig_server
+dart pub get
+tool/build.dart
+sudo tool/deploy
+```
