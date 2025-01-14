@@ -85,10 +85,13 @@ void _restart(String owner) {
 }
 
 void _installSqlite3() {
-  Shell.current.withPrivileges(() {
-    'apt update'.run;
-    'apt install sqlite3 libsqlite3-dev'.run;
-  });
+  if (which('sqlite3').notfound) {
+    print(green('Install sqllite3'));
+    Shell.current.withPrivileges(() {
+      'apt update'.run;
+      'apt install sqlite3 libsqlite3-dev'.run;
+    });
+  }
 }
 
 void fixDirectoryPermissions(String pathToFix, String owner) {

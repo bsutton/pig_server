@@ -2,17 +2,18 @@
 
 import 'dart:async';
 
-import '../database/entity/garden_feature.dart';
+import 'package:pig_common/pig_common.dart';
+
 import 'irrigation_timer.dart';
 import 'timer_notification.dart';
 
-/// Manages a list of running [IrrigationTimer] instances 
+/// Manages a list of running [IrrigationTimer] instances
 /// for [GardenFeature] objects.
 class TimerControl {
   static final Map<int, IrrigationTimer> _timers = {};
 
   /// Starts a timer for [feature] with [description], [duration],
-  /// and [completionAction]. It removes any existing timer for the 
+  /// and [completionAction]. It removes any existing timer for the
   /// same [feature] first.
   static Future<void> startTimer(
     GardenFeature feature,

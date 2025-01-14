@@ -1,9 +1,9 @@
 import 'package:dcli/dcli.dart';
+import 'package:pig_common/pig_common.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 import 'package:strings/strings.dart';
 
 import '../../../src/version/version.g.dart' as code;
-import '../entity/version.dart';
 import '../management/backup_provider.dart';
 import '../management/db_utility.dart';
 import 'script_source.dart';

@@ -1,7 +1,6 @@
+import 'package:pig_common/pig_common.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 
-import '../entity/garden_feature.dart';
-import '../entity/history.dart';
 import 'dao.dart';
 
 class DaoHistory extends Dao<History> {

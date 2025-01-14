@@ -1,9 +1,8 @@
+import 'package:pig_common/pig_common.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 
 import '../../controllers/end_point_bus.dart';
 import '../../pi/gpio_manager.dart';
-import '../entity/endpoint.dart';
-import '../types/endpoint_type.dart';
 import '../types/pin_status.dart';
 import 'dao.dart';
 
@@ -94,7 +93,7 @@ class DaoEndPoint extends Dao<EndPoint> {
 
   /// Activates a pin associated with an [EndPoint].
   Future<void> hardOn(EndPoint endPoint) async {
-    final pinNo = endPoint.pinNo;
+    final pinNo = endPoint.gpioPinNo;
 
     GpioManager().setEndPointState(endPoint: endPoint, turnOn: true);
 
@@ -103,7 +102,7 @@ class DaoEndPoint extends Dao<EndPoint> {
 
   /// Deactivates a pin associated with an [EndPoint].
   Future<void> hardOff(EndPoint endPoint) async {
-    final pinNo = endPoint.pinNo;
+    final pinNo = endPoint.gpioPinNo;
 
     GpioManager().setEndPointState(endPoint: endPoint, turnOn: false);
 

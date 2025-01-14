@@ -1,7 +1,7 @@
-import '../entity/entities.dart';
+import 'package:pig_common/pig_common.dart';
+
 import '../management/database_helper.dart';
 import 'dao_base.dart';
-
 
 abstract class Dao<T extends Entity<T>> extends DaoBase<T> {
   Dao() : super(DatabaseHelper.instance.database, _notifier) {
@@ -16,13 +16,6 @@ abstract class Dao<T extends Entity<T>> extends DaoBase<T> {
   void _notify() {
     // June.getState(juneRefresher).setState();
   }
-
-  /// A callback which provides the [Dao]p with the ability to notify
-  /// the [JuneState] returned by [juneRefresher].
-  /// The [Dao] notifies the [juneRefresher] when ever the table
-  /// is changed via one of the standard CRUD operations exposed
-  /// by the Dao.
-  // JuneStateCreator get juneRefresher;
 
   T fromMap(Map<String, dynamic> map);
 

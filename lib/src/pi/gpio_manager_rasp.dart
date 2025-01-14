@@ -1,10 +1,8 @@
 import 'package:dart_periphery/dart_periphery.dart';
 import 'package:dcli/dcli.dart';
-import 'package:path/path.dart';
+import 'package:pig_common/pig_common.dart';
 
 import '../database/dao/dao_endpoint.dart';
-import '../database/entity/endpoint.dart';
-import '../database/types/pin_activation_type.dart';
 import '../database/types/pin_status.dart';
 import '../logger.dart';
 import 'gpio_manager.dart';
@@ -26,13 +24,14 @@ class GpioManagerRaspPi implements GpioManager {
   @override
   Future<void> provisionPins() async {
     final daoEndPoint = DaoEndPoint();
+    print(orange('Found ${availablePins.length} active GPIO pins'));
 
     for (final pinNo in availablePins) {
-      final endPoint = (await daoEndPoint.getByPin(pinNo)).firstOrNull;
+      final endPoint = (await daoEndPoint.getByPin(pinNo.gpioPin)).firstOrNull;
 
       if (endPoint == null) {
         setPinState(
-            pinNo: pinNo,
+            pinNo: pinNo.gpioPin,
             activationType: PinActivationType.lowIsOn,
             turnOn: false);
       } else {
@@ -62,7 +61,7 @@ class GpioManagerRaspPi implements GpioManager {
   @override
   void setEndPointState({required EndPoint endPoint, required bool turnOn}) {
     setPinState(
-        pinNo: endPoint.pinNo,
+        pinNo: endPoint.gpioPinNo,
         activationType: endPoint.activationType,
         turnOn: turnOn);
   }
@@ -117,7 +116,7 @@ Provisioned GPIO pin $pinNo with initial state(off): $direction''');
 
   @override
   PinStatus getCurrentStatus(EndPoint endPoint) {
-    final pinNo = endPoint.pinNo;
+    final pinNo = endPoint.gpioPinNo;
     if (!_gpioMap.containsKey(pinNo)) {
       print('Error: GPIO pin $pinNo has not been provisioned.');
       return PinStatus.off;
@@ -141,25 +140,25 @@ Provisioned GPIO pin $pinNo with initial state(off): $direction''');
   }
 
   @override
-  List<int> get availablePins {
-    const gpioPath = '/sys/class/gpio';
+  List<GPIOPinAssignment> get availablePins => GPIOPinAssignment.values;
+  // header pin numbers
+  // const gpioPath = '/sys/class/gpio';
 
-    if (!exists(gpioPath)) {
-      throw Exception('GPIO path not found: $gpioPath');
-    }
+  // if (!exists(gpioPath)) {
+  //   throw Exception('GPIO path not found: $gpioPath');
+  // }
 
-    final availablePins = <int>[];
-    for (final entry in find('*', workingDirectory: gpioPath).toList()) {
-      if (isDirectory(entry)) {
-        final pinName = basename(entry);
-        if (pinName.startsWith('gpio')) {
-          final pinNumber = int.tryParse(pinName.replaceFirst('gpio', ''));
-          if (pinNumber != null) {
-            availablePins.add(pinNumber);
-          }
-        }
-      }
-    }
-    return availablePins;
-  }
+  // final availablePins = <int>[];
+  // for (final entry in find('*', workingDirectory: gpioPath).toList()) {
+  //   if (isDirectory(entry)) {
+  //     final pinName = basename(entry);
+  //     if (pinName.startsWith('gpio')) {
+  //       final pinNumber = int.tryParse(pinName.replaceFirst('gpio', ''));
+  //       if (pinNumber != null) {
+  //         availablePins.add(pinNumber);
+  //       }
+  //     }
+  //   }
+  // }
+  // return availablePins;
 }

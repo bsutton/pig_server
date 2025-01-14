@@ -2,7 +2,7 @@ name: pig_server
 version: 0.0.1
 description: Pigation Server
 repository: https://github.com/bsutton/pig_server
-publish_to: https://onepub.dev/api/jbbxpsdavu/
+publish_to: none
 environment:
   sdk: '>=3.3.0 <4.0.0'
 dependencies:
@@ -26,6 +26,9 @@ dependencies:
   mime: ^1.0.4
   mime_type: ^1.0.0
   path: ^1.9.0
+  pig_common:
+    path: ../pig_common
+
   pointycastle: ^3.9.1
   sentry: ^8.12.0
   settings_yaml: ^8.1.0-alpha.2
@@ -41,6 +44,7 @@ dependencies:
   sqflite_common_ffi: ^2.3.4+4
   strings: ^3.1.2
   timezone: ^0.10.0
+
 
   
 dev_dependencies:

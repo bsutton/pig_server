@@ -1,16 +1,16 @@
 import 'dart:async';
 
+import 'package:pig_common/pig_common.dart';
+
 import '../../controllers/end_point_bus.dart';
 import '../../controllers/timer_control.dart';
 import '../../controllers/timer_notification.dart';
-import '../entity/garden_feature.dart';
-import '../entity/history.dart';
 import 'dao_endpoint.dart';
 import 'dao_history.dart';
 
 /// Data Access Object for performing operations on [GardenFeature].
 ///
-/// Methods ported from the Java [GardenFeature] class into a DAO-based 
+/// Methods ported from the Java [GardenFeature] class into a DAO-based
 /// approach.
 /// The [GardenFeature] entity is now a simple data class, and any logic that
 /// modifies or creates [History] records or triggers [TimerControl] goes here.

@@ -1,8 +1,7 @@
 import 'package:dcli/dcli.dart';
+import 'package:pig_common/pig_common.dart';
 
 import '../database/dao/dao_endpoint.dart';
-import '../database/entity/endpoint.dart';
-import '../database/types/pin_activation_type.dart';
 import '../database/types/pin_status.dart';
 import '../logger.dart';
 import 'gpio_manager.dart';
@@ -26,14 +25,14 @@ class GpioManagerMock implements GpioManager {
     final daoEndPoint = DaoEndPoint();
 
     for (final pinNo in availablePins) {
-      final endPoint = (await daoEndPoint.getByPin(pinNo)).firstOrNull;
+      final endPoint = (await daoEndPoint.getByPin(pinNo.gpioPin)).firstOrNull;
       if (endPoint == null) {
-        _mockPinStates[pinNo] = PinState.low;
+        _mockPinStates[pinNo.gpioPin] = PinState.low;
       } else {
-        _mockPinStates[pinNo] = endPoint.activationType.offState;
+        _mockPinStates[pinNo.gpioPin] = endPoint.activationType.offState;
       }
       print('''
-Mock provisioned GPIO pin $pinNo with initial state: ${_mockPinStates[pinNo]}''');
+Mock provisioned GPIO pin $pinNo with initial state: ${_mockPinStates[pinNo.gpioPin]}''');
     }
 
     _printPinStates();
@@ -49,7 +48,7 @@ Mock provisioned GPIO pin $pinNo with initial state: ${_mockPinStates[pinNo]}'''
   @override
   void setEndPointState({required EndPoint endPoint, required bool turnOn}) {
     setPinState(
-        pinNo: endPoint.pinNo,
+        pinNo: endPoint.gpioPinNo,
         activationType: endPoint.activationType,
         turnOn: turnOn);
   }
@@ -66,7 +65,7 @@ Mock provisioned GPIO pin $pinNo with initial state: ${_mockPinStates[pinNo]}'''
 
   @override
   PinStatus getCurrentStatus(EndPoint endPoint) {
-    final pinNo = endPoint.pinNo;
+    final pinNo = endPoint.gpioPinNo;
     if (!_mockPinStates.containsKey(pinNo)) {
       print('Mock error: GPIO pin $pinNo has not been provisioned.');
       return PinStatus.off;
@@ -84,5 +83,5 @@ Mock provisioned GPIO pin $pinNo with initial state: ${_mockPinStates[pinNo]}'''
   }
 
   @override
-  List<int> get availablePins => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  List<GPIOPinAssignment> get availablePins => GPIOPinAssignment.values;
 }

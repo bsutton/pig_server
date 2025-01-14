@@ -1,6 +1,5 @@
+import 'package:pig_common/pig_common.dart';
 import 'package:sqflite_common/sqlite_api.dart';
-
-import '../entity/entities.dart';
 
 class DaoBase<T extends Entity<T>> {
   DaoBase(this.db, this._notify);

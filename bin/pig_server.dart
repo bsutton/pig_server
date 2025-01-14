@@ -16,6 +16,7 @@ import 'package:pig_server/src/handlers/router.dart';
 import 'package:pig_server/src/logger.dart';
 import 'package:pig_server/src/mailer.dart';
 import 'package:pig_server/src/pi/gpio_manager.dart';
+import 'package:pig_server/src/weather/bureaus/weather_bureaus.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart';
 import 'package:shelf_letsencrypt/shelf_letsencrypt.dart';
@@ -38,6 +39,8 @@ void main() async {
   final domain = Domain(name: config.fqdn, email: config.domainEmail);
 
   await _initDb();
+
+  WeatherBureaus.initialize();
 
   await _initPins();
 

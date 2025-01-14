@@ -1,7 +1,8 @@
 import 'dart:async';
 
+import 'package:pig_common/pig_common.dart';
+
 import '../dao/dao_endpoint.dart';
-import '../entity/endpoint.dart';
 
 /// Enum representing the type of dependency between pins.
 enum DependencyType {

@@ -17,15 +17,15 @@ void main(List<String> args) {
   DartScript.fromFile(join('bin', 'pig_launch.dart'), project: project)
       .compile(overwrite: true);
 
-  print(green('Packing static resources under ${truepath('www_root')}'));
+  print(green('Packing deployable resources'));
   Resources().pack();
 
   final buildSettings = SettingsYaml.load(
       pathToSettings: join(project.pathToProjectRoot, 'tool', 'build.yaml'));
 
-  final scpCommand = buildSettings.asString('scp_command');
+  // final scpCommand = buildSettings.asString('scp_command');
   final targetServer = buildSettings.asString('target_server');
-  final targetDirectory = buildSettings.asString('target_directory');
+  // final targetDirectory = buildSettings.asString('target_directory');
 
   /// Order is important.
   /// We must compile iahserver and the resources as they are all

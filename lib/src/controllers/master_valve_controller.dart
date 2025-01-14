@@ -1,9 +1,9 @@
 import 'dart:async';
 
+import 'package:pig_common/pig_common.dart';
+
 import '../database/dao/dao_endpoint.dart';
 import '../database/dao/dao_garden_bed.dart';
-import '../database/entity/endpoint.dart';
-import '../database/entity/garden_bed.dart';
 import 'end_point_bus.dart';
 
 /// A controller for managing a master valve and its associated garden beds.

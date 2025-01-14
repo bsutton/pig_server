@@ -1,13 +1,13 @@
 // end_point_handlers.dart
 import 'dart:convert';
 
+import 'package:pig_common/pig_common.dart';
 import 'package:shelf/shelf.dart';
+import 'package:strings/strings.dart';
 
 import '../controllers/garden_bed_controller.dart';
 import '../database/dao/dao_endpoint.dart';
-import '../database/entity/endpoint.dart';
-import '../database/types/endpoint_type.dart';
-import '../database/types/pin_activation_type.dart';
+import '../database/types/pin_status.dart';
 import '../pi/gpio_manager.dart';
 import '../weather/bureaus/weather_bureaus.dart';
 
@@ -27,13 +27,16 @@ Future<Response> handleEndPointList(Request request) async {
     final endPoints = await dao.getAll();
 
     // Build the list of endPoints for JSON
-    final endPointList = <Map<String, dynamic>>[];
+    final endPointList = <EndPointInfo>[];
     for (final ep in endPoints) {
-      endPointList.add({
-        'id': ep.id,
-        'name': ep.name,
-        'isOn': dao.isOn(ep), // or ep.getCurrentStatus()==ON
-      });
+      endPointList.add(EndPointInfo.fromEndPoint(ep,
+          on: dao.getCurrentStatus(ep) == PinStatus.on));
+
+      //     {
+      //     'id': ep.id,
+      //     'name': ep.name,
+      //     'isOn': dao.isOn(ep), // or ep.getCurrentStatus()==ON
+      //   });
     }
 
     // If you have WeatherBureaus, WeatherStations:
@@ -104,14 +107,8 @@ Future<Response> handleEndPointEditData(Request request) async {
         .map((type) => type.name) // e.g. "highIsOn", "lowIsOn"
         .toList();
 
-    final endPointJson = endPoint == null
-        ? null
-        : {
-            'id': endPoint.id,
-            'name': endPoint.name,
-            'pinNo': endPoint.pinNo,
-            'activationType': endPoint.activationType.name,
-          };
+    final endPointJson =
+        endPoint == null ? null : EndPointInfo.fromEndPoint(endPoint).toJson();
 
     final responseMap = {
       'endPoint': endPointJson,
@@ -183,12 +180,14 @@ Future<Response> handleEndPointSave(Request request) async {
     final bodyStr = await request.readAsString();
     final body = jsonDecode(bodyStr) as Map<String, dynamic>? ?? {};
 
-    final id = body['id'] as int?;
-    final name = body['name'] as String?;
-    final pinNo = body['pinNo'] as int?;
-    final activationTypeStr = body['activationType'] as String?;
+    final endPointInfo = EndPointInfo.fromJson(body);
 
-    if (name == null || pinNo == null || activationTypeStr == null) {
+    // final id = body['id'] as int?;
+    // final name = body['name'] as String?;
+    // final pinNo = body['pinNo'] as int?;
+    // final activationTypeStr = body['activationType'] as String?;
+
+    if (Strings.isBlank(endPointInfo.name)) {
       return Response.badRequest(
         body: jsonEncode({
           'error':
@@ -197,39 +196,30 @@ Future<Response> handleEndPointSave(Request request) async {
       );
     }
 
-    // Convert the activationType string to enum
-    final activationType = _parsePinActivationType(activationTypeStr);
-    if (activationType == null) {
-      return Response.badRequest(
-        body: jsonEncode({
-          'error': 'Invalid activationType: $activationTypeStr',
-        }),
-      );
-    }
-
     final dao = DaoEndPoint();
 
-    if (id == null) {
+    if (endPointInfo.id == null) {
       // Create a new EndPoint
       final newEndPoint = EndPoint(
           id: 0, // or auto-assigned
-          name: name,
-          pinNo: pinNo,
-          endPointType: EndPointType.valve,
-          activationType: activationType,
+          name: endPointInfo.name,
+          gpioPinNo: endPointInfo.pinAssignment.gpioPin,
+          endPointType: endPointInfo.endPointType,
+          activationType: endPointInfo.activationType,
           createdDate: DateTime.now(),
           modifiedDate: DateTime.now());
       await dao.insert(newEndPoint);
     } else {
       // Update an existing EndPoint
-      final existing = await dao.getById(id);
+      final existing = await dao.getById(endPointInfo.id);
       if (existing == null) {
         return Response.notFound(jsonEncode({'error': 'EndPoint not found'}));
       }
       existing
-        ..name = name
-        ..pinNo = pinNo
-        ..activationType = activationType;
+        ..name = endPointInfo.name
+        ..gpioPinNo = endPointInfo.pinAssignment.gpioPin
+        ..activationType = endPointInfo.activationType
+        ..endPointType = endPointInfo.endPointType;
       await dao.update(existing);
     }
 

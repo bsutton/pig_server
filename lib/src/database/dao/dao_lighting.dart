@@ -1,8 +1,7 @@
+import 'package:pig_common/pig_common.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 
 import '../../controllers/end_point_bus.dart';
-import '../entity/endpoint.dart';
-import '../entity/lighting.dart';
 import 'dao.dart';
 import 'dao_endpoint.dart';
 import 'dao_garden_feature.dart';

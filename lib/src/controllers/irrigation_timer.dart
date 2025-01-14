@@ -2,7 +2,8 @@
 
 import 'dart:async';
 
-import '../database/entity/garden_feature.dart';
+import 'package:pig_common/pig_common.dart';
+
 import '../util/delay.dart';
 import 'timer_control.dart';
 import 'timer_notification.dart';

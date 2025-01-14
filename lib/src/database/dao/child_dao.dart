@@ -1,5 +1,4 @@
-
-import '../entity/entities.dart';
+import 'package:pig_common/pig_common.dart';
 
 abstract class ChildDao<C extends Entity<C>, P extends Entity<P>> {
   /// delete the child owned by [parent]

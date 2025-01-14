@@ -1,7 +1,6 @@
 import 'package:dcli/dcli.dart';
+import 'package:pig_common/pig_common.dart';
 
-import '../database/entity/endpoint.dart';
-import '../database/types/pin_activation_type.dart';
 import '../database/types/pin_status.dart';
 import 'gpio_manager_mock.dart';
 import 'gpio_manager_rasp.dart';
@@ -11,7 +10,7 @@ abstract class GpioManager {
   factory GpioManager() =>
       _isRaspberryPi() ? GpioManagerRaspPi() : GpioManagerMock();
 
-  List<int> get availablePins;
+  List<GPIOPinAssignment> get availablePins;
 
   /// Provision GPIO pins based on the database configuration.
   Future<void> provisionPins();
@@ -22,7 +21,7 @@ abstract class GpioManager {
   /// Set the state of a GPIO pin.
   void setEndPointState({required EndPoint endPoint, required bool turnOn}) {
     setPinState(
-        pinNo: endPoint.pinNo,
+        pinNo: endPoint.gpioPinNo,
         activationType: endPoint.activationType,
         turnOn: turnOn);
   }

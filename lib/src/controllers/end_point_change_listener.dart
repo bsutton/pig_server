@@ -1,4 +1,5 @@
-import '../database/entity/endpoint.dart';
+
+import 'package:pig_common/pig_common.dart';
 
 /// Interface to listen for changes to an [EndPoint].
 abstract class EndPointChangeListener {

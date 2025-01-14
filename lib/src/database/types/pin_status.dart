@@ -1,5 +1,4 @@
-import '../entity/endpoint.dart';
-import 'pin_activation_type.dart';
+import 'package:pig_common/pig_common.dart';
 
 /// Represents the status of a GPIO pin.
 enum PinStatus {

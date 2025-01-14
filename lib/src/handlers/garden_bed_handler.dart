@@ -1,12 +1,11 @@
 // garden_bed_handlers.dart
 import 'dart:convert';
 
+import 'package:pig_common/pig_common.dart';
 import 'package:shelf/shelf.dart';
 
 import '../database/dao/dao_endpoint.dart';
 import '../database/dao/dao_garden_bed.dart';
-import '../database/entity/endpoint.dart';
-import '../database/entity/garden_bed.dart';
 
 /// POST /api/garden_beds/list
 /// Request body: {}
@@ -23,20 +22,22 @@ import '../database/entity/garden_bed.dart';
 Future<Response> handleGardenBedList(Request request) async {
   try {
     final daoGardenBed = DaoGardenBed();
-    final beds = await daoGardenBed.getAll();
+    final daoEndPoint = DaoEndPoint();
+    final beds = <GardenBedData>[];
 
-    final result = <Map<String, dynamic>>[];
-    for (final bed in beds) {
-      result.add({
-        'id': bed.id,
-        'name': bed.name,
-        // Let's assume we have a method isOn(bed) or bed.isOn
-        'isOn': await daoGardenBed.isOn(bed),
-      });
+    for (final bed in await daoGardenBed.getAll()) {
+      beds.add(GardenBedData.fromBed(bed,
+          allowDelete: true, isOn: await daoGardenBed.isOn(bed)));
     }
+    final valves = await _getValves(daoEndPoint);
+
+    final masterValves = await _getMasterValves(daoEndPoint);
+
+    final bedListData = GardenBedListData(
+        beds: beds, valves: valves, masterValves: masterValves);
 
     return Response.ok(
-      jsonEncode({'beds': result}),
+      jsonEncode(bedListData),
       headers: {'Content-Type': 'application/json'},
     );
   } catch (e) {
@@ -105,8 +106,14 @@ Future<Response> handleGardenBedEditData(Request request) async {
     final daoBed = DaoGardenBed();
     final daoEndPoint = DaoEndPoint();
 
-    // We'll build this map to return
-    final responseMap = <String, dynamic>{};
+    final valves = await _getValves(daoEndPoint);
+
+    final masterValves = await _getMasterValves(daoEndPoint);
+
+    /// We always pass the valves even if there is no garden bed
+    /// to handle adding new beds.
+    var data =
+        GardenBedListData(beds: [], valves: valves, masterValves: masterValves);
 
     // 1) If a gardenBedId is provided, load that bed from the DB
     //    If none is provided, we'll return an empty bed
@@ -119,29 +126,20 @@ Future<Response> handleGardenBedEditData(Request request) async {
 
       // Example: We allow delete if it’s found
       // (You can add more advanced logic if needed.)
-      final bedJson = {
-        'id': bed.id,
-        'name': bed.name,
-        'description': bed.description,
-        'valveId': bed.valveId,
-        'masterValveId': bed.masterValveId,
-        'allowDelete': true,
-      };
-      responseMap['bed'] = bedJson;
-    } else {
-      // Return an empty bed object
-      responseMap['bed'] = null;
+      final gardenBedData = GardenBedData(
+          id: bed.id,
+          name: bed.name,
+          description: bed.description,
+          valveId: bed.valveId,
+          masterValveId: bed.masterValveId,
+          allowDelete: true);
+
+      data = GardenBedListData(
+          beds: [gardenBedData], valves: valves, masterValves: masterValves);
     }
 
-    // 2) Fetch all valves and masterValves
-    final valves = await daoEndPoint.getAllValves(); // Example
-    final masterValves = await daoEndPoint.getMasterValves(); // Example
-
-    responseMap['valves'] = valves.map(_endPointToJson).toList();
-    responseMap['masterValves'] = masterValves.map(_endPointToJson).toList();
-
     return Response.ok(
-      jsonEncode(responseMap),
+      jsonEncode(data.toJson()),
       headers: {'Content-Type': 'application/json'},
     );
   } catch (e) {
@@ -152,12 +150,19 @@ Future<Response> handleGardenBedEditData(Request request) async {
   }
 }
 
-/// Converts an EndPoint to JSON. Adjust fields to match your usage.
-Map<String, dynamic> _endPointToJson(EndPoint endPoint) => {
-      'id': endPoint.id,
-      'name': endPoint.name, // or simply 'name'
-      'pinNo': endPoint.pinNo,
-    };
+Future<List<EndPointInfo>> _getMasterValves(DaoEndPoint daoEndPoint) async {
+  final masterValves = (await daoEndPoint.getMasterValves())
+      .map(EndPointInfo.fromEndPoint)
+      .toList();
+  return masterValves;
+}
+
+Future<List<EndPointInfo>> _getValves(DaoEndPoint daoEndPoint) async {
+  final valves = (await daoEndPoint.getAllValves())
+      .map(EndPointInfo.fromEndPoint)
+      .toList();
+  return valves;
+}
 
 /// POST /api/garden_beds/save
 /// Request body: { "id": 123 (optional), "name": "...", ...}
@@ -176,8 +181,7 @@ Future<Response> handleGardenBedSave(Request request) async {
     }
     final description = body['description'] as String? ?? '';
     final valveId = body['valve_id'] as int?;
-    final masterValveId =
-        int.tryParse(body['master_valve_id'] as String? ?? '');
+    final masterValveId = body['master_valve_id'] as int?;
 
     if (valveId == null) {
       return Response.badRequest(

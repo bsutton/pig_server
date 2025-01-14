@@ -1,9 +1,8 @@
 // ignore_for_file: avoid_classes_with_only_static_members
 import 'package:collection/collection.dart';
+import 'package:pig_common/pig_common.dart';
 
 import '../database/dao/dao_endpoint.dart';
-import '../database/entity/garden_bed.dart';
-import '../database/types/endpoint_type.dart';
 import 'master_valve_controller.dart';
 
 /// A controller to manage the operation of garden beds and their valves.

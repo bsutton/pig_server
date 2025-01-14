@@ -1,4 +1,5 @@
-import '../database/entity/endpoint.dart';
+import 'package:pig_common/pig_common.dart';
+
 import 'end_point_change_listener.dart';
 
 /// Singleton class to manage notifications for EndPoint changes.
