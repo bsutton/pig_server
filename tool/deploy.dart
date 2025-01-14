@@ -75,11 +75,20 @@ void _restart(String owner) {
   // set execute priviliged
   makeExecutable(pathToPigServer, pathToLauncher, pathToLauncherScript);
 
+  _installSqlite3();
+
   pathToLauncherScript.start(detached: true);
 
   print(red('Reboot the system to complete the deployment'));
 
   print(green('sudo reboot now'));
+}
+
+void _installSqlite3() {
+  Shell.current.withPrivileges(() {
+    'apt update'.run;
+    'apt install sqlite3 libsqlite3-dev'.run;
+  });
 }
 
 void fixDirectoryPermissions(String pathToFix, String owner) {
