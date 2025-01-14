@@ -27,25 +27,28 @@ void main(List<String> args) {
 
   _createDirectory(pathToWwwRoot);
 
+  print(green('unpacking resources to: $pathToPigation'));
+  final user = Shell.current.loggedInUser;
   Shell.current.withPrivileges(() {
-    print(green('unpacking resources to: $pathToPigation'));
-
-    final user = Shell.current.loggedInUser;
     chown(pathToPigation, user: user, group: user);
-    chmod(pathToPigation, permission: '644');
+    chmod(pathToPigation, permission: '755');
+  });
 
-    unpackResources(pathToPigation);
+  unpackResources(pathToPigation);
 
+  /// Create the dir to store letsencrypt files
+  final pathToLetsEncrypt = join(pathToPigation, 'letsencrypt', 'live');
+  _createDir(pathToLetsEncrypt);
+
+  Shell.current.withPrivileges(() {
     final pathToLog = join(rootPath, 'var', 'log', 'pig_server.log');
-    touch(pathToLog);
+    touch(pathToLog, create: true);
 
     chown(pathToLog, user: user, group: user);
     chmod(pathToLog, permission: '644');
+  });
 
-    /// Create the dir to store letsencrypt files
-    final pathToLetsEncrypt = join(pathToPigation, 'letsencrypt', 'live');
-    _createDir(pathToLetsEncrypt);
-
+  Shell.current.withPrivileges(() {
     _addCronBoot(pathToLauncherScript);
 
     // restart t
