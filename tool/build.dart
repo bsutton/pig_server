@@ -35,9 +35,9 @@ void main(List<String> args) {
   DartScript.fromFile(join('tool', 'deploy.dart'), project: project)
       .compile(overwrite: true);
 
-  print(green("deploying 'deploy' to $targetDirectory"));
-  '$scpCommand tool/deploy $targetServer:$targetDirectory'.run;
+  // print(green("deploying 'deploy' to $targetDirectory"));
+  // '$scpCommand tool/deploy $targetServer:$targetDirectory'.run;
 
   print(orange('build/deploy complete'));
-  print("log into the $targetServer and run 'sudo ./deploy'");
+  print("log into the $targetServer and run 'sudo tool/deploy'");
 }
