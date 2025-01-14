@@ -30,7 +30,17 @@ void main(List<String> args) {
   Shell.current.withPrivileges(() {
     print(green('unpacking resources to: $pathToPigation'));
 
+    final user = Shell.current.loggedInUser;
+    chown(pathToPigation, user: user, group: user);
+    chmod(pathToPigation, permission: '644');
+
     unpackResources(pathToPigation);
+
+    final pathToLog = join(rootPath, 'var', 'log', 'pig_server.log');
+    touch(pathToLog);
+
+    chown(pathToLog, user: user, group: user);
+    chmod(pathToLog, permission: '644');
 
     /// Create the dir to store letsencrypt files
     final pathToLetsEncrypt = join(pathToPigation, 'letsencrypt', 'live');
@@ -46,7 +56,7 @@ void main(List<String> args) {
 /// Restart the the pig_server by killing the existing processes
 /// and spawning them detached.
 void _restart() {
-  killProcess('piglaunch.sh');
+  killProcess('pig_launch.sh');
   killProcess('dart:pig_launch');
   killProcess('dart:pig_server');
 
