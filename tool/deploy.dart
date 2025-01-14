@@ -28,10 +28,9 @@ void main(List<String> args) {
   _createDirectory(pathToWwwRoot);
 
   print(green('unpacking resources to: $pathToPigation'));
-  final user = Shell.current.loggedInUser!;
+  final owner = Shell.current.loggedInUser!;
   Shell.current.withPrivileges(() {
-    chown(pathToPigation, user: user, group: user);
-    chmod(pathToPigation, permission: '755');
+    fixDirectoryPermissions(pathToPigation, owner);
   });
 
   unpackResources(pathToPigation);
@@ -44,7 +43,7 @@ void main(List<String> args) {
     final pathToLog = join(rootPath, 'var', 'log', 'pig_server.log');
     touch(pathToLog, create: true);
 
-    chown(pathToLog, user: user, group: user);
+    chown(pathToLog, user: owner, group: owner);
     chmod(pathToLog, permission: '644');
   });
 
@@ -52,7 +51,7 @@ void main(List<String> args) {
     _addCronBoot(pathToLauncherScript);
 
     // restart t
-    _restart(user);
+    _restart(owner);
   });
 }
 
@@ -70,10 +69,8 @@ void _restart(String owner) {
 
   copyTree(pathToPigationAltBin, pathToPigationBin, overwrite: true);
 
-  chown(pathToPigationAltBin, user: owner, group: owner);
-  chmod(pathToPigationAltBin, permission: '755');
-  chown(pathToPigationBin, user: owner, group: owner);
-  chmod(pathToPigationBin, permission: '755');
+  fixDirectoryPermissions(pathToPigationAltBin, owner);
+  fixDirectoryPermissions(pathToPigationBin, owner);
 
   // set execute priviliged
   makeExecutable(pathToPigServer, pathToLauncher, pathToLauncherScript);
@@ -83,6 +80,21 @@ void _restart(String owner) {
   print(red('Reboot the system to complete the deployment'));
 
   print(green('sudo reboot now'));
+}
+
+void fixDirectoryPermissions(String pathToFix, String owner) {
+  chown(pathToFix, user: owner, group: owner);
+  chmod(pathToFix, permission: '755');
+
+  find('*', workingDirectory: pathToFix).forEach((entry) {
+    chown(entry, user: owner, group: owner);
+    if (isFile(entry)) {
+      chmod(entry, permission: '755');
+    }
+    if (isDirectory(entry)) {
+      chmod(entry, permission: '644');
+    }
+  });
 }
 
 void killProcess(String processName) {
