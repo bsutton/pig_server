@@ -196,6 +196,14 @@ Future<Response> handleEndPointSave(Request request) async {
       );
     }
 
+    if (await _pinInUse(endPointInfo)) {
+      return Response.badRequest(
+          body: jsonEncode({
+        'error': '''
+The GPIO Pin ${endPointInfo.pinAssignment.gpioPin} is already in use.'''
+      }));
+    }
+
     final dao = DaoEndPoint();
 
     if (endPointInfo.id == null) {
@@ -233,6 +241,13 @@ Future<Response> handleEndPointSave(Request request) async {
       headers: {'Content-Type': 'application/json'},
     );
   }
+}
+
+Future<bool> _pinInUse(EndPointInfo endPointInfo) async {
+  final endPoint =
+      await DaoEndPoint().getByPin(endPointInfo.pinAssignment.gpioPin);
+
+  return endPoint != null && endPoint.id != endPointInfo.id;
 }
 
 /// Helper to parse the activation type string into a [PinActivationType] enum

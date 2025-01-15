@@ -45,7 +45,7 @@ class DaoEndPoint extends Dao<EndPoint> {
   }
 
   /// Get EndPoints by pin number
-  Future<List<EndPoint>> getByPin(int pinNo) async {
+  Future<EndPoint?> getByPin(int pinNo) async {
     final db = withoutTransaction();
     final data = await db.query(
       tableName,
@@ -53,7 +53,13 @@ class DaoEndPoint extends Dao<EndPoint> {
       whereArgs: [pinNo],
       orderBy: 'LOWER(end_point_name)',
     );
-    return List.generate(data.length, (i) => fromMap(data[i]));
+    final list = List.generate(data.length, (i) => fromMap(data[i]));
+
+    if (list.length > 1) {
+      throw StateError('''
+Found multiple EndPoints with the same gpio pin no. There should only be one. $list''');
+    }
+    return list.firstOrNull;
   }
 
   /// Delete a specific EndPoint

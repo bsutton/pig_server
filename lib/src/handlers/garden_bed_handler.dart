@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:pig_common/pig_common.dart';
 import 'package:shelf/shelf.dart';
+import 'package:strings/strings.dart';
 
 import '../database/dao/dao_endpoint.dart';
 import '../database/dao/dao_garden_bed.dart';
@@ -173,28 +174,28 @@ Future<Response> handleGardenBedSave(Request request) async {
     final bodyStr = await request.readAsString();
     final body = jsonDecode(bodyStr) as Map<String, dynamic>;
 
-    final id = body['id'] as int?;
-    final name = body['name'] as String?;
-    if (name == null || name.trim().isEmpty) {
+    final bedData = GardenBedData.fromJson(body);
+
+    if (Strings.isBlank(bedData.name)) {
       return Response.badRequest(
           body: jsonEncode({'error': 'GardenBed name is required'}));
     }
-    final description = body['description'] as String? ?? '';
-    final valveId = body['valve_id'] as int?;
-    final masterValveId = body['master_valve_id'] as int?;
 
-    if (valveId == null) {
+    if (bedData.valveId == null) {
       return Response.badRequest(
           body: jsonEncode({'error': 'valveId is required'}));
     }
 
+    
+
     final daoGardenBed = DaoGardenBed();
-    if (id == null) {
+    if (bedData.id == null) {
       // Insert
       final bed = GardenBed.forInsert(
-          name: name,
-          description: description,
-          valveId: valveId,
+          name: bedData.name!,
+          description: bedData.description,
+          valveId: bedData.valveId!,
+          masterValveId: bedData.masterValveId,
           moistureContent: 0);
       final newBedId = await daoGardenBed.insert(bed);
       return Response.ok(jsonEncode({
@@ -203,20 +204,20 @@ Future<Response> handleGardenBedSave(Request request) async {
       }));
     } else {
       // Update
-      final existingBed = await daoGardenBed.getById(id);
+      final existingBed = await daoGardenBed.getById(bedData.id);
       if (existingBed == null) {
         return Response.notFound(jsonEncode({'error': 'Garden bed not found'}));
       }
       existingBed
-        ..name = name
-        ..description = description
-        ..valveId = valveId
-        ..masterValveId = masterValveId;
+        ..name = bedData.name!
+        ..description = bedData.description
+        ..valveId = bedData.valveId!
+        ..masterValveId = bedData.masterValveId;
 
       await daoGardenBed.update(existingBed);
       return Response.ok(jsonEncode({
         'result': 'OK',
-        'bedId': id,
+        'bedId': bedData.id,
       }));
     }
   } catch (e) {

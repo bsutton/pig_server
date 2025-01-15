@@ -27,7 +27,7 @@ class GpioManagerRaspPi implements GpioManager {
     print(orange('Found ${availablePins.length} active GPIO pins'));
 
     for (final pinNo in availablePins) {
-      final endPoint = (await daoEndPoint.getByPin(pinNo.gpioPin)).firstOrNull;
+      final endPoint = await daoEndPoint.getByPin(pinNo.gpioPin);
 
       if (endPoint == null) {
         setPinState(

@@ -25,7 +25,7 @@ class GpioManagerMock implements GpioManager {
     final daoEndPoint = DaoEndPoint();
 
     for (final pinNo in availablePins) {
-      final endPoint = (await daoEndPoint.getByPin(pinNo.gpioPin)).firstOrNull;
+      final endPoint = await daoEndPoint.getByPin(pinNo.gpioPin);
       if (endPoint == null) {
         _mockPinStates[pinNo.gpioPin] = PinState.low;
       } else {
