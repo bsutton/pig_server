@@ -48,7 +48,7 @@ Future<Response> handleLightingList(Request request) async {
 }
 
 Future<DateTime?> _getLastActivation(Lighting light) async =>
-    (await DaoHistory().getLastRecord(light))?.eventStart;
+    (await DaoHistory().getMostRecent(light))?.eventStart;
 
 /// POST /api/lighting/toggle
 ///

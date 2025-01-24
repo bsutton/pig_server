@@ -5,8 +5,10 @@ import 'package:pig_common/pig_common.dart';
 import 'package:shelf/shelf.dart';
 import 'package:strings/strings.dart';
 
+import '../controllers/timer_control.dart';
 import '../database/dao/dao_endpoint.dart';
 import '../database/dao/dao_garden_bed.dart';
+import '../database/dao/dao_history.dart';
 
 /// POST /api/garden_beds/list
 /// Request body: {}
@@ -27,8 +29,16 @@ Future<Response> handleGardenBedList(Request request) async {
     final beds = <GardenBedData>[];
 
     for (final bed in await daoGardenBed.getAll()) {
-      beds.add(GardenBedData.fromBed(bed,
-          allowDelete: true, isOn: await daoGardenBed.isOn(bed)));
+      final timer = TimerControl.getTimer(bed);
+      final history = await DaoHistory().getMostRecent(bed);
+      beds.add(GardenBedData.fromBed(
+        bed,
+        allowDelete: true,
+        isOn: await daoGardenBed.isOn(bed),
+        remainingDuration: timer?.timeRemaining(),
+        lastWateringDateTime: history?.eventStart,
+        lastWateringDuration: history?.eventDuration?.inSeconds,
+      ));
     }
     final valves = await _getValves(daoEndPoint);
 
@@ -72,6 +82,95 @@ Future<Response> handleGardenBedToggle(Request request) async {
       await daoGardenBed.softOn(bed);
     } else {
       await daoGardenBed.softOff(bed);
+    }
+
+    return Response.ok(jsonEncode({'result': 'OK'}));
+  } catch (e) {
+    return Response.internalServerError(
+      body: jsonEncode({'error': e.toString()}),
+    );
+  }
+}
+
+/// POST /api/garden_beds/start_timer
+/// Request body: { "bedId": 123, "durationSeconds": 100
+///     , "description" : "User triggered" }
+/// Response: { "result": "OK" }
+Future<Response> handleGardenBedStartTimer(Request request) async {
+  try {
+    final bodyStr = await request.readAsString();
+    final body = jsonDecode(bodyStr) as Map<String, dynamic>;
+    final bedId = body['bedId'] as int?;
+    final durationInSeconds = body['durationSeconds'] as int?;
+    final description = body['description'] as String?;
+
+    if (bedId == null || durationInSeconds == null) {
+      return Response.badRequest(
+          body: jsonEncode({'error': 'Missing bedId or durationSeconds'}));
+    }
+
+    final daoGardenBed = DaoGardenBed();
+    final bed = await daoGardenBed.getById(bedId);
+    if (bed == null) {
+      return Response.notFound(jsonEncode({'error': 'Garden bed not found'}));
+    }
+
+    await daoGardenBed.softOn(bed);
+
+    final eventStart = DateTime.now();
+    final runTime = Duration(seconds: durationInSeconds);
+    await TimerControl.startTimer(
+        bed,
+        description ?? '',
+        runTime,
+        (bed) => DaoHistory().insert(History.forInsert(
+            gardenFeatureId: bedId,
+            eventStart: eventStart,
+
+            /// We don't use the requested [durationInSeconds] as the run
+            /// time may be truncated.
+            eventDuration: DateTime.now().difference(eventStart))));
+
+    return Response.ok(jsonEncode({'result': 'OK'}));
+  } catch (e) {
+    return Response.internalServerError(
+      body: jsonEncode({'error': e.toString()}),
+    );
+  }
+}
+
+/// POST /api/garden_beds/start_timer
+/// Request body: { "bedId": 123, "durationSeconds": 100
+///     , "description" : "User triggered" }
+/// Response: { "result": "OK" }
+Future<Response> handleGardenBedStopTimer(Request request) async {
+  try {
+    final bodyStr = await request.readAsString();
+    final body = jsonDecode(bodyStr) as Map<String, dynamic>;
+    final bedId = body['bedId'] as int?;
+
+    if (bedId == null) {
+      return Response.badRequest(body: jsonEncode({'error': 'Missing bedId'}));
+    }
+
+    final daoGardenBed = DaoGardenBed();
+    final bed = await daoGardenBed.getById(bedId);
+    if (bed == null) {
+      return Response.notFound(jsonEncode({'error': 'Garden bed not found'}));
+    }
+
+    await daoGardenBed.softOff(bed);
+
+    final existingTimer = TimerControl.getTimer(bed);
+
+    if (existingTimer != null) {
+      final startTime = existingTimer.startTime ?? DateTime.now();
+      await DaoHistory().insert(History.forInsert(
+          gardenFeatureId: bedId,
+          eventStart: startTime,
+          eventDuration: DateTime.now().difference(startTime)));
+
+      TimerControl.removeTimer(bed);
     }
 
     return Response.ok(jsonEncode({'result': 'OK'}));
@@ -185,8 +284,6 @@ Future<Response> handleGardenBedSave(Request request) async {
       return Response.badRequest(
           body: jsonEncode({'error': 'valveId is required'}));
     }
-
-    
 
     final daoGardenBed = DaoGardenBed();
     if (bedData.id == null) {

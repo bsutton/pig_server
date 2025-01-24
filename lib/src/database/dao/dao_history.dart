@@ -39,7 +39,7 @@ class DaoHistory extends Dao<History> {
 
   /// Returns the most recent [History] record for [feature],
   /// or `null` if none exist.
-  Future<History?> getLastRecord(GardenFeature feature) async {
+  Future<History?> getMostRecent(GardenFeature feature) async {
     // fetch all records sorted by most recent first
     final records = await getByGardenFeatureId(feature.id);
     if (records.isEmpty) {
