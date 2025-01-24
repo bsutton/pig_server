@@ -26,6 +26,9 @@ class IrrigationTimer {
   DateTime? _startTime;
   Delay<GardenFeature>? _timerFuture;
 
+  /// Can be null if the timer was never started
+  DateTime? get startTime => _startTime;
+
   /// Starts the timer and schedules the completion action.
   Future<void> start() async {
     _startTime = DateTime.now();
@@ -36,7 +39,7 @@ class IrrigationTimer {
       feature: feature,
       callback: (_) async => applyCompletionAction(),
     );
-    await _timerFuture!.start();
+    unawaited(_timerFuture!.start());
   }
 
   /// Called when the timer completes normally.
