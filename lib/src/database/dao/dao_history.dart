@@ -31,6 +31,8 @@ class DaoHistory extends Dao<History> {
       tableName,
       where: 'garden_feature_id = ?',
       whereArgs: [featureId],
+      orderBy:
+          'timestamp DESC', // Replace 'timestamp' with your actual column name
     );
     return List.generate(data.length, (i) => fromMap(data[i]));
   }
@@ -85,7 +87,8 @@ class DaoHistory extends Dao<History> {
   }
 
   void deleteByGardenBed(int id) {
-    /// TODO: I think we need to add a 'feature' type to the history records
+    // TODO(bsutton): I think we need to add a 'feature' type
+    ///  to the history records
     /// as garden bed and lighting have overlapping ids.
   }
 }
