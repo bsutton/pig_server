@@ -13,6 +13,8 @@ Router buildRouter() {
     ..post('/lighting/toggle', handleLightingToggle)
     ..post('/garden_bed/list', handleGardenBedList)
     ..post('/garden_bed/toggle', handleGardenBedToggle)
+    ..post('/garden_bed/start_timer', handleGardenBedStartTimer)
+    ..post('/garden_bed/stop_timer', handleGardenBedStopTimer)
     ..post('/garden_bed/edit_data', handleGardenBedEditData)
     ..post('/garden_bed/save', handleGardenBedSave)
     ..post('/garden_bed/delete', handleGardenBedDelete)
