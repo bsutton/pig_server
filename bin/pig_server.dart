@@ -191,9 +191,11 @@ LetsEncrypt build({CertificateMode mode = CertificateMode.staging}) {
 
 Future<void> _checkConfiguration(String pathToStaticContent) async {
   qlog(green('PiGation Server'));
-  qlog(blue('Loading config.yaml from ${truepath(Config().loadedFrom)}'));
+  final config = Config();
 
-  qlog(blue('Starting web server'));
+  qlog(blue('Loading config.yaml from ${truepath(config.loadedFrom)}'));
+
+  qlog(blue(buildStartingMessage(config)));
 }
 
 Future<void> _sendTestEmail() async {
@@ -209,6 +211,18 @@ Future<void> _sendTestEmail() async {
         '''Failed to send startup email: check the configuration at ${Config().loadedFrom}'''));
     exit(33);
   }
+}
+
+String buildStartingMessage(Config config) {
+  final sb = StringBuffer()..write('Starting web server endpoint: ');
+
+  if (config.useHttps) {
+    sb.write('https://${config.bindingAddress}:${config.httpsPort}');
+  } else {
+    sb.write('https://${config.bindingAddress}:${config.httpPort}');
+  }
+
+  return sb.toString();
 }
 
 Future<void> _initDb() async {
