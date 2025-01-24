@@ -50,5 +50,6 @@ class Config {
 
   late final String pathToLogfile;
 
+  /// Returns the path the [Config] was loaded from.
   String get loadedFrom => _settings.filePath;
 }
