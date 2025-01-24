@@ -21,6 +21,8 @@ class GpioManagerRaspPi implements GpioManager {
   /// Map to manage GPIO pin instances
   final Map<int, GPIO> _gpioMap = {};
 
+  /// Ensures that all pins are in an off
+  /// state.
   @override
   Future<void> provisionPins() async {
     final daoEndPoint = DaoEndPoint();
