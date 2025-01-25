@@ -1,5 +1,4 @@
 externals:
-  
   - external:
     path: bin/pig_server
     mount: altbin/pig_server
@@ -14,3 +13,9 @@ externals:
   - external:
     path: release/config.yaml
     mount: config/config.yaml
+
+# wasm files that need to be served.
+  - external:
+    path: ../pig_app/build/flutter_assets
+    mount: www_root
+

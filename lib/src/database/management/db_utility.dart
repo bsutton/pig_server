@@ -1,8 +1,7 @@
-import 'package:dcli/dcli.dart';
 import 'package:path/path.dart';
 
-int extractVerionForSQLUpgradeScript(PackedResource packedResource) {
-  final basename = basenameWithoutExtension(packedResource.originalPath);
+int extractVerionForSQLUpgradeScript(String originPath) {
+  final basename = basenameWithoutExtension(originPath);
 
   return int.parse(basename.substring(1));
 }

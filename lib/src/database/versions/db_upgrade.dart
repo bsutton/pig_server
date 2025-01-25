@@ -34,8 +34,8 @@ Future<void> upgradeDb(
   // sort the list of upgrade script numerically after stripping
   // of the .sql extension.
   upgradeAssets.sort((a, b) =>
-      extractVerionForSQLUpgradeScript(a) -
-      extractVerionForSQLUpgradeScript(b));
+      extractVerionForSQLUpgradeScript(a.originalPath) -
+      extractVerionForSQLUpgradeScript(b.originalPath));
 
   final firstUpgrade = oldVersion + 1;
 
@@ -43,7 +43,8 @@ Future<void> upgradeDb(
   var index = 0;
   for (; index < upgradeAssets.length; index++) {
     final pathToScript = upgradeAssets[index];
-    final scriptVersion = extractVerionForSQLUpgradeScript(pathToScript);
+    final scriptVersion =
+        extractVerionForSQLUpgradeScript(pathToScript.originalPath);
     if (scriptVersion >= firstUpgrade) {
       print('Upgrading to $scriptVersion via $pathToScript');
       await _executeScript(db, src, pathToScript);
@@ -82,10 +83,10 @@ Future<int> getLatestVersion(ScriptSource src) async {
   // sort the list of upgrade script numerically after stripping
   // of the .sql extension.
   upgradeAssets.sort((a, b) =>
-      extractVerionForSQLUpgradeScript(a) -
-      extractVerionForSQLUpgradeScript(b));
+      extractVerionForSQLUpgradeScript(a.originalPath) -
+      extractVerionForSQLUpgradeScript(b.originalPath));
 
-  return extractVerionForSQLUpgradeScript(upgradeAssets.last);
+  return extractVerionForSQLUpgradeScript(upgradeAssets.last.originalPath);
 }
 
 Future<void> _executeScript(

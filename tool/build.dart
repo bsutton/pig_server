@@ -1,12 +1,19 @@
 #! /usr/bin/env dart
 
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:dcli/dcli.dart';
+import 'package:path/path.dart' as path;
 import 'package:path/path.dart';
+import 'package:pig_server/src/database/management/db_utility.dart';
 import 'package:settings_yaml/settings_yaml.dart';
 
-void main(List<String> args) {
+void main(List<String> args) async {
   // 'dcli pack'.run;
   // 'zip -r www_root.zip www_root'.run;
+
+  await updateAssetList();
 
   print(green('Compiling pig_server'));
   final project = DartProject.self;
@@ -40,4 +47,41 @@ void main(List<String> args) {
 
   print(orange('build/deploy complete'));
   print("log into the $targetServer and run 'sudo tool/deploy'");
+}
+
+/// Update the list of sql upgrade scripts we ship as assets.
+/// The lists is held in assets/sql/upgrade_list.json
+Future<void> updateAssetList() async {
+  final pathToAssets = join(
+      DartProject.self.pathToProjectRoot, 'resource', 'sql', 'upgrade_scripts');
+  final assetFiles = find('v*.sql', workingDirectory: pathToAssets).toList();
+
+  final posix = path.posix;
+  final relativePaths = assetFiles
+
+      /// We are creating asset path which must us the posix path delimiter \
+      .map((path) {
+    final rel = relative(path, from: DartProject.self.pathToProjectRoot);
+    return posix.joinAll(split(rel));
+  }).toList()
+    ..sort((a, b) =>
+        extractVerionForSQLUpgradeScript(b) -
+        extractVerionForSQLUpgradeScript(a));
+
+  var jsonContent = jsonEncode(relativePaths);
+
+  // make the json file more readable
+  jsonContent = jsonContent.replaceAllMapped(
+    RegExp(r'\[|\]'),
+    (match) => match.group(0) == '[' ? '[\n  ' : '\n]',
+  );
+  jsonContent = jsonContent.replaceAll(RegExp(r',\s*'), ',\n  ');
+
+  final jsonFile = File('resource/sql/upgrade_scripts/upgrade_list.json')
+    ..writeAsStringSync(jsonContent);
+
+  print('SQL Asset list generated: ${jsonFile.path}');
+
+  // After updating the assets, create the clean test database.
+  // await createCleanTestDatabase();
 }

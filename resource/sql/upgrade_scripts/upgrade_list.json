@@ -1,0 +1,4 @@
+[
+  "resource/sql/upgrade_scripts/v2.sql",
+  "resource/sql/upgrade_scripts/v1.sql"
+]
