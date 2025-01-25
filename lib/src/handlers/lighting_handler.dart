@@ -22,9 +22,9 @@ Future<Response> handleLightingList(Request request) async {
 
     final result = <Map<String, dynamic>>[];
     for (final light in lights) {
-      final timer = TimerControl.getTimer(light);
-      final isTimerRunning = timer?.isTimerRunning() ?? false;
-      final remaining = isTimerRunning ? timer!.timeRemaining().inSeconds : 0;
+      final isTimerRunning = TimerControl().isTimerRunning(light) ;
+      final remaining =
+          isTimerRunning ? TimerControl().timeRemaining(light).inSeconds : 0;
 
       result.add({
         'id': light.id,
@@ -79,7 +79,7 @@ Future<Response> handleLightingToggle(Request request) async {
       // Possibly start a timer
       if (durationSeconds != null && durationSeconds > 0) {
         // Start a timed run
-        await TimerControl.startTimer(
+        await TimerControl().startTimer(
           lighting,
           'Lighting Timer',
           Duration(seconds: durationSeconds),
@@ -106,7 +106,7 @@ Future<Response> handleLightingToggle(Request request) async {
       }
     } else {
       // turn off
-      TimerControl.removeTimer(lighting);
+      TimerControl().stopTimer(lighting);
       await DaoLighting().softOff(lighting);
       return Response.ok(jsonEncode({'result': 'OK'}));
     }

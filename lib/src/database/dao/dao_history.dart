@@ -31,8 +31,7 @@ class DaoHistory extends Dao<History> {
       tableName,
       where: 'garden_feature_id = ?',
       whereArgs: [featureId],
-      orderBy:
-          'created_date DESC', // Replace 'timestamp' with your actual column name
+      orderBy: 'created_date DESC',
     );
     return List.generate(data.length, (i) => fromMap(data[i]));
   }

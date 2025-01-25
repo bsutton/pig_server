@@ -29,13 +29,12 @@ Future<Response> handleGardenBedList(Request request) async {
     final beds = <GardenBedData>[];
 
     for (final bed in await daoGardenBed.getAll()) {
-      final timer = TimerControl.getTimer(bed);
       final history = await DaoHistory().getMostRecent(bed);
       beds.add(GardenBedData.fromBed(
         bed,
         allowDelete: true,
         isOn: await daoGardenBed.isOn(bed),
-        remainingDuration: timer?.timeRemaining(),
+        remainingDuration: TimerControl().timeRemaining(bed),
         lastWateringDateTime: history?.eventStart,
         lastWateringDuration: history?.eventDuration?.inSeconds,
       ));
@@ -115,21 +114,10 @@ Future<Response> handleGardenBedStartTimer(Request request) async {
       return Response.notFound(jsonEncode({'error': 'Garden bed not found'}));
     }
 
-    await daoGardenBed.softOn(bed);
-
-    final eventStart = DateTime.now();
     final runTime = Duration(seconds: durationInSeconds);
-    await TimerControl.startTimer(
-        bed,
-        description ?? '',
-        runTime,
-        (bed) => DaoHistory().insert(History.forInsert(
-            gardenFeatureId: bedId,
-            eventStart: eventStart,
 
-            /// We don't use the requested [durationInSeconds] as the run
-            /// time may be truncated.
-            eventDuration: DateTime.now().difference(eventStart))));
+    await daoGardenBed.runForTime(
+        feature: bed, description: description ?? '', runTime: runTime);
 
     return Response.ok(jsonEncode({'result': 'OK'}));
   } catch (e) {
@@ -161,16 +149,16 @@ Future<Response> handleGardenBedStopTimer(Request request) async {
 
     await daoGardenBed.softOff(bed);
 
-    final existingTimer = TimerControl.getTimer(bed);
+    final existingTimer = TimerControl().getTimer(bed);
 
-    if (existingTimer != null) {
-      final startTime = existingTimer.startTime ?? DateTime.now();
+    if (TimerControl().isTimerRunning(bed)) {
+      final startTime = existingTimer?.startTime ?? DateTime.now();
       await DaoHistory().insert(History.forInsert(
           gardenFeatureId: bedId,
           eventStart: startTime,
           eventDuration: DateTime.now().difference(startTime)));
 
-      TimerControl.removeTimer(bed);
+      TimerControl().stopTimer(bed);
     }
 
     return Response.ok(jsonEncode({'result': 'OK'}));

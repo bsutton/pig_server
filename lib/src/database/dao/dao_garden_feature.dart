@@ -4,7 +4,6 @@ import 'package:pig_common/pig_common.dart';
 
 import '../../controllers/end_point_bus.dart';
 import '../../controllers/timer_control.dart';
-import '../../controllers/timer_notification.dart';
 import 'dao_endpoint.dart';
 import 'dao_history.dart';
 
@@ -23,28 +22,21 @@ mixin DaoGardenFeature {
 
     // Insert the new record to the database via DaoHistory
     await DaoHistory().insert(history);
-
-    // Optionally store this 'currentHistory' in the feature or track
-    // it in the DAO
-    // if you need references during a subsequent softOff call, etc.
   }
 
   /// Runs a [GardenFeature] for a specified [runTime], automatically scheduling
-  /// an off action when the timer completes, and notifies [timerNotification]
-  /// about the timer events.
+  /// an off action when the timer completes
   Future<void> runForTime({
     required GardenFeature feature,
     required String description,
     required Duration runTime,
-    required TimerNotification timerNotification,
   }) async {
     // Start the timer and call _timerCompleted when it finishes
-    await TimerControl.startTimer(
+    await TimerControl().startTimer(
       feature,
       description,
       runTime,
       (f) => _timerCompleted(feature),
-      timerNotification: timerNotification,
     );
 
     // Immediately softOn the feature
@@ -78,16 +70,7 @@ mixin DaoGardenFeature {
 
     // Mark the history event complete
     current.markEventComplete();
-
-    // Insert or update that record in the DB so we have the updated end time.
-    // If you already inserted it in softOn, use update here.
     await DaoHistory().update(current);
-
-    // Because in the original Java code, the feature would also track
-    // this record in memory, you can do a fresh fetch or just
-    //rely on DB state here.
-
-    // Remove or reset references to the current history if needed.
   }
 
   /// Adds a [history] record to the local in-memory list or the DB.
