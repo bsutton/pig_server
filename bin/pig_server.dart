@@ -1,4 +1,4 @@
-#! /usr/bin/env dcli
+#! /usr/bin/env dart
 // ignore_for_file: avoid_types_on_closure_parameters
 
 import 'dart:async';
@@ -13,6 +13,7 @@ import 'package:pig_server/src/database/management/database_helper.dart';
 import 'package:pig_server/src/database/management/local_backup_provider.dart';
 import 'package:pig_server/src/database/versions/asset_script_source.dart';
 import 'package:pig_server/src/handlers/router.dart';
+import 'package:pig_server/src/http/middleware/wasm.dart';
 import 'package:pig_server/src/logger.dart';
 import 'package:pig_server/src/mailer.dart';
 import 'package:pig_server/src/pi/gpio_manager.dart';
@@ -114,7 +115,9 @@ Future<void> _startWebServer() async {
   final handler = const Pipeline()
       .addMiddleware(logRequests(logger: _log))
       .addMiddleware(rateLimiter.rateLimiter())
+      .addMiddleware(addWasmHeaders)
       .addHandler(router.call);
+  // .addHandler(router.call);
 
   final server = await serve(
     handler,
@@ -133,6 +136,7 @@ Future<void> _startHttpsServer(LetsEncrypt letsEncrypt, Domain domain) async {
       .addMiddleware(redirectToHttps)
       .addMiddleware(logRequests(logger: _log))
       .addMiddleware(rateLimiter.rateLimiter())
+      .addMiddleware(addWasmHeaders)
       .addHandler(router.call);
 
   final servers = await letsEncrypt.startServer(
