@@ -61,7 +61,7 @@ starts the server in debug mode. Opens config.yaml from ./config/config.yaml.'''
     await runServer(_loadConfig(debug));
     shutdown();
   } else {
-    await doInstall();
+    await doInstall(debug: debug);
   }
 }
 
