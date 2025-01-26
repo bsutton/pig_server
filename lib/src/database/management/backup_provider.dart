@@ -7,7 +7,7 @@ import 'package:path/path.dart';
 import 'package:sentry/sentry.dart';
 
 import '../../util/irrigation_exception.dart';
-import '../factory/hmb_database_factory.dart';
+import '../factory/pig_database_factory.dart';
 import '../versions/script_source.dart';
 import 'database_helper.dart';
 import 'zip_isolate.dart';
@@ -29,7 +29,7 @@ abstract class BackupProvider {
   /// user when offering a backup option.
   String get name;
 
-  HMBDatabaseFactory databaseFactory;
+  PigDatabaseFactory databaseFactory;
 
   /// Stores the zipped backup file to a [BackupProvider]s
   /// defined location.
@@ -62,7 +62,7 @@ abstract class BackupProvider {
 
         try {
           final pathToBackupFile = join(tmpDir, 'pigation-$datePart.db');
-          final pathToDatabase = await databasePath;
+          final pathToDatabase =  databasePath;
 
           if (!exists(pathToDatabase)) {
             emitProgress('Database file not found', 6, 6);
@@ -102,7 +102,7 @@ abstract class BackupProvider {
   Future<void> performRestore(
     Backup backup,
     ScriptSource src,
-    HMBDatabaseFactory databaseFactory,
+    PigDatabaseFactory databaseFactory,
   ) async {
     await withTempDirAsync((tmpDir) async {
       emitProgress('Initializing restore', 1, _restoreStageCount);
@@ -164,7 +164,7 @@ abstract class BackupProvider {
 
   /// Replaces the current database with the one in the backup file.
   Future<void> replaceDatabase(String pathToBackupFile, ScriptSource src,
-      BackupProvider backupProvider, HMBDatabaseFactory databaseFactory) async {
+      BackupProvider backupProvider, PigDatabaseFactory databaseFactory) async {
     final wasOpen = DatabaseHelper().isOpen();
     try {
       // Get the path to the app's internal database
@@ -229,7 +229,7 @@ abstract class BackupProvider {
   /// to be in but it was convenient to place it here
   /// as the [BackupProvider]s already understand the
   /// need for different database storage locations.
-  Future<String> get databasePath;
+  String get databasePath;
 
   bool useDebugPath = false;
 }

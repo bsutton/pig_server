@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:date_time_format/date_time_format.dart';
 import 'package:dcli_core/dcli_core.dart';
 import 'package:path/path.dart';
-import 'package:sqflite_common/sqflite.dart';
 
 import '../../logger.dart';
 import 'backup_provider.dart';
@@ -59,13 +58,13 @@ class LocalBackupProvider extends BackupProvider {
     }
 
     /// db file path with .bak and date/time/added
-    final pathToBackupFile = '$pathToBackupDir.$version.$datePart.zip';
+    final pathToBackupFile = join(pathToBackupDir, '$version.$datePart.zip');
 
     move(pathToZippedBackup, pathToBackupFile);
 
     return BackupResult(
         pathToBackup: pathToBackupFile,
-        pathToSource: await databasePath,
+        pathToSource: databasePath,
         success: true);
   }
 
@@ -75,6 +74,6 @@ class LocalBackupProvider extends BackupProvider {
   Future<String> get _pathToBackupDir async => 'backups';
 
   @override
-  Future<String> get databasePath async =>
-      join(await getDatabasesPath(), 'pigation.db');
+  String get databasePath =>
+      join(rootPath, 'opt', 'pigation', 'database', 'pigation.db');
 }

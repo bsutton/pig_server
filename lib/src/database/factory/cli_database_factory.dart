@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-import 'hmb_database_factory.dart' as local;
+import 'pig_database_factory.dart' as local;
 
-class CliDatabaseFactory implements local.HMBDatabaseFactory {
+class CliDatabaseFactory implements local.PigDatabaseFactory {
   factory CliDatabaseFactory() {
     if (instance == null) {
       instance = CliDatabaseFactory._();
@@ -29,5 +29,5 @@ class CliDatabaseFactory implements local.HMBDatabaseFactory {
   @override
   Future<Database> openDatabase(String path,
           {required OpenDatabaseOptions options}) async =>
-    databaseFactory.openDatabase(path, options: options);
+      databaseFactory.openDatabase(path, options: options);
 }

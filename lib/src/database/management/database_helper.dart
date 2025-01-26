@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:sqflite_common/sqlite_api.dart';
 
-import '../factory/hmb_database_factory.dart';
+import '../factory/pig_database_factory.dart';
 import '../versions/db_upgrade.dart';
 import '../versions/script_source.dart';
 import 'backup_provider.dart';
@@ -19,7 +19,7 @@ class DatabaseHelper {
     required ScriptSource src,
     required BackupProvider backupProvider,
     required bool backup,
-    required HMBDatabaseFactory databaseFactory,
+    required PigDatabaseFactory databaseFactory,
   }) async {
     await openDb(
         src: src,
@@ -31,10 +31,10 @@ class DatabaseHelper {
   Future<void> openDb({
     required ScriptSource src,
     required BackupProvider backupProvider,
-    required HMBDatabaseFactory databaseFactory,
+    required PigDatabaseFactory databaseFactory,
     required bool backup,
   }) async {
-    final path = await backupProvider.databasePath;
+    final path = backupProvider.databasePath;
     final targetVersion = await getLatestVersion(src);
     print('target db version: $targetVersion');
     _database = await databaseFactory.openDatabase(path,
@@ -59,7 +59,7 @@ class DatabaseHelper {
 
   Future<int> getVersion() async => database.getVersion();
 
-  Future<void> withOpenDatabase(HMBDatabaseFactory databaseFactory,
+  Future<void> withOpenDatabase(PigDatabaseFactory databaseFactory,
       String pathToDb, Future<void> Function() action) async {
     var wasOpen = false;
     try {
