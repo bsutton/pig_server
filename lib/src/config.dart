@@ -1,12 +1,18 @@
+import 'package:dcli/dcli.dart';
 import 'package:path/path.dart';
 import 'package:settings_yaml/settings_yaml.dart';
 
 class Config {
-  factory Config() => _config ??= Config._();
+  factory Config() => _config ??=
+      Config._(join(rootPath, 'opt', 'pigation', 'config', 'config.yaml'));
 
-  Config._() {
-    _settings =
-        SettingsYaml.load(pathToSettings: join('config', 'config.yaml'));
+  factory Config.fromDebugPath() {
+    _config = Config._(join('config', 'config.yaml'));
+    return _config!;
+  }
+
+  Config._(String loadFrom) {
+    _settings = SettingsYaml.load(pathToSettings: loadFrom);
 
     username = _settings.asString('gmail_app_username');
     password = _settings.asString('gmail_app_password');
