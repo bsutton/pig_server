@@ -8,8 +8,8 @@ import 'package:mime/mime.dart';
 import 'package:path/path.dart';
 import 'package:shelf/shelf.dart';
 
-import '../config.dart';
-import '../logger.dart';
+import '../../config.dart';
+import '../../logger.dart';
 
 Response handleDefault(Request request) => _handleStatic(request, 'index.html');
 

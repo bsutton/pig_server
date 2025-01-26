@@ -3,9 +3,9 @@ import 'dart:convert';
 
 import 'package:shelf/shelf.dart';
 
-import '../database/dao/dao_endpoint.dart';
-import '../database/dao/dao_garden_bed.dart';
-import '../database/dao/dao_history.dart';
+import '../../database/dao/dao_endpoint.dart';
+import '../../database/dao/dao_garden_bed.dart';
+import '../../database/dao/dao_history.dart';
 
 /// Returns data needed by the Overview screen:
 /// - do we have any endpoints? do we have any garden beds?

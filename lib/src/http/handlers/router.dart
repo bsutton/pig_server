@@ -3,7 +3,7 @@ import 'package:shelf_router/shelf_router.dart';
 import 'package:shelf_web_socket/shelf_web_socket.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-import '../controllers/timer_control.dart';
+import '../../controllers/timer_control.dart';
 import 'end_point_handler.dart';
 import 'garden_bed_handler.dart';
 import 'handle_static.dart';
@@ -12,7 +12,12 @@ import 'overview_handler.dart';
 
 Router buildRouter() {
   final router = Router()
-    ..get('/', reject) // attempt to block spam.
+    ..get('/', handleDefault)
+    ..get('/<.*>', handleStatic)
+    ..get('/css/<.*>', handleStatic)
+    ..get('/js/<.*>', handleStatic)
+    ..get('/images/<.*>', handleStatic)
+    ..get('/images/samples/<.*>', handleStatic)
     ..post('/lighting/toggle', handleLightingToggle)
     ..post('/garden_bed/list', handleGardenBedList)
     ..post('/garden_bed/toggle', handleGardenBedToggle)
