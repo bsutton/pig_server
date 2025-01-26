@@ -1,6 +1,5 @@
+import 'package:pig_server/src/startup/startup.g.dart';
 import 'package:test/test.dart';
-
-import '../tool/deploy.dart';
 
 void main() {
   test('kill process', () {

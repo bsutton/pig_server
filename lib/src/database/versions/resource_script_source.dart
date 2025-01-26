@@ -3,8 +3,8 @@ import 'package:dcli/dcli.dart';
 import '../../dcli/resource/generated/resource_registry.g.dart';
 import 'script_source.dart';
 
-class AssetScriptSource implements ScriptSource {
-  AssetScriptSource();
+class ResourceScriptSource implements ScriptSource {
+  ResourceScriptSource();
   @override
   Future<String> loadSQL(PackedResource packedScript) async =>
       withTempFileAsync((unpackedFile) async {
@@ -18,7 +18,7 @@ class AssetScriptSource implements ScriptSource {
   Future<List<PackedResource>> upgradeScripts() async {
     final upgradeScripts = <PackedResource>[];
     for (final entry in ResourceRegistry.resources.entries) {
-      if (entry.key.startsWith('upgrade_scripts/')) {
+      if (entry.key.startsWith('sql/upgrade_scripts/')) {
         upgradeScripts.add(entry.value);
       }
     }

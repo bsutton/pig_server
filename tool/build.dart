@@ -15,14 +15,7 @@ void main(List<String> args) async {
 
   await updateAssetList();
 
-  print(green('Compiling pig_server'));
   final project = DartProject.self;
-  DartScript.fromFile(join('bin', 'pig_server.dart'), project: project)
-      .compile(overwrite: true);
-
-  print(green('Compiling launch'));
-  DartScript.fromFile(join('bin', 'pig_launch.dart'), project: project)
-      .compile(overwrite: true);
 
   print(green('Packing deployable resources'));
   Resources().pack();
@@ -37,16 +30,16 @@ void main(List<String> args) async {
   /// Order is important.
   /// We must compile iahserver and the resources as they are all
   /// compiled into the deploy script.
-
-  print(green('Compiling tool/deploy.dart'));
-  DartScript.fromFile(join('tool', 'deploy.dart'), project: project)
+  ///
+  print(green('Compiling pig'));
+  DartScript.fromFile(join('bin', 'pig.dart'), project: project)
       .compile(overwrite: true);
 
   // print(green("deploying 'deploy' to $targetDirectory"));
   // '$scpCommand tool/deploy $targetServer:$targetDirectory'.run;
 
-  print(orange('build/deploy complete'));
-  print("log into the $targetServer and run 'sudo tool/deploy'");
+  print(orange('build complete'));
+  print("log into the $targetServer and run 'pig --install'");
 }
 
 /// Update the list of sql upgrade scripts we ship as assets.
@@ -77,7 +70,7 @@ Future<void> updateAssetList() async {
   );
   jsonContent = jsonContent.replaceAll(RegExp(r',\s*'), ',\n  ');
 
-  final jsonFile = File('resource/sql/upgrade_scripts/upgrade_list.json')
+  final jsonFile = File('resource/sql/upgrade_list.json')
     ..writeAsStringSync(jsonContent);
 
   print('SQL Asset list generated: ${jsonFile.path}');

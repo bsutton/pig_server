@@ -1,12 +1,13 @@
-#! /usr/bin/env dart
-
 import 'dart:io';
 
-import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
 import 'package:dcli/posix.dart';
 import 'package:path/path.dart';
-import 'package:pig_server/src/dcli/resource/generated/resource_registry.g.dart';
+import 'package:posix/posix.dart' as posix;
+
+import '../database/factory/cli_database_factory.dart';
+import '../database/management/local_backup_provider.dart';
+import '../dcli/resource/generated/resource_registry.g.dart';
 
 final pathToPigation = join(rootPath, 'opt', 'pigation');
 final pathToPigationBin = join(rootPath, 'opt', 'pigation', 'bin');
@@ -15,25 +16,26 @@ final pathToPigationBin = join(rootPath, 'opt', 'pigation', 'bin');
 /// existing execs will be running and therefore locked.
 final pathToPigationAltBin = join(rootPath, 'opt', 'pigation', 'altbin');
 final pathToWwwRoot = join(pathToPigation, 'www_root');
-final pathToPigServer = join(pathToPigationBin, 'pig_server');
-final pathToLauncher = join(pathToPigationBin, 'pig_launch');
+final pathToPigServer = join(pathToPigationBin, 'pig');
+final pathToLauncher = join(pathToPigationBin, 'pig');
 final pathToLauncherScript = join(pathToPigationBin, 'pig_launch.sh');
 
-void main(List<String> args) {
-  final argParser = ArgParser()..addFlag('verbose', abbr: 'v');
-  final parsed = argParser.parse(args);
+Future<void> doInstall() async {
+  await _deploy();
+}
 
-  Settings().setVerbose(enabled: parsed['verbose'] as bool);
-
+Future<void> _deploy() async {
   _createDirectory(pathToWwwRoot);
 
-  print(green('unpacking resources to: $pathToPigation'));
   final owner = Shell.current.loggedInUser!;
   Shell.current.withPrivileges(() {
     fixDirectoryPermissions(pathToPigation, owner);
   });
 
   unpackResources(pathToPigation);
+
+  /// copy this exe into altbin as we are the pig server.
+  copy(DartScript.self.pathToExe, pathToPigationAltBin);
 
   /// Create the dir to store letsencrypt files
   final pathToLetsEncrypt = join(pathToPigation, 'letsencrypt', 'live');
@@ -47,20 +49,19 @@ void main(List<String> args) {
     chmod(pathToLog, permission: '644');
   });
 
-  Shell.current.withPrivileges(() {
+  await Shell.current.withPrivilegesAsync(() async {
     _addCronBoot(pathToLauncherScript);
 
     // restart t
-    _restart(owner);
+    await _restart(owner);
   });
 }
 
 /// Restart the the pig_server by killing the existing processes
 /// and spawning them detached.
-void _restart(String owner) {
+Future<void> _restart(String owner) async {
   killProcess('pig_launch.sh');
-  killProcess('dart:pig_launch');
-  killProcess('dart:pig_server');
+  killProcess('dart:pig');
 
   // on first time install the bin directory won't exist.
   if (!exists(pathToPigationBin)) {
@@ -73,18 +74,16 @@ void _restart(String owner) {
   fixDirectoryPermissions(pathToPigationBin, owner);
 
   // set execute priviliged
-  makeExecutable(pathToPigServer, pathToLauncher, pathToLauncherScript);
+  makeExecutable(pathToPigServer, pathToLauncherScript);
 
-  _installSqlite3();
+  await _initDatabase(owner);
 
   pathToLauncherScript.start(detached: true);
 
-  print(red('Reboot the system to complete the deployment'));
-
-  print(green('sudo reboot now'));
+  print(red('The pig web server has been launched'));
 }
 
-void _installSqlite3() {
+Future<void> _initDatabase(String owner) async {
   if (which('sqlite3').notfound) {
     print(green('Install sqllite3'));
     Shell.current.withPrivileges(() {
@@ -92,43 +91,68 @@ void _installSqlite3() {
       'apt install sqlite3 libsqlite3-dev'.run;
     });
   }
+
+  final provider = LocalBackupProvider(CliDatabaseFactory());
+  final pathToDbDirectory = dirname(provider.databasePath);
+
+  if (!exists(pathToDbDirectory)) {
+    createDir(pathToDbDirectory, recursive: true);
+    fixDirectoryPermissions(pathToDbDirectory, owner);
+  }
+
+  final pathToBackups = await provider.backupLocation;
+  dirname(LocalBackupProvider(CliDatabaseFactory()).databasePath);
+
+  if (!exists(pathToDbDirectory)) {
+    createDir(pathToDbDirectory, recursive: true);
+    fixDirectoryPermissions(pathToDbDirectory, owner);
+  }
 }
 
 void fixDirectoryPermissions(String pathToFix, String owner) {
   chown(pathToFix, user: owner, group: owner);
   chmod(pathToFix, permission: '755');
 
-  find('*', workingDirectory: pathToFix).forEach((entry) {
+  find('*', workingDirectory: pathToFix, types: [Find.directory, Find.file])
+      .forEach((entry) {
+    print('fixing $entry');
     chown(entry, user: owner, group: owner);
+
     if (isFile(entry)) {
-      chmod(entry, permission: '755');
+      chmod(entry, permission: '644');
     }
     if (isDirectory(entry)) {
-      chmod(entry, permission: '644');
+      chmod(entry, permission: '755');
     }
   });
 }
 
 void killProcess(String processName) {
+  final pid = posix.getpid();
   final processes = ProcessHelper().getProcessesByName(processName);
   for (final process in processes) {
-    'kill -9 ${process.pid}'.run;
+    if (process.pid == pid) {
+      /// don't kill ourself.
+      continue;
+    }
+    'kill -9 ${process.pid}'.start(progress: Progress.devNull());
   }
 }
 
-void makeExecutable(String pathToPigServer, String pathToLauncher,
-    String pathToLauncherScript) {
+void makeExecutable(String pathToPig, String pathToLauncherScript) {
   // set execute priviliged
-  chmod(pathToPigServer, permission: '710');
-  chmod(pathToLauncher, permission: '710');
+  chmod(pathToPig, permission: '710');
   chmod(pathToLauncherScript, permission: '710');
 }
 
 void unpackResources(String pathToPigation) {
+  print(green('unpacking resources to: $pathToPigation'));
   for (final resource in ResourceRegistry.resources.values) {
     final localPathTo = join(pathToPigation, resource.originalPath);
     final resourceDir = dirname(localPathTo);
     _createDir(resourceDir);
+
+    print('unpacking $localPathTo');
 
     resource.unpack(localPathTo);
   }
