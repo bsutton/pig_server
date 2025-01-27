@@ -1,5 +1,5 @@
 name: pigation
-version: 3.0.2
+version: 3.0.3
 description: Pigation Server - an irrigation system for the Raspberry Pi
 repository: https://github.com/bsutton/pig_server
 environment:
