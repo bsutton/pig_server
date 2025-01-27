@@ -1,3 +1,6 @@
+# 3.0.0
+First release after port from java to dart.
+
 # 0.0.3
 Removed the 15min inclusion for the call out fee.
 ## 0.0.2
