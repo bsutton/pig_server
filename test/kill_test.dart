@@ -4,7 +4,6 @@ import 'package:test/test.dart';
 void main() {
   test('kill process', () {
     killProcess('piglaunch.sh');
-    killProcess('dart:pig_launch');
-    killProcess('dart:pig_server.d');
+    killProcess('dart:pig.d');
   });
 }
