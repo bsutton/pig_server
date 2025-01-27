@@ -233,3 +233,18 @@ dcli compile bin/pig.dart
 # install and start the web server.
 sudo bin/pig 
 ```
+
+# publishing to pub.dev
+
+The pigation server is intended to be publish to pub.dev to make installation
+simple.
+
+We use pub_release to do this.
+
+```
+dart pub global activate pub_release
+pub_release
+```
+
+There is a pub_release hook too/pre_release_hook/build_and_pack_wasm.dart which
+builds the wasm target and packs it into the pigation server.

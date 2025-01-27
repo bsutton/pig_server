@@ -250,23 +250,6 @@ Future<bool> _pinInUse(EndPointInfo endPointInfo) async {
   return endPoint != null && endPoint.id != endPointInfo.id;
 }
 
-/// Helper to parse the activation type string into a [PinActivationType] enum
-PinActivationType? _parsePinActivationType(String value) {
-  // Adjust logic depending on how your enum is declared
-  // e.g., "HIGH_IS_ON", "LOW_IS_ON"
-  // Some code might look like:
-  //   return PinActivationType.values.firstWhere(
-  //      (v) => v.name == value,
-  //      orElse: () => null
-  //   );
-  for (final type in PinActivationType.values) {
-    if (type.name.toUpperCase() == value.toUpperCase()) {
-      return type;
-    }
-  }
-  return null;
-}
-
 /// POST /api/end_point/delete
 /// Request: { "endPointId": 123 }
 /// Response: { "result": "OK" }
