@@ -46,4 +46,4 @@ Response _handleStatic(Request request, String filename) {
 String? _pathToStaticContent;
 
 String get pathToStaticContent =>
-    _pathToStaticContent ??= Config().pathToStaticContent;
+    _pathToStaticContent ??= Config().pathToStaticContent!;
