@@ -24,7 +24,7 @@ dependencies:
 
   pointycastle: ^3.9.1
   posix: ^6.0.1
-  settings_yaml: ^8.1.0-alpha.2
+  settings_yaml: ^8.2.0
   shelf: ^1.4.1
   shelf_letsencrypt: ^2.0.1
   shelf_rate_limiter: ^1.0.1
