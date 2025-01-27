@@ -62,7 +62,11 @@ The PiGation app needs the FQDN or IP address of you RiPi to connect back to the
 If you want to access the RiPi externally via NAT then this must be your external FQDN/IP'''));
   config.fqdn = ask('FQDN (or IP): ',
       defaultValue: config.fqdn,
-      validator: Ask.any([Ask.fqdn, Ask.ipAddress()]));
+      validator: Ask.any([
+        Ask.fqdn,
+        Ask.ipAddress(),
+        Ask.inList(['localhost'])
+      ]));
 
   print(green('''
 
