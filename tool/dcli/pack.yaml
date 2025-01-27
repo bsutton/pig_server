@@ -3,13 +3,7 @@ externals:
     path: bin/pig_launch.sh
     mount: altbin/pig_launch.sh    
 
-
-  - external:
-    path: release/config.yaml
-    mount: config/config.yaml
-
 # wasm files that need to be served.
   - external:
     path: ../pig_app/build/web
     mount: www_root
-
