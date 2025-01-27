@@ -10,8 +10,9 @@ import 'package:pig_server/src/logger.dart';
 import 'package:pig_server/src/pi/gpio_manager.dart';
 import 'package:pig_server/src/startup/startup.g.dart';
 
-/// Simple web server that can serve stastic content and email
-/// a booking.
+/// PiGation server side app that can install, launch and 
+/// run the PiGation web server based on the command line args passed
+/// 
 void main(List<String> args) async {
   final parser = ArgParser()
     ..options
