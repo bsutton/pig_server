@@ -14,7 +14,8 @@ void main() {
   pubspec.version.setSemVersion(newVersion);
   pubspec.save();
 
-  '../pig_app/tool/build.dart --build --wasm'.run;
+  print(orange('Forcing a build of the pig_app wasm target'));
+  'tool/build.dart --build --wasm'.start(workingDirectory: '../pig_app');
 
   Resources().pack();
   'dart pub publish'.run;
