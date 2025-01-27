@@ -18,7 +18,7 @@ not run on a RiPi.
 
 ```bash
 dart pub global activate pigation
-dart pub global activate dcli
+dart pub global activate dcli_sdk
 sudo env PATH="$PATH" dcli install
 ```
 
@@ -183,7 +183,8 @@ To debug the pig server you can simply launch bin/pig.dart --server in your favo
 # Build on the PI
 
 ```bash
-dart pub global activate dcli
+dart pub global activate dcli_sdk
+udo env PATH="$PATH" dcli install
 git clone https://github.com/bsutton/pig_server.git
 dcli compile bin/pig.dart
 sudo env PATH="$PATH" pig
