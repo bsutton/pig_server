@@ -21,7 +21,7 @@ Now run the pigation installer. This will install pigation into /opt/pigation.
 
 As part of the install you need to decide if you will use HTTP or HTTPS to
 access PiGation.  If you want to use HTTPS then your PI must be exposed on
-the internate (using NAT) with both port 80 and 443 open.
+the internet (using NAT) with both port 80 and 443 open.
 
 If you don't understand how to configure NAT then just choose HTTP.
 
@@ -30,111 +30,81 @@ If you don't understand how to configure NAT then just choose HTTP.
 sudo pig
 ```
 
+# Accessing 
+The pigation server has an embedded front end.
 
-This is a complete web server with a builtin letsencrypt client that obtains certs
-and serves static content.
+To access the Pigation front end navigate to the IP address of FQDN of
+your RiPI from a browser.
 
-The web server deploys a static web site and includes a single live end point /booking
+`http://mypi`
 
-The web server is deployed as a single executable that contains the static content!
-
-The static content is packed into the web server executable using the '[dcli pack](https://dcli.onepub.dev/dcli-tools-1/dcli-pack)' command.
-
-When you start the webserver it:
-* unpacks the static content
-* obtains a HTTPS certificate from LetsEncrypt (including doing auto renews)
-* Listens on http and https ports
-* Serves index.html and a varity of associated file times.
-* Exposes a single live end point '/booking' that sends an email
-   when called with valid parameters.
+If you have enabled HTTPS then:
+`https://mypi`
 
 
-To build/deploy the IHAServer you need to create your static content and
-create the config file under the project:
 
-<project root>/config/config.yaml
-<project root>/www_root
+# HTTPS
+If you have selected HTTPS then the server will attempt to obtain a letsencrypt
+certificate when it starts. It will also auto renew the certificate as require.
 
-# Build/Deploy
+In order to user HTTPS the following requirements must be met:
 
-## Target system
-On the target system create:
-`/opt/handyman`
+Ports 80 and 443 must be exposed to the public internet. This usually requires
+the configuration of NAT on your home router.
 
-Change the permissions so that you have access:
+When installing pigation you should choose a 'Staging' certificate until
+you have successfully obtain a certificate.
 
-`sudo chown <me>:<me> /opt/handyman`
+Once you have obtained a staging certificate you can switch to a live
+certificate by running `sudo pig` and switch to a Live certificate.
 
-## Dev system
 
-The build/deploy process is controlled by tool/build.yaml
+# deployment
 
-Configure your build.yaml
+The pig installer installs itself into /opt/pigation.
 
-Example
+It also installs a cron job so that the pigation server restarts if
+your RiPi reboots.
+
+
+# Release
+Pigation use pub_release to publish to pub.dev.
+
+From the pig_server root directory run: 
 ```
-target_server:  handyman.com
-target_directory: /opt/handyman
-scp_command: scp
+dart pub global activate pub_release
+pub_release
 ```
-
-
-Run tool/build.dart
-
-
-Once the build has run it will have copied a single exe `deploy` to the
-target system in /opt/handyman.
-
-Login to the target system and run:
-```
-cd /opt/handyman
-sudo ./deploy
-```
-
-Update your DNS A record to point to your new system.
-
-You are now live.
 
 
 # configuration
 
-The config.yaml file is used to configure the server.
+The /opt/pigation/config/config.yaml file is used to configure the server.
 
-You will need two config.yaml files, one for development and one for the release
-environment:
+The install creates the config.yaml file based on your answers during the 
+install. 
+It is generally easier to run `sudo/pig` if you need to make config modification
+as that command will restart you pigation server with the new config.
+
+
+# development
+You will need a separate config.yaml files for your development environment.
+
 | usage | location |
 | ----- | ----- |
-| release path | <project root>/release/config.yaml |
 | development path | <project root>/config/config.yaml |
 
-The following is a sample for your **production** environment
-`<project root>/release/config.yaml`
-
-```yaml
-password: XXXXXXXXXXX
-path_to_static_content: /opt/handyman/www_root
-path_to_lets_encrypt_live: /opt/pigation/letsencrypt/live
-fqdn: ivanhoehandyman.com.au
-domain_email: bsutton@onepub.dev
-https_port: 443
-http_port: 80
-production: true
-binding_address: 0.0.0.0
-logger_path: /var/log/pigserver.log
-
-```
 
 The following is a sample for your **development** environment
 
 `<project root>/config/config.yaml`
 ```yaml
-gmail_app_username: bsutton@onepub.dev
-gmail_app_password: XXXXXXXXXXX
-path_to_static_content: /home/bsutton/git/pigation/www_root
+password: XXXXXXXXXXX
+path_to_static_content: /home/bsutton/git/pigation/pig_app/build/web
 path_to_lets_encrypt_live: /opt/pigation/letsencrypt/live
-fqdn: squarephone.biz
+fqdn: <your local ip>
 domain_email: bsutton@onepub.dev
-https_port: 10443
+https_port: 10443  # use ports above 1024
 http_port: 1080
 production: false
 binding_address: 0.0.0.0
@@ -159,19 +129,7 @@ logger_path: console
 
 
 
-**READ THIS !!!**
-
-**production setting**
-
-The production setting in config.yaml, controls  whether we obtain a live or staging Lets Encrypt certificate. 
-
-*This is important* as the production flag controls whether we get a staging
-or live Lets Encrypt certificate. Lets Encrypt has *very strict rate limits* on
-the number of certificates it will issue to a production system (5 per 48 hrs?)
-so if you get something wrong (your http port isn't open) you can end up not being able to get a live certificate for 48 hrs.
-
-
-# Development
+# Certificates in Development
 
 Within you development environement you are likely to be behind a NAT.
 To test the cert aquistion and renewal you will need to forward 
@@ -195,7 +153,7 @@ and NAT are set up correctly.
 
 ## Run the service locally
 
-To debug the pig server you can simply launch bin/pig.dart --server.dart in your favourite IDE.
+To debug the pig server you can simply launch bin/pig.dart --server in your favourite IDE.
 
 
 # Build on the PI
@@ -205,33 +163,6 @@ dart pub global activate dcli
 git clone https://github.com/bsutton/pig_server.git
 dcli compile bin/pig.dart
 sudo bin/pig --install
-```
-
-Edit the config.yaml and add contents as follows making the necessary changes:
-
-```yaml
-password: <hashed passwrod>
-path_to_static_content: /opt/pigation/www_root
-path_to_lets_encrypt_live: /opt/pigation/letsencrypt/live
-fqdn: ivanhoehandyman.com.au
-domain_email: bsutton@onepub.dev
-https_port: 443
-http_port: 80
-use_https: false
-production: false
-binding_address: 0.0.0.0
-logger_path: /var/log/pig_server.log
-
-```
-
-```
-
-cd pig_server
-dart pub get
-tool/build.dart
-dcli compile bin/pig.dart
-# install and start the web server.
-sudo bin/pig 
 ```
 
 # publishing to pub.dev
