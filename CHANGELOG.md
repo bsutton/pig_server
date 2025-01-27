@@ -1,3 +1,6 @@
+# 3.0.3
+- correct the dcli install instructions.
+
 # 3.0.2
 - explained how to compile with dcli.
 - added localhost as a valid fqdn when configuring the endpoint.
