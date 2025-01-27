@@ -27,7 +27,7 @@ If you don't understand how to configure NAT then just choose HTTP.
 
 
 ```bash
-sudo pig
+sudo env PATH="$PATH" pig
 ```
 
 # Accessing 
@@ -83,7 +83,7 @@ The /opt/pigation/config/config.yaml file is used to configure the server.
 
 The install creates the config.yaml file based on your answers during the 
 install. 
-It is generally easier to run `sudo/pig` if you need to make config modification
+It is generally easier to run `sudo pig` if you need to make config modification
 as that command will restart you pigation server with the new config.
 
 
@@ -162,7 +162,7 @@ To debug the pig server you can simply launch bin/pig.dart --server in your favo
 dart pub global activate dcli
 git clone https://github.com/bsutton/pig_server.git
 dcli compile bin/pig.dart
-sudo bin/pig --install
+sudo env PATH="$PATH" pig
 ```
 
 # publishing to pub.dev
