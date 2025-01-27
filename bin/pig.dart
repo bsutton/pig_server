@@ -5,14 +5,14 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
-import 'package:pig_server/src/config.dart';
-import 'package:pig_server/src/logger.dart';
-import 'package:pig_server/src/pi/gpio_manager.dart';
-import 'package:pig_server/src/startup/startup.g.dart';
+import 'package:pigation/src/config.dart';
+import 'package:pigation/src/logger.dart';
+import 'package:pigation/src/pi/gpio_manager.dart';
+import 'package:pigation/src/startup/startup.g.dart';
 
-/// PiGation server side app that can install, launch and 
+/// PiGation server side app that can install, launch and
 /// run the PiGation web server based on the command line args passed
-/// 
+///
 void main(List<String> args) async {
   final parser = ArgParser()
     ..options

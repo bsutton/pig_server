@@ -6,7 +6,7 @@ import 'dart:io';
 import 'package:dcli/dcli.dart';
 import 'package:path/path.dart' as path;
 import 'package:path/path.dart';
-import 'package:pig_server/src/database/management/db_utility.dart';
+import 'package:pigation/src/database/management/db_utility.dart';
 import 'package:settings_yaml/settings_yaml.dart';
 
 void main(List<String> args) async {
