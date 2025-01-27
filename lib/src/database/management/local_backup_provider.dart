@@ -58,7 +58,7 @@ class LocalBackupProvider extends BackupProvider {
     }
 
     /// db file path with .bak and date/time/added
-    final pathToBackupFile = join(pathToBackupDir, '$version.$datePart.zip');
+    final pathToBackupFile = join(pathToBackupDir, 'v$version.$datePart.zip');
 
     move(pathToZippedBackup, pathToBackupFile);
 
