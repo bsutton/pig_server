@@ -8,3 +8,4 @@ config/config.yaml
 release/config.yaml
 bin/pig_server
 lib/src/dcli/resource/generated/*.*
+bin/pig
