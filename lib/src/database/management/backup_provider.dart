@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:date_time_format/date_time_format.dart';
 import 'package:dcli_core/dcli_core.dart';
 import 'package:path/path.dart';
-import 'package:sentry/sentry.dart';
 
 import '../../util/irrigation_exception.dart';
 import '../factory/pig_database_factory.dart';
@@ -62,7 +61,7 @@ abstract class BackupProvider {
 
         try {
           final pathToBackupFile = join(tmpDir, 'pigation-$datePart.db');
-          final pathToDatabase =  databasePath;
+          final pathToDatabase = databasePath;
 
           if (!exists(pathToDatabase)) {
             emitProgress('Database file not found', 6, 6);
@@ -90,8 +89,7 @@ abstract class BackupProvider {
 
           emitProgress('Backup completed', 6, 6);
           return result;
-        } catch (e, st) {
-          await Sentry.captureException(e, stackTrace: st);
+        } catch (e) {
           emitProgress('Error during backup', 6, 6);
           rethrow;
         }
@@ -131,7 +129,7 @@ abstract class BackupProvider {
 
         // Restore the database file
         emitProgress('Restoring database file', 7, _restoreStageCount);
-        final appDbPath = await databasePath;
+        final appDbPath = databasePath;
         if (exists(appDbPath)) {
           delete(appDbPath);
         }
@@ -168,7 +166,7 @@ abstract class BackupProvider {
     final wasOpen = DatabaseHelper().isOpen();
     try {
       // Get the path to the app's internal database
-      final dbPath = await databasePath;
+      final dbPath = databasePath;
       if (wasOpen) {
         await DatabaseHelper().closeDb();
       }
@@ -206,7 +204,7 @@ abstract class BackupProvider {
       if (wasOpen) {
         await DatabaseHelper().closeDb();
       }
-      final pathToDatabase = await databasePath;
+      final pathToDatabase = databasePath;
       copy(pathToDatabase, pathToBackupFile);
     } finally {
       if (wasOpen) {
