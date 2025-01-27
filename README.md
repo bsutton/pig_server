@@ -12,12 +12,26 @@ Start by installing Dart on your raspberry PI.
 
 Once Dart is installed you can install PiGation.
 
+NOTE: you can run up a test system on any linux system as PiGation
+comes with a IO simulator that simply logs out any IO PIN changes when
+not run on a RiPi.
+
 ```bash
 dart pub global activate pigation
+dart pub global activate dcli
+sudo env PATH="$PATH" dcli install
 ```
 
-Now run the pigation installer. This will install pigation into /opt/pigation.
+Follow the dcli instructions on adding the ~/.dcli/bin directory to your path.
 
+Now compile pigation.
+
+```bash
+dcli compile --package pigation
+```
+
+
+Now run the pigation installer. This will install pigation into /opt/pigation.
 
 As part of the install you need to decide if you will use HTTP or HTTPS to
 access PiGation.  If you want to use HTTPS then your PI must be exposed on
@@ -40,6 +54,16 @@ your RiPI from a browser.
 
 If you have enabled HTTPS then:
 `https://mypi`
+
+# Getting Started
+The first thing you need to do is connect the GIO pins to your irrigation
+values, you will need a relay device to provide enough power to trigger the vales.
+
+Once the hardware is configured you need to define End Points and Garden Beds
+
+An EndPoint creates a named mapping to a GIO pin on the pie.
+Once you have defined you End Points you can go in and configure your
+Garden Beds. After which you are ready to water your garden.
 
 
 
