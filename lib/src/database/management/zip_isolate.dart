@@ -4,7 +4,6 @@ import 'dart:isolate';
 
 import 'package:archive/archive_io.dart';
 import 'package:path/path.dart';
-import 'package:sentry/sentry.dart';
 
 import 'backup_provider.dart';
 
@@ -38,7 +37,6 @@ Future<void> zipBackup(
   // Listen for progress updates from the isolate
   final completer = Completer<void>();
   errorPort.listen((error) {
-    Sentry.captureException(error);
     completer.completeError(error as Object);
   });
   exitPort.listen((message) {
@@ -68,15 +66,6 @@ Future<void> zipBackup(
 
 // _zipFiles function
 Future<void> _zipFiles(_ZipParams params) async {
-  await Sentry.init(
-    (options) {
-      options
-        ..dsn =
-            'https://17bb41df4a5343530bfcb92553f4c5a7@o4507706035994624.ingest.us.sentry.io/4507706038157312'
-        ..tracesSampleRate = 1.0;
-    },
-  );
-
   final encoder = ZipFileEncoder();
   final sendPort = params.sendPort;
 
@@ -95,15 +84,11 @@ Future<void> _zipFiles(_ZipParams params) async {
     sendPort.send(ProgressUpdate(
         'Zipping completed', params.progressStageEnd, params.progressStageEnd));
     // ignore: avoid_catches_without_on_clauses
-  } catch (e, st) {
-    await Sentry.captureException(e, stackTrace: st);
+  } catch (e) {
     // Send error back to the main isolate
     sendPort.send(ProgressUpdate('Error during zipping: $e',
         params.progressStageEnd, params.progressStageEnd));
   }
-
-  /// Isolate won't shutdown if we don't terminate sentry.
-  await Sentry.close();
 }
 
 Future<String?> extractFiles(BackupProvider provider, File backupFile,
