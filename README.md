@@ -1,5 +1,36 @@
 # PiGation
 
+PiGation is a WebServer and front end for running an irrigation system
+on the raspberry pi.
+
+PiGation lets you configure garden beds and lights associate those features
+with general IO pins on your Rapsberry PI.
+
+Pigation is written in Dart and easy to install.
+
+Start by installing Dart on your raspberry PI.
+
+Once Dart is installed you can install PiGation.
+
+```bash
+dart pub global activate pigation
+```
+
+Now run the pigation installer. This will install pigation into /opt/pigation.
+
+
+As part of the install you need to decide if you will use HTTP or HTTPS to
+access PiGation.  If you want to use HTTPS then your PI must be exposed on
+the internate (using NAT) with both port 80 and 443 open.
+
+If you don't understand how to configure NAT then just choose HTTP.
+
+
+```bash
+sudo pig
+```
+
+
 This is a complete web server with a builtin letsencrypt client that obtains certs
 and serves static content.
 
@@ -80,10 +111,9 @@ The following is a sample for your **production** environment
 `<project root>/release/config.yaml`
 
 ```yaml
-mail_app_username: bsutton@onepub.dev
-gmail_app_password: XXXXXXXXXXX
+password: XXXXXXXXXXX
 path_to_static_content: /opt/handyman/www_root
-lets_encrypt_live: /opt/handyman/letsencrypt/live
+path_to_lets_encrypt_live: /opt/pigation/letsencrypt/live
 fqdn: ivanhoehandyman.com.au
 domain_email: bsutton@onepub.dev
 https_port: 443
@@ -100,8 +130,8 @@ The following is a sample for your **development** environment
 ```yaml
 gmail_app_username: bsutton@onepub.dev
 gmail_app_password: XXXXXXXXXXX
-path_to_static_content: /home/bsutton/git/handyman/www_root
-lets_encrypt_live: /opt/ihs/letsencrypt/live
+path_to_static_content: /home/bsutton/git/pigation/www_root
+path_to_lets_encrypt_live: /opt/pigation/letsencrypt/live
 fqdn: squarephone.biz
 domain_email: bsutton@onepub.dev
 https_port: 10443
@@ -116,16 +146,15 @@ logger_path: console
 
 | setting | purpose |
 | ------------ | ----------------- |
-| gmail_app_username | username of google workspace account. Required to using the /booking endpoint to send emails |
-| gmail_app_password | password of the google workspace account. |
+| password | hasshed password used to auth the front end app. |
 | path_to_static_content | location where the server will look for the sites static web content |
-| lets_encrypt_live | The location to store the lets encrypt certificate. |
+| path_to_lets_encrypt_live | The location to store the lets encrypt certificate. |
 | fqdn | The fully qualified domain name of your web site |
 |domain_email | The email address we submit to Lets Encrypt so it can send renewal notices and other critical communications. (We do however renew certificates automatically). |
 |https_port | The port to listen to https requests on. |
 | http_port | The port to listen to http requests on. This port MUST be open as it is required by Lets Encrypt to obtain a certificate |
-| production | Controls wheter we obtain a live or staging Lets Encrypt certificate. You should start by setting this to false until you have seen IHAServer successfully obtain a certificate. You can then change the setting to 'true' and restart the IAHServer to obtain a live certificate. **See blow for additional information**|
-| binding_address | The IP address that IAHServer will listen to. Using 0.0.0.0 tells the IAHServer to listen on all local addresses. If you use a specific address it must be a local addres on the server. |
+| production | Controls wheter we obtain a live or staging Lets Encrypt certificate. You should start by setting this to false until you have seen IHAServer successfully obtain a certificate. You can then change the setting to 'true' and restart the IAHServer to obtain a live certificate. **See below for additional information**|
+| binding_address | The IP address that IAHServer will listen to. Using 0.0.0.0 tells the PIG Server to listen on all local addresses. If you use a specific address it must be a local addres on the server. |
 | logger_path | The path to write log messages to. If you set this value to 'console' log messages are printed to the stdout (the console). This is useful in a development environment |
 
 
@@ -139,21 +168,7 @@ The production setting in config.yaml, controls  whether we obtain a live or sta
 *This is important* as the production flag controls whether we get a staging
 or live Lets Encrypt certificate. Lets Encrypt has *very strict rate limits* on
 the number of certificates it will issue to a production system (5 per 48 hrs?)
-so if you get something wrong (your http port isn't open) you can end up not being able to get a live
-certificate for 48 hrs.
-
-
-# Email
-The pig_servver has a '/booking' end-point which can send an email.
-It does this by connection to gmail. You will need a gmail app password
-for this to work.
-
-If you are not using the /booking end point then you don't need to configure
-the gmail app username/password.
-
-Use the following link to get an app password (assumes you have a gmail workspace account.)
-https://myaccount.google.com/apppasswords
-
+so if you get something wrong (your http port isn't open) you can end up not being able to get a live certificate for 48 hrs.
 
 
 # Development
@@ -180,72 +195,30 @@ and NAT are set up correctly.
 
 ## Run the service locally
 
-To debug the pig_server you can simply launch bin/pig_server.dart in your favourite IDE.
-
-
-
-You can run this function example on your own machine using Docker to simulate
-running in a hosted environment.
-
-```shell
-$ docker build -t email_server .
-...
-
-$ docker run -it -p 8080:8080 --name app email_server
-Listening on :8080
-```
-
-You can test the server using postman
-Method: post
-Body: x-www-form-urlencoded
-Args:
-name:
-email:
-phone:
-description:
-...
-
-
-
-
-If you're curious about the size of the image you created, enter:
-
-```shell
-$ docker image ls email_server
-REPOSITORY   TAG       IMAGE ID       CREATED          SIZE
-email_server        latest    3f23c737877b   1 minute ago     11.6MB
-```
+To debug the pig server you can simply launch bin/pig.dart --server.dart in your favourite IDE.
 
 
 # Build on the PI
 
-
-
 ```bash
+dart pub global activate dcli
 git clone https://github.com/bsutton/pig_server.git
-
-touch !~/pig_server/release/config.yaml
+dcli compile bin/pig.dart
+sudo bin/pig --install
 ```
 
 Edit the config.yaml and add contents as follows making the necessary changes:
 
 ```yaml
-# pig_server sends an email each time it starts up via
-# gmail account.
-# To obtain a gmail app password:
-# https://myaccount.google.com/apppasswords
-# TODO: we need to allow this to be disabled.
-
-gmail_app_username: bsutton@onepub.dev
-gmail_app_password: xeae mrqw mhuk sxbo
+password: <hashed passwrod>
 path_to_static_content: /opt/pigation/www_root
-lets_encrypt_live: /opt/pigation/letsencrypt/live
+path_to_lets_encrypt_live: /opt/pigation/letsencrypt/live
 fqdn: ivanhoehandyman.com.au
 domain_email: bsutton@onepub.dev
 https_port: 443
 http_port: 80
 use_https: false
-production: true
+production: false
 binding_address: 0.0.0.0
 logger_path: /var/log/pig_server.log
 
@@ -256,5 +229,7 @@ logger_path: /var/log/pig_server.log
 cd pig_server
 dart pub get
 tool/build.dart
-sudo tool/deploy
+dcli compile bin/pig.dart
+# install and start the web server.
+sudo bin/pig 
 ```
