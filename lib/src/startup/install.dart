@@ -29,7 +29,10 @@ Future<void> doInstall({required bool debug}) async {
   }
 
   if (!Shell.current.isPrivilegedUser) {
-    printerr(red('You must run this script as sudo'));
+    printerr(red('''
+You must run this script as sudo
+sudo env PATH="$PATH" pig
+    '''));
     exit(1);
   }
   await _getConfigFromUser();
