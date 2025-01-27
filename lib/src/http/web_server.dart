@@ -15,7 +15,6 @@ import '../database/management/database_helper.dart';
 import '../database/management/local_backup_provider.dart';
 import '../database/versions/resource_script_source.dart';
 import '../logger.dart';
-import '../mailer.dart';
 import '../pi/gpio_manager.dart';
 import '../weather/bureaus/weather_bureaus.dart';
 import 'handlers/router.dart';
@@ -28,11 +27,11 @@ late HttpServer secureServer;
 
 Future<void> startWebServer(Config config) async {
   final pathToStaticContent = config.pathToStaticContent;
-  await _checkConfiguration(pathToStaticContent);
+  await _checkConfiguration(pathToStaticContent!);
 
-  await _checkFQDNResolved(config.fqdn);
+  await _checkFQDNResolved(config.fqdn!);
 
-  final domain = Domain(name: config.fqdn, email: config.domainEmail);
+  final domain = Domain(name: config.fqdn!, email: config.domainEmail!);
 
   await _initDb();
 
@@ -40,19 +39,16 @@ Future<void> startWebServer(Config config) async {
 
   await _initPins();
 
-  final letsEncrypt = build(
-      mode: Config().production
-          ? CertificateMode.production
-          : CertificateMode.staging);
-
   if (Config().useHttps) {
+    final letsEncrypt = build(
+        mode: Config().production!
+            ? CertificateMode.production
+            : CertificateMode.staging);
     await _startHttpsServer(letsEncrypt, domain);
     await _startRenewalService(letsEncrypt, domain);
   } else {
     await _startWebServer();
   }
-
-  await _sendTestEmail();
 }
 
 Future<void> _initPins() async {
@@ -130,8 +126,8 @@ Future<void> _startHttpsServer(LetsEncrypt letsEncrypt, Domain domain) async {
     [domain],
   );
 
-  server = servers[0]; // HTTP Server.
-  secureServer = servers[1]; // HTTPS Server.
+  server = servers.http;
+  secureServer = servers.https;
 
   // Enable gzip:
   server.autoCompress = true;
@@ -162,7 +158,7 @@ void _log(String message, bool isError) {
 // [fqdn] is the fqdn for the HTTPS certificate
 LetsEncrypt build({CertificateMode mode = CertificateMode.staging}) {
   final config = Config();
-  final certificatesDirectory = config.letsEncryptLive;
+  final certificatesDirectory = config.pathToLetsEncryptLive!;
 
   // The Certificate handler, storing at `certificatesDirectory`.
   final certificatesHandler =
@@ -172,7 +168,6 @@ LetsEncrypt build({CertificateMode mode = CertificateMode.staging}) {
       port: config.httpPort,
       securePort: config.httpsPort,
       bindingAddress: config.bindingAddress,
-      selfTest: false,
       production: mode == CertificateMode.production)
     ..minCertificateValidityTime = const Duration(days: 10);
 
@@ -186,21 +181,6 @@ Future<void> _checkConfiguration(String pathToStaticContent) async {
   qlog(blue('Loading config.yaml from ${truepath(config.loadedFrom)}'));
 
   qlog(blue(buildStartingMessage(config)));
-}
-
-Future<void> _sendTestEmail() async {
-  qlog('Sending test email to bsutton@onepub.dev');
-  final result = await sendEmail(
-      from: 'startup@onepub.dev',
-      to: 'bsutton@onepub.dev',
-      subject: 'PiGation',
-      body: 'The PiGation Server has been restarted');
-
-  if (!result) {
-    qlogerr(red(
-        '''Failed to send startup email: check the configuration at ${Config().loadedFrom}'''));
-    exit(33);
-  }
 }
 
 String buildStartingMessage(Config config) {
@@ -223,7 +203,7 @@ Future<void> _initDb() async {
         backupProvider: backupProvider,
         backup: true,
         databaseFactory: CliDatabaseFactory());
-    print('Database located at: ${await backupProvider.databasePath}');
+    print('Database located at: ${backupProvider.databasePath}');
     // ignore: avoid_catches_without_on_clauses
   } catch (e) {
     qlogerr('Db open failed. Try rebooting your phone or restore the db $e');
