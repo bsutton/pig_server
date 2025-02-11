@@ -116,7 +116,7 @@ You will need a separate config.yaml files for your development environment.
 
 | usage | location |
 | ----- | ----- |
-| development path | <project root>/config/config.yaml |
+| development path | `<project root>/config/config.yaml` |
 
 
 The following is a sample for your **development** environment
