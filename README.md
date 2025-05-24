@@ -116,7 +116,7 @@ You will need a separate config.yaml files for your development environment.
 
 | usage | location |
 | ----- | ----- |
-| development path | <project root>/config/config.yaml |
+| development path | `<project root>/config/config.yaml` |
 
 
 The following is a sample for your **development** environment
@@ -124,10 +124,10 @@ The following is a sample for your **development** environment
 `<project root>/config/config.yaml`
 ```yaml
 password: XXXXXXXXXXX
-path_to_static_content: /home/bsutton/git/pigation/pig_app/build/web
+path_to_static_content: /home/yourhome/pigation/pig_app/build/web
 path_to_lets_encrypt_live: /opt/pigation/letsencrypt/live
 fqdn: <your local ip>
-domain_email: bsutton@onepub.dev
+domain_email: your@email.dev
 https_port: 10443  # use ports above 1024
 http_port: 1080
 production: false
@@ -140,12 +140,12 @@ logger_path: console
 
 | setting | purpose |
 | ------------ | ----------------- |
-| password | hasshed password used to auth the front end app. |
+| password | hashed password used to auth the front end app. |
 | path_to_static_content | location where the server will look for the sites static web content |
 | path_to_lets_encrypt_live | The location to store the lets encrypt certificate. |
 | fqdn | The fully qualified domain name of your web site |
-|domain_email | The email address we submit to Lets Encrypt so it can send renewal notices and other critical communications. (We do however renew certificates automatically). |
-|https_port | The port to listen to https requests on. |
+| domain_email | The email address we submit to Lets Encrypt so it can send renewal notices and other critical communications. (We do however renew certificates automatically). |
+| https_port | The port to listen to https requests on. |
 | http_port | The port to listen to http requests on. This port MUST be open as it is required by Lets Encrypt to obtain a certificate |
 | production | Controls wheter we obtain a live or staging Lets Encrypt certificate. You should start by setting this to false until you have seen IHAServer successfully obtain a certificate. You can then change the setting to 'true' and restart the IAHServer to obtain a live certificate. **See below for additional information**|
 | binding_address | The IP address that IAHServer will listen to. Using 0.0.0.0 tells the PIG Server to listen on all local addresses. If you use a specific address it must be a local addres on the server. |
