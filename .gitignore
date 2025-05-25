@@ -8,5 +8,6 @@ config/config.yaml
 release/config.yaml
 bin/pig_server
 bin/pig
+bin/pig_arm64
 test/letsencrypt
 .failed_tracker
