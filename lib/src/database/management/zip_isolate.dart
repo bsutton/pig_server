@@ -83,7 +83,6 @@ Future<void> _zipFiles(_ZipParams params) async {
     // Notify completion
     sendPort.send(ProgressUpdate(
         'Zipping completed', params.progressStageEnd, params.progressStageEnd));
-    // ignore: avoid_catches_without_on_clauses
   } catch (e) {
     // Send error back to the main isolate
     sendPort.send(ProgressUpdate('Error during zipping: $e',
@@ -96,7 +95,7 @@ Future<String?> extractFiles(BackupProvider provider, File backupFile,
   final encoder = ZipDecoder();
   String? dbPath;
   // Extract the ZIP file contents to a temporary directory
-  final archive = encoder.decodeBuffer(InputFileStream(backupFile.path));
+  final archive = encoder.decodeStream(InputFileStream(backupFile.path));
 
   const restored = 0;
 

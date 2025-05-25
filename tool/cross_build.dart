@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
 import 'package:path/path.dart' as path;
 import 'package:path/path.dart';
@@ -10,12 +11,28 @@ import 'package:pigation/src/database/management/db_utility.dart';
 import 'package:settings_yaml/settings_yaml.dart';
 
 void main(List<String> args) async {
+  final parser = ArgParser()
+    ..addFlag('no-wasm', help: "Don't rebuild the wasm front end");
   // 'dcli pack'.run;
   // 'zip -r www_root.zip www_root'.run;
+
+  ArgResults parsed;
+  try {
+    parsed = parser.parse(args);
+  } on FormatException catch (e) {
+    print(e);
+    rethrow;
+  }
 
   await updateAssetList();
 
   final project = DartProject.self;
+
+  print(green('building wasm front end'));
+
+  'tool/build.dart --build --wasm'.start(workingDirectory: '../pig_app');
+
+  print(green('wasm build completed'));
 
   print(green('Packing deployable resources'));
   Resources().pack();
@@ -23,9 +40,9 @@ void main(List<String> args) async {
   final buildSettings = SettingsYaml.load(
       pathToSettings: join(project.pathToProjectRoot, 'tool', 'build.yaml'));
 
-  // final scpCommand = buildSettings.asString('scp_command');
+  final scpCommand = buildSettings.asString('scp_command');
   final targetServer = buildSettings.asString('target_server');
-  // final targetDirectory = buildSettings.asString('target_directory');
+  final targetDirectory = buildSettings.asString('target_directory');
 
   /// Order is important.
   /// We must compile iahserver and the resources as they are all
@@ -39,7 +56,7 @@ void main(List<String> args) async {
       .run;
 
   // print(green("deploying 'deploy' to $targetDirectory"));
-  // '$scpCommand tool/deploy $targetServer:$targetDirectory'.run;
+  '$scpCommand bin/pig_arm64 $targetServer:$targetDirectory'.run;
 
   print(orange('build complete'));
   print("log into the $targetServer and run 'pig_arm64 --install'");

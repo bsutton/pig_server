@@ -75,6 +75,7 @@ class GpioManagerRaspPi implements GpioManager {
       required bool turnOn}) {
     try {
       GPIOdirection direction;
+      final onOrOff = turnOn ? 'on' : 'off';
       if (turnOn) {
         // Determine the initial state based on activation type
         direction = activationType == PinActivationType.highIsOn
@@ -93,9 +94,10 @@ class GpioManagerRaspPi implements GpioManager {
         final gpio = GPIO(pinNo, direction);
         _gpioMap[pinNo] = gpio;
         print('''
-Provisioned GPIO pin $pinNo with initial state(off): $direction''');
-      } catch (e) {
-        print('Error provisioning GPIO pin $pinNo: $e');
+Set GPIO pin $pinNo to $onOrOff: $direction''');
+      } catch (e, st) {
+        print('Error Setting GPIO pin state $pinNo to $onOrOff : $e');
+        print('StackTrace: $st');
       }
 
       _printPinStates();

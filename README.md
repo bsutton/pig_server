@@ -204,3 +204,24 @@ pub_release
 
 There is a pub_release hook too/pre_release_hook/build_and_pack_wasm.dart which
 builds the wasm target and packs it into the pigation server.
+
+
+# cross platform compliation
+
+* requires dart 3.8
+
+You can compile pig for you raspberry pi using a Linix/Windows or MacOS
+desktop environment.
+
+Compiling on your rpi can be very slow and requires quite a bit of memory.
+As such it is better to compile the pig exec on a desktop system.
+
+* Note the cross compilation will take a few minutes.
+
+To cross compile run:
+
+```bash
+cd pig_server
+
+tool/cross_build.dart
+```

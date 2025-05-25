@@ -1,4 +1,3 @@
-// ignore: prefer_relative_imports
 import 'package:dcli/dcli.dart';
 
 /// GENERATED -- GENERATED
@@ -27,7 +26,7 @@ class A933a3ddb758239427ea8c071f5169c5d extends PackedResource {
   String get checksum =>
       '3f27003f534d514d6ba1fdddec2fd65c';
 
-  /// <package>/resources relative path to the original resource.
+  /// `<package>/resources` relative path to the original resource.
   @override
   String get originalPath => 'www_root/assets/packages/iconsax_flutter/fonts/FlutterIconsax.ttf';
 

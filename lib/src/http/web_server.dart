@@ -101,12 +101,9 @@ Future<void> _startWebServer() async {
       .addHandler(router.call);
   // .addHandler(router.call);
 
-  final server = await serve(
-    handler,
-    Config().bindingAddress,
-    Config().httpPort,
-  );
-  qlog('Serving at http://${server.address.host}:${server.port}');
+  qlog('Serving at http://${Config().bindingAddress}:${Config().httpPort}');
+
+  await serve(handler, Config().bindingAddress, Config().httpPort);
 }
 
 Future<void> _startHttpsServer(LetsEncrypt letsEncrypt, Domain domain) async {

@@ -1,4 +1,3 @@
-// ignore: prefer_relative_imports
 import 'package:dcli/dcli.dart';
 
 /// GENERATED -- GENERATED
@@ -27,7 +26,7 @@ class A9e76318cf387fb01992b9ab23d950e22 extends PackedResource {
   String get checksum =>
       '3dd15ba8d0a2d02283855f3a6b596c9e';
 
-  /// <package>/resources relative path to the original resource.
+  /// `<package>/resources` relative path to the original resource.
   @override
   String get originalPath => 'www_root/favicon.png';
 

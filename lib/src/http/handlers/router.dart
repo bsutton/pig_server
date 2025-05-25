@@ -1,7 +1,8 @@
+import 'dart:async';
+
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 import 'package:shelf_web_socket/shelf_web_socket.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../../controllers/timer_control.dart';
 import 'end_point_handler.dart';
@@ -42,7 +43,7 @@ Router buildRouter() {
 
 // Future<Response?> monitor(Request request) async {
 
-Handler monitorHandler() => webSocketHandler((WebSocketChannel socket, _) {
+Handler monitorHandler() => webSocketHandler((socket, _) {
       print('websocket connected');
       TimerControl().monitor(socket.sink);
       socket.stream.listen((data) {
@@ -51,6 +52,6 @@ Handler monitorHandler() => webSocketHandler((WebSocketChannel socket, _) {
       }, onDone: () {
         print('Closing monitor');
         TimerControl().stopMonitor(socket.sink);
-        socket.sink.close();
+        unawaited(socket.sink.close());
       });
     });

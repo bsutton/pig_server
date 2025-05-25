@@ -36,9 +36,9 @@ class TimerControl {
       feature: feature,
       description: description,
       duration: duration,
-      completionAction: (feature) {
+      completionAction: (feature) async {
         stopTimer(feature);
-        completionAction(feature);
+        await completionAction(feature);
       },
     );
     _timers[feature.id] = entry;
@@ -113,7 +113,7 @@ class FeatureTimer {
   final String description;
   final Duration duration;
   final DateTime startTime;
-  final void Function(GardenFeature) completionAction;
+  final Future<void> Function(GardenFeature) completionAction;
 
   Delay<GardenFeature>? _delay;
 

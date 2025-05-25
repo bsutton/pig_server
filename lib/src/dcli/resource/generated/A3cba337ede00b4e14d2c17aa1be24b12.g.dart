@@ -1,4 +1,3 @@
-// ignore: prefer_relative_imports
 import 'package:dcli/dcli.dart';
 
 /// GENERATED -- GENERATED
@@ -27,7 +26,7 @@ class A3cba337ede00b4e14d2c17aa1be24b12 extends PackedResource {
   String get checksum =>
       '4dbda35ec0dc93e1900e3dc95ddfb7e0';
 
-  /// <package>/resources relative path to the original resource.
+  /// `<package>/resources` relative path to the original resource.
   @override
   String get originalPath => 'www_root/icons/Icon-maskable-192.png';
 

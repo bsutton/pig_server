@@ -1,4 +1,3 @@
-// ignore: prefer_relative_imports
 import 'package:dcli/dcli.dart';
 
 /// GENERATED -- GENERATED
@@ -27,7 +26,7 @@ class Ab01380d65ed0a47775740943e6e584cf extends PackedResource {
   String get checksum =>
       '633d245af2231bde93466d4f30b31c62';
 
-  /// <package>/resources relative path to the original resource.
+  /// `<package>/resources` relative path to the original resource.
   @override
   String get originalPath => 'www_root/assets/shaders/ink_sparkle.frag';
 

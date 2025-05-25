@@ -2,7 +2,7 @@ import 'package:shelf/shelf.dart';
 
 /// Headers required to run a flutter wasm app from
 /// our server.
-final Map<String, String> _flutterWasmHeaders = {
+final _flutterWasmHeaders = <String, String>{
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST',
   'Access-Control-Allow-Headers':

@@ -9,9 +9,9 @@ import 'package:pointycastle/export.dart';
 class Password {
   // The higher the number of iterations, the more expensive computing
   //the hash is for us and attackers.
-  static const int iterations = 20000;
-  static const int saltLen = 32;
-  static const int keyLen = 32; // 256 bits
+  static const iterations = 20000;
+  static const saltLen = 32;
+  static const keyLen = 32; // 256 bits
 
   /// Computes a salted PBKDF2 hash of the given plaintext password suitable
   /// for storing in a database.

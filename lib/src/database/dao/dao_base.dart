@@ -83,7 +83,7 @@ class DaoBase<T extends Entity<T>> {
   //// Returns the number of rows deleted.
   Future<int> delete(int id, [Transaction? transaction]) async {
     final executor = transaction ?? db;
-    final rowsDeleted = executor.delete(
+    final rowsDeleted = await executor.delete(
       _tableName,
       where: 'id = ?',
       whereArgs: [id],

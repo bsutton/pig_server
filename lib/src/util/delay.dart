@@ -24,7 +24,7 @@ class Delay<F> {
   final Future<void> Function(F) callback;
 
   /// A flag to indicate whether the delay has been canceled.
-  bool _isCancelled = false;
+  var _isCancelled = false;
 
   /// Starts the delay and executes the callback after the duration,
   /// unless canceled.

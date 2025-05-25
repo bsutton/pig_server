@@ -11,7 +11,7 @@ class DatabaseHelper {
   factory DatabaseHelper() => instance;
   DatabaseHelper._();
   static Database? _database;
-  static final DatabaseHelper instance = DatabaseHelper._();
+  static final instance = DatabaseHelper._();
 
   Database get database => _database!;
 

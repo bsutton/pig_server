@@ -5,7 +5,7 @@ import 'contants.dart';
 /// A helper class for handling [DateTime] comparisons, checks, and formatting.
 class LocalDateTimeHelper {
   /// Formatter for `DateTime` objects with the pattern `yyyy-MM-dd HH:mm`.
-  static final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm');
+  static final formatter = DateFormat('yyyy-MM-dd HH:mm');
 
   /// Returns the later of two [DateTime] objects.
   /// If either is null, the non-null value is returned.

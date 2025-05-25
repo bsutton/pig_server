@@ -1,3 +1,3 @@
-target_server:  irrigation
+target_server:  irrigation.noojee.org
 target_directory: /opt/pigation
-scp_command: op-scp
+scp_command: scp

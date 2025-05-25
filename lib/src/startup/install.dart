@@ -29,9 +29,9 @@ Future<void> doInstall({required bool debug}) async {
   }
 
   if (!Shell.current.isPrivilegedUser) {
-    printerr(red('''
+    printerr(red(r'''
 You must run this script as sudo
-sudo env PATH="$PATH" pig
+sudo env PATH="$PATH" pig_arm64
     '''));
     exit(1);
   }
@@ -43,7 +43,9 @@ sudo env PATH="$PATH" pig
 Future<void> _getConfigFromUser() async {
   Config.init();
 
-  final config = Config()..password = _createPassword();
+  final config = Config()
+    ..password = _createPassword()
+    ..pathToStaticContent = pathToWwwRoot;
 
   print(green('''
 

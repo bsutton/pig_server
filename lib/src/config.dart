@@ -46,10 +46,10 @@ class Config {
   String? _domainEmail;
   // if false we handle request via http and don't
   // start the https service.
-  bool _useHttps = false;
-  int _httpPort = 80;
-  int _httpsPort = 443;
-  String _bindingAddress = '0.0.0.0';
+  var _useHttps = false;
+  var _httpPort = 80;
+  var _httpsPort = 443;
+  var _bindingAddress = '0.0.0.0';
   String _pathToLogfile = pathToLog;
 
   Future<void> save() async => _settings.save();
@@ -72,6 +72,7 @@ class Config {
 
   // Getter and Setter for pathToStaticContent
   String? get pathToStaticContent => _pathToStaticContent;
+
   set pathToStaticContent(String? value) {
     _pathToStaticContent = value;
     _settings['path_to_static_content'] = value;

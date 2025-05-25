@@ -20,7 +20,7 @@ import 'bom_weather_station.dart';
 class BureauOfMeterologyAustralia implements WeatherBureau {
   WeatherStation? _defaultStation;
 
-  static final DateFormat _dateFormat = DateFormat('yyyyMMddHHmmss');
+  static final _dateFormat = DateFormat('yyyyMMddHHmmss');
 
   @override
   void setDefaultStation(WeatherStation station) {

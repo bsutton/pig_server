@@ -3,10 +3,10 @@ import 'package:intl/intl.dart';
 /// Utility class for formatting dates, times, and durations.
 class Formatters {
   /// Formatter for dates (dd/MM/yyyy).
-  static final DateFormat dateFormat = DateFormat('dd/MM/yyyy');
+  static final dateFormat = DateFormat('dd/MM/yyyy');
 
   /// Formatter for date and time (dd/MM/yyyy hh:mma).
-  static final DateFormat dateTimeFormat = DateFormat('dd/MM/yyyy hh:mma');
+  static final dateTimeFormat = DateFormat('dd/MM/yyyy hh:mma');
 
   /// Formats a [DateTime] object to a date string.
   static String formatDate(DateTime? date) =>

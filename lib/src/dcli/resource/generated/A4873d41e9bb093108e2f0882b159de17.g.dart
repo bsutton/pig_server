@@ -1,4 +1,3 @@
-// ignore: prefer_relative_imports
 import 'package:dcli/dcli.dart';
 
 /// GENERATED -- GENERATED
@@ -27,7 +26,7 @@ class A4873d41e9bb093108e2f0882b159de17 extends PackedResource {
   String get checksum =>
       '4d7e4a85b12f85461e8a36cf2f21b6f8';
 
-  /// <package>/resources relative path to the original resource.
+  /// `<package>/resources` relative path to the original resource.
   @override
   String get originalPath => 'sql/upgrade_scripts/v2.sql';
 

@@ -1,4 +1,3 @@
-// ignore: prefer_relative_imports
 import 'package:dcli/dcli.dart';
 
 /// GENERATED -- GENERATED
@@ -27,7 +26,7 @@ class Adbf1e04ff8d74b1d1425f128e56f73ad extends PackedResource {
   String get checksum =>
       '882638d4509bc5449b06e874101e6e2d';
 
-  /// <package>/resources relative path to the original resource.
+  /// `<package>/resources` relative path to the original resource.
   @override
   String get originalPath => 'www_root/assets/FontManifest.json';
 

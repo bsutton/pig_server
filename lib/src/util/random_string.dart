@@ -15,10 +15,10 @@ class RandomString {
       throw ArgumentError('Symbols must contain at least 2 characters');
     }
   }
-  static const String _upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  static const String _lower = 'abcdefghijklmnopqrstuvwxyz';
-  static const String _digits = '0123456789';
-  static const String _alphanum = '$_upper$_lower$_digits';
+  static const _upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  static const _lower = 'abcdefghijklmnopqrstuvwxyz';
+  static const _digits = '0123456789';
+  static const _alphanum = '$_upper$_lower$_digits';
 
   final Random _random;
   final String _symbols;

@@ -1,4 +1,3 @@
-// ignore: prefer_relative_imports
 import 'package:dcli/dcli.dart';
 
 /// GENERATED -- GENERATED
@@ -27,7 +26,7 @@ class A6ab048d4560a138ed7618aae90b3d081 extends PackedResource {
   String get checksum =>
       '16e899d7ccdd1ec25c0f10078aa062e1';
 
-  /// <package>/resources relative path to the original resource.
+  /// `<package>/resources` relative path to the original resource.
   @override
   String get originalPath => 'www_root/assets/AssetManifest.bin';
 

@@ -29,7 +29,7 @@ class PBKDF2 extends Algorithm {
     _derivator = PBKDF2KeyDerivator(HMac(SHA512Digest(), blockLength))
       ..init(Pbkdf2Parameters(_salt, iterationCount, desiredKeyLength));
   }
-  static String id = 'pcks';
+  static const id = 'pcks';
   final int blockLength;
   final int iterationCount;
   final int desiredKeyLength;

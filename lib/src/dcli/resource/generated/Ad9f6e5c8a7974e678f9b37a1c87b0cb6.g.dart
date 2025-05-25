@@ -1,4 +1,3 @@
-// ignore: prefer_relative_imports
 import 'package:dcli/dcli.dart';
 
 /// GENERATED -- GENERATED
@@ -27,7 +26,7 @@ class Ad9f6e5c8a7974e678f9b37a1c87b0cb6 extends PackedResource {
   String get checksum =>
       '6532538a68cc6ef2a136337265823282';
 
-  /// <package>/resources relative path to the original resource.
+  /// `<package>/resources` relative path to the original resource.
   @override
   String get originalPath => 'altbin/pig_launch.sh';
 

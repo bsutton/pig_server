@@ -6,7 +6,7 @@ import 'end_point_change_listener.dart';
 class EndPointBus {
   /// Private constructor for singleton pattern.
   EndPointBus._internal();
-  static final EndPointBus _instance = EndPointBus._internal();
+  static final _instance = EndPointBus._internal();
 
   /// A map of EndPoints to their listeners.
   final Map<EndPoint, List<EndPointChangeListener>> _listenerMap = {};
