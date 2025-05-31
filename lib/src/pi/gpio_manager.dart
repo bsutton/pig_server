@@ -1,7 +1,7 @@
 import 'package:dcli/dcli.dart';
 import 'package:pig_common/pig_common.dart';
 
-import '../database/types/pin_status.dart';
+import '../database/types/pin_logic_status.dart';
 import 'gpio_manager_mock.dart';
 import 'gpio_manager_rasp.dart';
 
@@ -33,7 +33,7 @@ abstract class GpioManager {
       required bool turnOn});
 
   /// Get the current status of a GPIO pin.
-  PinStatus getCurrentStatus(EndPoint endPoint);
+  PinLogicStatus getCurrentStatus(EndPoint endPoint);
 
   /// Detect if running on a Raspberry Pi
   static bool _isRaspberryPi() {

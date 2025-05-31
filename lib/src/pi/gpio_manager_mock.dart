@@ -2,7 +2,7 @@ import 'package:dcli/dcli.dart';
 import 'package:pig_common/pig_common.dart';
 
 import '../database/dao/dao_endpoint.dart';
-import '../database/types/pin_status.dart';
+import '../database/types/pin_logic_status.dart';
 import '../logger.dart';
 import 'gpio_manager.dart';
 
@@ -64,14 +64,14 @@ Mock provisioned GPIO pin $pinNo with initial state: ${_mockPinStates[pinNo.gpio
   }
 
   @override
-  PinStatus getCurrentStatus(EndPoint endPoint) {
+  PinLogicStatus getCurrentStatus(EndPoint endPoint) {
     final pinNo = endPoint.gpioPinNo;
     if (!_mockPinStates.containsKey(pinNo)) {
       print('Mock error: GPIO pin $pinNo has not been provisioned.');
-      return PinStatus.off;
+      return PinLogicStatus.off;
     }
     final isHigh = _mockPinStates[pinNo]!;
-    return PinStatus.getStatus(endPoint, isHigh: isHigh == PinState.high);
+    return PinLogicStatus.getStatus(endPoint, isHigh: isHigh == PinState.high);
   }
 
   void _printPinStates() {

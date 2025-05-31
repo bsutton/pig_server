@@ -48,7 +48,7 @@ class TimerControl {
       noticeType: NoticeType.start,
       featureType: FeatureType.fromFeature(feature),
       featureId: feature.id,
-      description: description,
+      description: feature.name,
     ));
   }
 
@@ -119,7 +119,7 @@ class FeatureTimer {
 
   /// Starts the timer and schedules [completionAction].
   void start() {
-    final delay = Delay<GardenFeature>(
+    _delay = Delay<GardenFeature>(
       description: description,
       duration: duration,
       feature: feature,
@@ -129,7 +129,7 @@ class FeatureTimer {
       },
     );
 
-    unawaited(delay.start());
+    unawaited(_delay!.start());
   }
 
   /// Cancels the timer if running.

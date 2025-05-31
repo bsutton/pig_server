@@ -14,6 +14,7 @@ import 'overview_handler.dart';
 Router buildRouter() {
   final router = Router()
     ..get('/', handleDefault)
+    ..get('/monitor', monitorHandler())
     ..get('/<.*>', handleStatic)
     ..get('/assets/<path|.*>', handleStatic)
     ..get('/css/<.*>', handleStatic)
@@ -35,8 +36,7 @@ Router buildRouter() {
     ..post('/end_point/save', handleEndPointSave)
     ..post('/end_point/toggle', handleEndPointToggle)
     ..post('/end_point/delete', handleEndPointDelete)
-    ..post('/overview', (Request request) async => handleOverview(request))
-    ..mount('/monitor', monitorHandler());
+    ..post('/overview', (Request request) async => handleOverview(request));
 
   return router;
 }

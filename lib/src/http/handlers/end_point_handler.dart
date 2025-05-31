@@ -7,7 +7,7 @@ import 'package:strings/strings.dart';
 
 import '../../controllers/garden_bed_controller.dart';
 import '../../database/dao/dao_endpoint.dart';
-import '../../database/types/pin_status.dart';
+import '../../database/types/pin_logic_status.dart';
 import '../../pi/gpio_manager.dart';
 import '../../weather/bureaus/weather_bureaus.dart';
 
@@ -30,7 +30,7 @@ Future<Response> handleEndPointList(Request request) async {
     final endPointList = <EndPointInfo>[];
     for (final ep in endPoints) {
       endPointList.add(EndPointInfo.fromEndPoint(ep,
-          on: dao.getCurrentStatus(ep) == PinStatus.on));
+          on: dao.getCurrentStatus(ep) == PinLogicStatus.on));
 
       //     {
       //     'id': ep.id,

@@ -3,7 +3,7 @@ import 'package:dcli/dcli.dart';
 import 'package:pig_common/pig_common.dart';
 
 import '../database/dao/dao_endpoint.dart';
-import '../database/types/pin_status.dart';
+import '../database/types/pin_logic_status.dart';
 import '../logger.dart';
 import 'gpio_manager.dart';
 
@@ -119,18 +119,18 @@ Set GPIO pin $pinNo to $onOrOff: $direction''');
   }
 
   @override
-  PinStatus getCurrentStatus(EndPoint endPoint) {
+  PinLogicStatus getCurrentStatus(EndPoint endPoint) {
     final pinNo = endPoint.gpioPinNo;
     if (!_gpioMap.containsKey(pinNo)) {
       print('Error: GPIO pin $pinNo has not been provisioned.');
-      return PinStatus.off;
+      return PinLogicStatus.off;
     }
     try {
       final isHigh = _gpioMap[pinNo]!.read();
-      return PinStatus.getStatus(endPoint, isHigh: isHigh);
+      return PinLogicStatus.getStatus(endPoint, isHigh: isHigh);
     } catch (e) {
       print('Error reading GPIO pin $pinNo: $e');
-      return PinStatus.off;
+      return PinLogicStatus.off;
     }
   }
 

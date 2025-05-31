@@ -3,7 +3,7 @@ import 'package:sqflite_common/sqlite_api.dart';
 
 import '../../controllers/end_point_bus.dart';
 import '../../pi/gpio_manager.dart';
-import '../types/pin_status.dart';
+import '../types/pin_logic_status.dart';
 import 'dao.dart';
 
 class DaoEndPoint extends Dao<EndPoint> {
@@ -94,7 +94,7 @@ Found multiple EndPoints with the same gpio pin no. There should only be one. $l
   // }
 
   /// Get the current status of a GPIO pin.
-  PinStatus getCurrentStatus(EndPoint endPoint) =>
+  PinLogicStatus getCurrentStatus(EndPoint endPoint) =>
       GpioManager().getCurrentStatus(endPoint);
 
   /// Activates a pin associated with an [EndPoint].
@@ -128,5 +128,5 @@ Found multiple EndPoints with the same gpio pin no. There should only be one. $l
   }
 
   bool isOn(EndPoint endPoint) =>
-      GpioManager().getCurrentStatus(endPoint) == PinStatus.on;
+      GpioManager().getCurrentStatus(endPoint) == PinLogicStatus.on;
 }
