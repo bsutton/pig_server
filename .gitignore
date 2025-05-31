@@ -11,3 +11,4 @@ bin/pig
 bin/pig_arm64
 test/letsencrypt
 .failed_tracker
+bin/pig_install
