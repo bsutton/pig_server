@@ -25,7 +25,8 @@ class Config {
     useHttps = _settings.asBool('use_https', defaultValue: false);
     bindingAddress =
         _settings.asString('binding_address', defaultValue: '0.0.0.0');
-    pathToLogfile = _settings.asString('logger_path', defaultValue: 'print');
+    pathToLogfile =
+        _settings.asString('logger_path', defaultValue: 'pigserver.log');
   }
 
   static final pathToLog = join(rootPath, 'var', 'log', 'pig_server.log');

@@ -9,22 +9,22 @@ class Logger {
   static Logger? _self;
   late final String pathToLog;
 
-  void log(String message) {
+  void log(Object? message) {
     if (pathToLog == 'console') {
-      print(message);
+      qlog(message);
     } else {
-      pathToLog.append(message);
+      pathToLog.append(message.toString());
     }
   }
 
   void logerr(String message) {
-    if (pathToLog == 'print') {
-      printerr(message);
+    if (pathToLog == 'console') {
+      qlogerr(message);
     } else {
       pathToLog.append(message);
     }
   }
 }
 
-void qlog(String message) => Logger().log(message);
+void qlog(Object? message) => Logger().log(message);
 void qlogerr(String message) => Logger().log(message);
