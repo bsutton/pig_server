@@ -26,7 +26,7 @@ class GpioManagerRaspPi implements GpioManager {
   @override
   Future<void> provisionPins() async {
     final daoEndPoint = DaoEndPoint();
-    print(orange('Found ${availablePins.length} active GPIO pins'));
+    qlog(orange('Found ${availablePins.length} active GPIO pins'));
 
     for (final pinNo in availablePins) {
       final endPoint = await daoEndPoint.getByPin(pinNo.gpioPin);
@@ -50,14 +50,14 @@ class GpioManagerRaspPi implements GpioManager {
       try {
         setPinVoltage(pinNo: pinNo, pinVoltage: PinVoltage.low);
       } catch (e) {
-        print('Error setting pin $pinNo to low during shutdown: $e');
+        qlog('Error setting pin $pinNo to low during shutdown: $e');
       } finally {
         gpio?.dispose();
-        print('Closed GPIO pin $pinNo.');
+        qlog('Closed GPIO pin $pinNo.');
       }
     }
     _gpioMap.clear();
-    print('GPIO Manager shutdown complete.');
+    qlog('GPIO Manager shutdown complete.');
   }
 
   /// Set the state of a GPIO pin.
@@ -78,12 +78,12 @@ class GpioManagerRaspPi implements GpioManager {
         ? GPIOdirection.gpioDirOutLow
         : GPIOdirection.gpioDirOutHigh;
     try {
-      print('''Provisioned GPIO pin $pinNo to low (off)''');
+      qlog('''Provisioned GPIO pin $pinNo to low (off)''');
       return GPIO(pinNo, direction);
     } on GPIOexception catch (e, st) {
-      print(
+      qlog(
           '''Error Setting GPIO pin state $pinNo to off : $e ${e.errorCode} ${e.errorMsg}''');
-      print('StackTrace: $st');
+      qlog('StackTrace: $st');
       rethrow;
     }
   }
@@ -92,14 +92,14 @@ class GpioManagerRaspPi implements GpioManager {
   PinLogicState getCurrentStatus(EndPoint endPoint) {
     final pinNo = endPoint.gpioPinNo;
     if (!_gpioMap.containsKey(pinNo)) {
-      print('Error: GPIO pin $pinNo has not been provisioned.');
+      qlog('Error: GPIO pin $pinNo has not been provisioned.');
       return PinLogicState.off;
     }
     try {
       final isHigh = _gpioMap[pinNo]!.read();
       return PinLogicState.getStatus(endPoint, isHigh: isHigh);
     } catch (e) {
-      print('Error reading GPIO pin $pinNo: $e');
+      qlog('Error reading GPIO pin $pinNo: $e');
       return PinLogicState.off;
     }
   }
@@ -110,7 +110,7 @@ class GpioManagerRaspPi implements GpioManager {
       final isHigh = gpio.read();
       buffer.write('p$pin:${isHigh ? 'on' : 'off'};');
     });
-    print(buffer);
+    qlog(buffer);
   }
 
   @override

@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:pig_common/pig_common.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
+import '../logger.dart';
 import '../util/delay.dart';
 
 /// A controller for managing timers and notifying WebSocket clients.
@@ -82,13 +83,13 @@ class TimerControl {
   /// Attach a [WebSocket] to receive notifications when timers
   /// start, stop, or complete.
   void monitor(WebSocketSink socket) {
-    print('Adding monitor socket');
+    qlog('Adding monitor socket');
     _listening.add(socket);
   }
 
   /// Remove a [WebSocket] from the notification list.
   void stopMonitor(WebSocketSink socket) {
-    print('Removing monitor socket');
+    qlog('Removing monitor socket');
     _listening.remove(socket);
   }
 

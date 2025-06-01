@@ -4,6 +4,7 @@ import 'package:pig_common/pig_common.dart';
 
 import '../database/dao/dao_endpoint.dart';
 import '../database/dao/dao_garden_bed.dart';
+import '../logger.dart';
 import 'end_point_bus.dart';
 
 /// A controller for managing a master valve and its associated garden beds.
@@ -41,7 +42,7 @@ class MasterValveController {
         await DaoEndPoint().hardOff(masterValve);
 
         // Let the line drain for 30 seconds, then turn off the garden bed valve
-        print('Draining Line via Valve: $gardenBedValve');
+        qlog('Draining Line via Valve: $gardenBedValve');
         drainOutTimer = Timer(const Duration(seconds: 30), drainLineCompleted);
         EndPointBus.instance.timerStarted(gardenBedValve);
       } else {
@@ -61,7 +62,7 @@ class MasterValveController {
   Future<void> drainLineCompleted() async {
     final drainOutValve = await DaoEndPoint().getById(drainOutVia?.valveId);
     await DaoEndPoint().hardOff(drainOutValve!);
-    print('Drain process completed. Setting drainOutVia to null.');
+    qlog('Drain process completed. Setting drainOutVia to null.');
     drainOutVia = null;
     drainOutTimer = null;
     EndPointBus.instance.timerFinished(drainOutValve);
@@ -98,7 +99,7 @@ class MasterValveController {
         // Cancel the current drain process
         final drainOutValve = await DaoEndPoint().getById(drainOutVia!.valveId);
         await DaoEndPoint().hardOff(drainOutValve!);
-        print('Cancelling drain process due to new valve activation.');
+        qlog('Cancelling drain process due to new valve activation.');
         drainOutTimer?.cancel();
         drainOutVia = null;
       }

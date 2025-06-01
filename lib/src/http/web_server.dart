@@ -203,7 +203,7 @@ Future<void> _initDb() async {
         backupProvider: backupProvider,
         backup: true,
         databaseFactory: CliDatabaseFactory());
-    print('Database located at: ${backupProvider.databasePath}');
+    qlog('Database located at: ${backupProvider.databasePath}');
     // ignore: avoid_catches_without_on_clauses
   } catch (e) {
     qlogerr('Db open failed. Try rebooting your phone or restore the db $e');

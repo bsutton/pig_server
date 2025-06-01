@@ -3,6 +3,7 @@ import 'package:collection/collection.dart';
 import 'package:pig_common/pig_common.dart';
 
 import '../database/dao/dao_endpoint.dart';
+import '../logger.dart';
 import 'master_valve_controller.dart';
 
 /// A controller to manage the operation of garden beds and their valves.
@@ -27,7 +28,7 @@ class GardenBedController {
 
   /// Turn off the valve of a specified garden bed with soft control.
   static Future<void> softOff(GardenBed gardenBed) async {
-    print('Turning ${gardenBed.name} Off.');
+    qlog('Turning ${gardenBed.name} Off.');
 
     final masterValveController = _getMasterValveForBed(gardenBed);
 
@@ -41,7 +42,7 @@ class GardenBedController {
 
   /// Turn on the valve of a specified garden bed with soft control.
   static Future<void> softOn(GardenBed gardenBed) async {
-    print('Turning ${gardenBed.name} On.');
+    qlog('Turning ${gardenBed.name} On.');
 
     final masterValveController = _getMasterValveForBed(gardenBed);
 

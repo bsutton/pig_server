@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:sqflite_common/sqlite_api.dart';
 
+import '../../logger.dart';
 import '../factory/pig_database_factory.dart';
 import '../versions/db_upgrade.dart';
 import '../versions/script_source.dart';
@@ -36,7 +37,7 @@ class DatabaseHelper {
   }) async {
     final path = backupProvider.databasePath;
     final targetVersion = await getLatestVersion(src);
-    print('target db version: $targetVersion');
+    qlog('target db version: $targetVersion');
     _database = await databaseFactory.openDatabase(path,
         options: OpenDatabaseOptions(
             version: targetVersion,

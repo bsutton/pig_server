@@ -11,7 +11,7 @@ Future<void> doLaunch(Config config, {required bool debug}) async {
   final String pathToPigServer;
 
   pathToPigServer = DartScript.self.pathToScript;
-  Logger().log('Launching pig --server from $pathToPigServer');
+  qlog('Launching pig --server from $pathToPigServer');
 
   // start the server and relaunch it if it fails.
   for (;;) {

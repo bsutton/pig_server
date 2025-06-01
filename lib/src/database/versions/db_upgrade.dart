@@ -4,6 +4,7 @@ import 'package:sqflite_common/sqlite_api.dart';
 import 'package:strings/strings.dart';
 
 import '../../../src/version/version.g.dart' as code;
+import '../../logger.dart';
 import '../management/backup_provider.dart';
 import '../management/db_utility.dart';
 import 'script_source.dart';
@@ -18,15 +19,15 @@ Future<void> upgradeDb(
     required ScriptSource src,
     required BackupProvider backupProvider}) async {
   if (oldVersion == 1) {
-    print('Creating database');
+    qlog('Creating database');
   } else {
     if (backup) {
-      print('Backing up database prior to upgrade');
+      qlog('Backing up database prior to upgrade');
 
       await backupProvider.performBackup(version: oldVersion, src: src);
-      print('Upgrade database from Version $oldVersion');
+      qlog('Upgrade database from Version $oldVersion');
     } else {
-      print('Skipping backup');
+      qlog('Skipping backup');
     }
   }
   final upgradeAssets = await src.upgradeScripts();
@@ -46,7 +47,7 @@ Future<void> upgradeDb(
     final scriptVersion =
         extractVerionForSQLUpgradeScript(pathToScript.originalPath);
     if (scriptVersion >= firstUpgrade) {
-      print('Upgrading to $scriptVersion via $pathToScript');
+      qlog('Upgrading to $scriptVersion via $pathToScript');
       await _executeScript(db, src, pathToScript);
 
       /// invoke any registered post upgrade actions for [scriptVersion]
@@ -93,14 +94,14 @@ Future<void> _executeScript(
     Database db, ScriptSource src, PackedResource packedScript) async {
   final sql = await src.loadSQL(packedScript);
 
-  print('running $src.pathToScript');
+  qlog('running $src.pathToScript');
   final statements = await parseSqlFile(sql);
 
   for (final statement in statements) {
     if (Strings.isEmpty(statement)) {
       continue;
     }
-    print('running: $statement');
+    qlog('running: $statement');
     await db.transaction((txn) async => txn.execute(statement));
   }
 }

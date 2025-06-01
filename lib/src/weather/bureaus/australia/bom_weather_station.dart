@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import '../../../logger.dart';
 import '../../../util/irrigation_exception.dart';
 import '../../weather_forecast.dart';
 import '../weather_station.dart';
@@ -39,7 +40,7 @@ enum BOMWeatherStation implements WeatherStation {
           .then((request) => request.close());
 
       final result = await response.transform(utf8.decoder).join();
-      print('Raw JSON data: $result');
+      qlog('Raw JSON data: $result');
 
       // Parse JSON data
       final jsonData = jsonDecode(result) as Map<String, dynamic>;

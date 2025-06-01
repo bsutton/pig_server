@@ -2,6 +2,7 @@ import 'package:pig_common/pig_common.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 
 import '../../controllers/end_point_bus.dart';
+import '../../logger.dart';
 import '../../pi/gpio_manager.dart';
 import '../types/pin_logic_state.dart';
 import 'dao.dart';
@@ -85,9 +86,9 @@ Found multiple EndPoints with the same gpio pin no. There should only be one. $l
   //     try {
   //       // Add the provisioned pin to the map
   //       GpioManager().setEndPointState(endPoint: endPoint, turnOn: false);
-  //       print('Provisioned GPIO pin $pinNo with initial state: off');
+  //       qlog('Provisioned GPIO pin $pinNo with initial state: off');
   //     } catch (e) {
-  //       print('Error provisioning GPIO pin $pinNo: $e');
+  //       qlog('Error provisioning GPIO pin $pinNo: $e');
   //       // Handle the error appropriately (e.g., log, retry, skip the pin)
   //     }
   //   }
@@ -104,7 +105,7 @@ Found multiple EndPoints with the same gpio pin no. There should only be one. $l
     GpioManager()
         .setEndPointState(endPoint: endPoint, pinState: PinLogicState.on);
 
-    print('Pin $pinNo for EndPoint: ${endPoint.name} set On.');
+    qlog('Pin $pinNo for EndPoint: ${endPoint.name} set On.');
   }
 
   /// Deactivates a pin associated with an [EndPoint].
@@ -115,7 +116,7 @@ Found multiple EndPoints with the same gpio pin no. There should only be one. $l
         .setEndPointState(endPoint: endPoint, pinState: PinLogicState.off);
 
     EndPointBus.instance.notifyHardOff(endPoint);
-    print('Pin $pinNo for EndPoint: ${endPoint.name} set Off.');
+    qlog('Pin $pinNo for EndPoint: ${endPoint.name} set Off.');
   }
 
   Future<void> hardOffById(int valveId) async {

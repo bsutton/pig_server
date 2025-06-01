@@ -31,17 +31,17 @@ class GpioManagerMock implements GpioManager {
       } else {
         _mockPinStates[pinNo.gpioPin] = endPoint.activationType.offState;
       }
-      print('''
+      qlog('''
 Mock provisioned GPIO pin $pinNo with initial state: ${_mockPinStates[pinNo.gpioPin]}''');
     }
 
-    _printPinStates();
+    _qlogPinStates();
   }
 
   @override
   void shutdown() {
     _mockPinStates.clear();
-    print('Mock GPIO Manager shutdown complete.');
+    qlog('Mock GPIO Manager shutdown complete.');
   }
 
   /// Set the state of a GPIO pin.
@@ -49,33 +49,33 @@ Mock provisioned GPIO pin $pinNo with initial state: ${_mockPinStates[pinNo.gpio
   void setEndPointState(
       {required EndPoint endPoint, required PinLogicState pinState}) {
     final pinVoltage = DaoEndPoint().voltageForState(endPoint, pinState);
-       print('$endPoint set to $pinState voltage: $pinVoltage');
+    qlog('$endPoint set to $pinState voltage: $pinVoltage');
     setPinVoltage(pinNo: endPoint.gpioPinNo, pinVoltage: pinVoltage);
   }
 
   @override
   void setPinVoltage({required int pinNo, required PinVoltage pinVoltage}) {
     _mockPinStates[pinNo] = pinVoltage;
-    _printPinStates();
+    _qlogPinStates();
   }
 
   @override
   PinLogicState getCurrentStatus(EndPoint endPoint) {
     final pinNo = endPoint.gpioPinNo;
     if (!_mockPinStates.containsKey(pinNo)) {
-      print('Mock error: GPIO pin $pinNo has not been provisioned.');
+      qlog('Mock error: GPIO pin $pinNo has not been provisioned.');
       return PinLogicState.off;
     }
     final isHigh = _mockPinStates[pinNo]!;
     return PinLogicState.getStatus(endPoint, isHigh: isHigh == PinVoltage.high);
   }
 
-  void _printPinStates() {
+  void _qlogPinStates() {
     final buffer = StringBuffer();
     _mockPinStates.forEach((pin, pinState) {
       buffer.write('p$pin:${pinState == PinVoltage.high ? 'high' : 'low'} ');
     });
-    print(buffer);
+    qlog(buffer);
   }
 
   @override

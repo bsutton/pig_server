@@ -1,5 +1,6 @@
 import 'package:pig_common/pig_common.dart';
 
+import '../logger.dart';
 import 'end_point_change_listener.dart';
 
 /// Singleton class to manage notifications for EndPoint changes.
@@ -18,7 +19,7 @@ class EndPointBus {
   void addListener(EndPoint endPoint, EndPointChangeListener listener) {
     final listeners = _listenerMap[endPoint] ?? [];
     if (listeners.contains(listener)) {
-      print('Warning: Listener added twice for EndPoint: $listener');
+      qlog('Warning: Listener added twice for EndPoint: $listener');
     } else {
       listeners.add(listener);
       _listenerMap[endPoint] = listeners;
@@ -30,11 +31,10 @@ class EndPointBus {
     final listeners = _listenerMap[endPoint];
     if (listeners != null) {
       if (!listeners.remove(listener)) {
-        print(
-            'Warning: Attempted to remove a non-existent listener: $listener');
+        qlog('Warning: Attempted to remove a non-existent listener: $listener');
       }
     } else {
-      print('Warning: Attempted to remove listener when no listeners exist.');
+      qlog('Warning: Attempted to remove listener when no listeners exist.');
     }
   }
 
