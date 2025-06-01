@@ -27,7 +27,6 @@ Launches pig in server mode as a sub-process and will restart it if it crashes.'
             'Starts the web server. Use /opt/pig/config/config.yaml to control its settings')
     ..addFlag('debug', abbr: 'd', negatable: false, help: '''
 starts the server in debug mode. Opens config.yaml from ./config/config.yaml.''');
-
   bool launch;
   bool server;
   bool debug;
@@ -59,7 +58,15 @@ starts the server in debug mode. Opens config.yaml from ./config/config.yaml.'''
   if (launch) {
     await doLaunch(_loadConfig(debug), debug: debug);
   } else if (server) {
-    await runServer(_loadConfig(debug));
+    final server = await runServer(_loadConfig(debug));
+
+    print('Pig Server is running - CTRL-C to stop it gracefully');
+
+    // Wait for shutdown signal (CTRL+C or SIGTERM)
+    await _waitForShutdown();
+
+    await server.close();
+
     shutdown();
   } else {
     await doInstall(debug: debug);
@@ -99,11 +106,19 @@ void usage(ArgParser parser) {
   print(parser.usage);
 }
 
-// TODO(bsutton): call shutdown as the web server stops.
 void shutdown() {
+  qlog('');
   qlog('Irrigation Manager is shutting down.');
   // stop all GPIO activity/threads by shutting down the GPIO controller
   // (this method will forcefully shutdown all GPIO monitoring threads and
   // scheduled tasks)
   GpioManager().shutdown();
+}
+
+// Function to wait for a shutdown signal
+Future<void> _waitForShutdown() async {
+  // Listen for SIGINT (Ctrl+C) or SIGTERM (termination signal)
+  final shutdownSignal = ProcessSignal.sigint.watch().first;
+  print('Waiting for shutdown signal...');
+  await shutdownSignal;
 }

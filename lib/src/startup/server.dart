@@ -1,8 +1,6 @@
+import 'dart:io';
+
 import '../config.dart';
 import '../http/web_server.dart';
 
-Future<void> runServer(Config config) async {
-
-
-  await startWebServer(config);
-}
+Future<HttpServer> runServer(Config config) async => startWebServer(config);

@@ -25,7 +25,7 @@ enum CertificateMode { staging, production }
 late HttpServer server;
 late HttpServer secureServer;
 
-Future<void> startWebServer(Config config) async {
+Future<HttpServer> startWebServer(Config config) async {
   final pathToStaticContent = config.pathToStaticContent;
   await _checkConfiguration(pathToStaticContent!);
 
@@ -44,10 +44,11 @@ Future<void> startWebServer(Config config) async {
         mode: Config().production!
             ? CertificateMode.production
             : CertificateMode.staging);
-    await _startHttpsServer(letsEncrypt, domain);
+    final server = await _startHttpsServer(letsEncrypt, domain);
     await _startRenewalService(letsEncrypt, domain);
+    return server;
   } else {
-    await _startWebServer();
+    return _startWebServer();
   }
 }
 
@@ -91,7 +92,7 @@ Future<void> refreshIfRequired(
   }
 }
 
-Future<void> _startWebServer() async {
+Future<HttpServer> _startWebServer() async {
   final router = buildRouter();
 
   final handler = const Pipeline()
@@ -102,11 +103,11 @@ Future<void> _startWebServer() async {
   // .addHandler(router.call);
 
   qlog('Serving at http://${Config().bindingAddress}:${Config().httpPort}');
-
-  await serve(handler, Config().bindingAddress, Config().httpPort);
+  return serve(handler, Config().bindingAddress, Config().httpPort);
 }
 
-Future<void> _startHttpsServer(LetsEncrypt letsEncrypt, Domain domain) async {
+Future<HttpServer> _startHttpsServer(
+    LetsEncrypt letsEncrypt, Domain domain) async {
   final router = buildRouter();
 
   final redirectToHttps = createMiddleware(requestHandler: _redirectToHttps);
@@ -132,6 +133,8 @@ Future<void> _startHttpsServer(LetsEncrypt letsEncrypt, Domain domain) async {
 
   qlog('Serving at http://${server.address.host}:${server.port}');
   qlog('Serving at https://${secureServer.address.host}:${secureServer.port}');
+
+  return secureServer;
 }
 
 /// Redirect all http traffic to https.
