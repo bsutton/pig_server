@@ -21,6 +21,29 @@ class DaoHistory extends Dao<History> {
     return List.generate(data.length, (i) => fromMap(data[i]));
   }
 
+  /// Get all History records, ordered by event_start descending by default.
+  ///
+ ///
+  /// You can still override the ordering via [orderByClause].
+  Future<List<History>> getLast7Days({
+    String? orderByClause,
+  }) async {
+    final db = withoutTransaction();
+
+    // Compute the ISO string for one week ago from now.
+    final oneWeekAgo = DateTime.now().subtract(const Duration(days: 7));
+    final cutoffIso = oneWeekAgo.toIso8601String();
+
+    // Query only those rows with event_start >= cutoffIso
+    final data = await db.query(
+      tableName,
+      where: 'event_start >= ?',
+      whereArgs: [cutoffIso],
+      orderBy: orderByClause ?? 'event_start DESC',
+    );
+    return List.generate(data.length, (i) => fromMap(data[i]));
+  }
+
   /// Get History records by a specific GardenBed
   Future<List<History>> getByGardenFeature(GardenFeature gardenFeature) async =>
       getByGardenFeatureId(gardenFeature.id);
