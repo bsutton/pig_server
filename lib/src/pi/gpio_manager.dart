@@ -1,7 +1,6 @@
 import 'package:dcli/dcli.dart';
 import 'package:pig_common/pig_common.dart';
 
-import '../database/dao/dao_endpoint.dart';
 import '../database/types/pin_logic_state.dart';
 import 'gpio_manager_mock.dart';
 import 'gpio_manager_rasp.dart';
@@ -21,13 +20,7 @@ abstract class GpioManager {
 
   /// Set the state of a GPIO pin. for the passed [endPoint].
   void setEndPointState(
-      {required EndPoint endPoint, required PinLogicState pinState}) {
-    final pinVoltage = DaoEndPoint().voltageForState(endPoint, pinState);
-    setPinVoltage(pinNo: endPoint.gpioPinNo, pinVoltage: pinVoltage);
-  }
-
-  /// Set the state of a GPIO pin.
-  void setPinVoltage({required int pinNo, required PinVoltage pinVoltage});
+      {required EndPoint endPoint, required PinLogicState pinState});
 
   /// Get the current status of a GPIO pin.
   PinLogicState getCurrentStatus(EndPoint endPoint);

@@ -6,11 +6,16 @@ enum PinLogicState {
   off;
 
   /// Determines the status of a pin based on its activation type and state.
-  static PinLogicState getStatus(EndPoint pin, {required bool isHigh}) {
+  static PinLogicState getStatus(EndPoint pin,
+      {required PinVoltage pinVoltage}) {
     if (pin.activationType == PinActivationType.lowIsOn) {
-      return isHigh ? PinLogicState.off : PinLogicState.on;
+      return pinVoltage == PinVoltage.high
+          ? PinLogicState.off
+          : PinLogicState.on;
     } else {
-      return isHigh ? PinLogicState.on : PinLogicState.off;
+      return pinVoltage == PinVoltage.high
+          ? PinLogicState.on
+          : PinLogicState.off;
     }
   }
 }

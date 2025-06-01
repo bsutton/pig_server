@@ -50,11 +50,10 @@ Mock provisioned GPIO pin $pinNo with initial state: ${_mockPinStates[pinNo.gpio
       {required EndPoint endPoint, required PinLogicState pinState}) {
     final pinVoltage = DaoEndPoint().voltageForState(endPoint, pinState);
     qlog('$endPoint set to $pinState voltage: $pinVoltage');
-    setPinVoltage(pinNo: endPoint.gpioPinNo, pinVoltage: pinVoltage);
+    _setPinVoltage(pinNo: endPoint.gpioPinNo, pinVoltage: pinVoltage);
   }
 
-  @override
-  void setPinVoltage({required int pinNo, required PinVoltage pinVoltage}) {
+  void _setPinVoltage({required int pinNo, required PinVoltage pinVoltage}) {
     _mockPinStates[pinNo] = pinVoltage;
     _qlogPinStates();
   }
@@ -66,14 +65,14 @@ Mock provisioned GPIO pin $pinNo with initial state: ${_mockPinStates[pinNo.gpio
       qlog('Mock error: GPIO pin $pinNo has not been provisioned.');
       return PinLogicState.off;
     }
-    final isHigh = _mockPinStates[pinNo]!;
-    return PinLogicState.getStatus(endPoint, isHigh: isHigh == PinVoltage.high);
+    final pinVoltage = _mockPinStates[pinNo]!;
+    return PinLogicState.getStatus(endPoint, pinVoltage: pinVoltage);
   }
 
   void _qlogPinStates() {
     final buffer = StringBuffer();
-    _mockPinStates.forEach((pin, pinState) {
-      buffer.write('p$pin:${pinState == PinVoltage.high ? 'high' : 'low'} ');
+    _mockPinStates.forEach((pin, pinVoltage) {
+      buffer.write('p$pin:${pinVoltage.name} ');
     });
     qlog(buffer);
   }

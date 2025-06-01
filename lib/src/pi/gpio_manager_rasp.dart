@@ -36,10 +36,33 @@ class GpioManagerRaspPi implements GpioManager {
         pinNo: pinNo.gpioPin,
         activationType: PinActivationType.highIsOn,
       );
+
+      _gpioMap[pinNo.gpioPin] = pin;
+
       if (endPoint != null) {
         setEndPointState(endPoint: endPoint, pinState: PinLogicState.off);
       }
-      _gpioMap[pinNo.gpioPin] = pin;
+    }
+  }
+
+  /// Initialises the pin, and sets it to off.
+  GPIO _provisionPin({
+    required int pinNo,
+    required PinActivationType activationType,
+  }) {
+    /// we initialise the pin in an off set
+    final direction = activationType == PinActivationType.highIsOn
+        ? GPIOdirection.gpioDirOutLow
+        : GPIOdirection.gpioDirOutHigh;
+    try {
+      qlog('''Provisioned GPIO pin $pinNo to low (off)''');
+      final gpio = GPIO(pinNo, direction)..write(false);
+      return gpio;
+    } on GPIOexception catch (e, st) {
+      qlog(
+          '''Error Setting GPIO pin state $pinNo to off : $e ${e.errorCode} ${e.errorMsg}''');
+      qlog('StackTrace: $st');
+      rethrow;
     }
   }
 
@@ -48,7 +71,7 @@ class GpioManagerRaspPi implements GpioManager {
     for (final pinNo in _gpioMap.keys) {
       final gpio = _gpioMap[pinNo];
       try {
-        setPinVoltage(pinNo: pinNo, pinVoltage: PinVoltage.low);
+        _setPinVoltage(pinNo: pinNo, pinVoltage: PinVoltage.low);
       } catch (e) {
         qlog('Error setting pin $pinNo to low during shutdown: $e');
       } finally {
@@ -65,27 +88,7 @@ class GpioManagerRaspPi implements GpioManager {
   void setEndPointState(
       {required EndPoint endPoint, required PinLogicState pinState}) {
     final pinVoltage = DaoEndPoint().voltageForState(endPoint, pinState);
-    setPinVoltage(pinNo: endPoint.gpioPinNo, pinVoltage: pinVoltage);
-  }
-
-  /// Initialises the pin, and sets it to off.
-  GPIO _provisionPin({
-    required int pinNo,
-    required PinActivationType activationType,
-  }) {
-    /// we initialise the pin in an off set
-    final direction = activationType == PinActivationType.highIsOn
-        ? GPIOdirection.gpioDirOutLow
-        : GPIOdirection.gpioDirOutHigh;
-    try {
-      qlog('''Provisioned GPIO pin $pinNo to low (off)''');
-      return GPIO(pinNo, direction);
-    } on GPIOexception catch (e, st) {
-      qlog(
-          '''Error Setting GPIO pin state $pinNo to off : $e ${e.errorCode} ${e.errorMsg}''');
-      qlog('StackTrace: $st');
-      rethrow;
-    }
+    _setPinVoltage(pinNo: endPoint.gpioPinNo, pinVoltage: pinVoltage);
   }
 
   @override
@@ -96,8 +99,9 @@ class GpioManagerRaspPi implements GpioManager {
       return PinLogicState.off;
     }
     try {
-      final isHigh = _gpioMap[pinNo]!.read();
-      return PinLogicState.getStatus(endPoint, isHigh: isHigh);
+      final pinVoltage =
+          _gpioMap[pinNo]!.read() ? PinVoltage.high : PinVoltage.low;
+      return PinLogicState.getStatus(endPoint, pinVoltage: pinVoltage);
     } catch (e) {
       qlog('Error reading GPIO pin $pinNo: $e');
       return PinLogicState.off;
@@ -116,10 +120,9 @@ class GpioManagerRaspPi implements GpioManager {
   @override
   List<GPIOPinAssignment> get availablePins => GPIOPinAssignment.values;
 
-  @override
-  void setPinVoltage({required int pinNo, required PinVoltage pinVoltage}) {
+  void _setPinVoltage({required int pinNo, required PinVoltage pinVoltage}) {
     if (_gpioMap[pinNo] == null) {
-      qlog("Error: Pin $pinNo hasn't been provisioned");
+      qlog('Error: Pin $pinNo has not been provisioned');
     }
     _gpioMap[pinNo]?.write(pinVoltage == PinVoltage.high);
   }
