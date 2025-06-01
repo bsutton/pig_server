@@ -8,6 +8,7 @@ import '../../controllers/timer_control.dart';
 import 'end_point_handler.dart';
 import 'garden_bed_handler.dart';
 import 'handle_static.dart';
+import 'history_handler.dart';
 import 'lighting_handler.dart';
 import 'overview_handler.dart';
 
@@ -30,6 +31,7 @@ Router buildRouter() {
     ..post('/garden_bed/edit_data', handleGardenBedEditData)
     ..post('/garden_bed/save', handleGardenBedSave)
     ..post('/garden_bed/delete', handleGardenBedDelete)
+     ..post('/history/list', (Request request) async => handleHistoryList(request))
     ..post('/lighting/list', handleLightingList)
     ..post('/end_point/list', handleEndPointList)
     ..post('/end_point/edit_data', handleEndPointEditData)
