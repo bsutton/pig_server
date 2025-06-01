@@ -7,7 +7,8 @@ import 'package:strings/strings.dart';
 
 import '../../controllers/garden_bed_controller.dart';
 import '../../database/dao/dao_endpoint.dart';
-import '../../database/types/pin_logic_status.dart';
+import '../../database/types/pin_logic_state.dart';
+import '../../logger.dart';
 import '../../pi/gpio_manager.dart';
 import '../../weather/bureaus/weather_bureaus.dart';
 
@@ -30,7 +31,7 @@ Future<Response> handleEndPointList(Request request) async {
     final endPointList = <EndPointInfo>[];
     for (final ep in endPoints) {
       endPointList.add(EndPointInfo.fromEndPoint(ep,
-          on: dao.getCurrentStatus(ep) == PinLogicStatus.on));
+          on: dao.getCurrentStatus(ep) == PinLogicState.on));
 
       //     {
       //     'id': ep.id,
@@ -137,8 +138,10 @@ Future<Response> handleEndPointToggle(Request request) async {
     final body = jsonDecode(bodyStr) as Map<String, dynamic>? ?? {};
     final endPointId = body['endPointId'] as int?;
     final turnOn = body['turnOn'] as bool?;
+    qlog('end_point/toggle endPointId: $endPointId, turnOn: $turnOn');
 
     if (endPointId == null || turnOn == null) {
+      qlog('end_point/toggle Missing endPointId or turnOn');
       return Response.badRequest(
         body: jsonEncode({'error': 'Missing endPointId or turnOn'}),
       );
@@ -147,6 +150,7 @@ Future<Response> handleEndPointToggle(Request request) async {
     final dao = DaoEndPoint();
     final endPoint = await dao.getById(endPointId);
     if (endPoint == null) {
+      qlog('end_point/toggle EndPoint not found');
       return Response.notFound(jsonEncode({'error': 'EndPoint not found'}));
     }
 
