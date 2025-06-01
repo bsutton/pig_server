@@ -31,7 +31,7 @@ Future<void> doInstall({required bool debug}) async {
   if (!Shell.current.isPrivilegedUser) {
     printerr(red(r'''
 You must run this script as sudo
-sudo env PATH="$PATH" pig_arm64
+sudo env PATH="$PATH" pig_install
     '''));
     exit(1);
   }
@@ -133,8 +133,10 @@ Future<void> _deploy() async {
 
   unpackResources(pathToPigation);
 
-  /// copy this exe into altbin as we are the pig server.
-  copy(DartScript.self.pathToExe, pathToPigationAltBin, overwrite: true);
+  /// copy this exe (the pig_installer) into altbin as we are also the
+  /// pig server.
+  copy(DartScript.self.pathToExe, join(pathToPigationAltBin, 'pig'),
+      overwrite: true);
 
   /// Create the dir to store letsencrypt files
   final pathToLetsEncrypt = join(pathToPigation, 'letsencrypt', 'live');
