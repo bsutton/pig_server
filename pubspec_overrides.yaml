@@ -1,4 +1,6 @@
 dependency_overrides:
+  pig_common:
+    path: ../pig_common
   # shelf_letsencrypt:
   #   path: ../../shelf_letsencrypt
   # simple_mysql_orm:

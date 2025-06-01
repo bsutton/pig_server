@@ -556,10 +556,9 @@ packages:
   pig_common:
     dependency: "direct main"
     description:
-      name: pig_common
-      sha256: "19f2e271e310a78d20d73b81e2c8ef39996317f1bddefe5d4f1a44b6897f28ba"
-      url: "https://pub.dev"
-    source: hosted
+      path: "../pig_common"
+      relative: true
+    source: path
     version: "1.0.0"
   platform:
     dependency: transitive
