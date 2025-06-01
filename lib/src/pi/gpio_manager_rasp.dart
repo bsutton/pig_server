@@ -3,7 +3,7 @@ import 'package:dcli/dcli.dart';
 import 'package:pig_common/pig_common.dart';
 
 import '../database/dao/dao_endpoint.dart';
-import '../database/types/pin_logic_status.dart';
+import '../database/types/pin_logic_state.dart';
 import '../logger.dart';
 import 'gpio_manager.dart';
 
@@ -31,14 +31,15 @@ class GpioManagerRaspPi implements GpioManager {
     for (final pinNo in availablePins) {
       final endPoint = await daoEndPoint.getByPin(pinNo.gpioPin);
 
-      if (endPoint == null) {
-        setPinState(
-            pinNo: pinNo.gpioPin,
-            activationType: PinActivationType.lowIsOn,
-            turnOn: false);
-      } else {
-        setEndPointState(endPoint: endPoint, turnOn: false);
+      final GPIO pin;
+      pin = _provisionPin(
+        pinNo: pinNo.gpioPin,
+        activationType: PinActivationType.highIsOn,
+      );
+      if (endPoint != null) {
+        setEndPointState(endPoint: endPoint, pinState: PinLogicState.off);
       }
+      _gpioMap[pinNo.gpioPin] = pin;
     }
   }
 
@@ -47,7 +48,7 @@ class GpioManagerRaspPi implements GpioManager {
     for (final pinNo in _gpioMap.keys) {
       final gpio = _gpioMap[pinNo];
       try {
-        gpio?.setGPIOdirection(GPIOdirection.gpioDirOutLow);
+        setPinVoltage(pinNo: pinNo, pinVoltage: PinVoltage.low);
       } catch (e) {
         print('Error setting pin $pinNo to low during shutdown: $e');
       } finally {
@@ -61,76 +62,45 @@ class GpioManagerRaspPi implements GpioManager {
 
   /// Set the state of a GPIO pin.
   @override
-  void setEndPointState({required EndPoint endPoint, required bool turnOn}) {
-    setPinState(
-        pinNo: endPoint.gpioPinNo,
-        activationType: endPoint.activationType,
-        turnOn: turnOn);
+  void setEndPointState(
+      {required EndPoint endPoint, required PinLogicState pinState}) {
+    final pinVoltage = DaoEndPoint().voltageForState(endPoint, pinState);
+    setPinVoltage(pinNo: endPoint.gpioPinNo, pinVoltage: pinVoltage);
   }
 
-  @override
-  void setPinState(
-      {required int pinNo,
-      required PinActivationType activationType,
-      required bool turnOn}) {
+  /// Initialises the pin, and sets it to off.
+  GPIO _provisionPin({
+    required int pinNo,
+    required PinActivationType activationType,
+  }) {
+    /// we initialise the pin in an off set
+    final direction = activationType == PinActivationType.highIsOn
+        ? GPIOdirection.gpioDirOutLow
+        : GPIOdirection.gpioDirOutHigh;
     try {
-      GPIOdirection direction;
-      final onOrOff = turnOn ? 'on' : 'off';
-      if (turnOn) {
-        // Determine the initial state based on activation type
-        direction = activationType == PinActivationType.highIsOn
-            ? GPIOdirection.gpioDirOutHigh
-            : GPIOdirection.gpioDirOutLow;
-      } else {
-        // Determine the initial state based on activation type
-        direction = activationType == PinActivationType.highIsOn
-            ? GPIOdirection.gpioDirOutLow
-            : GPIOdirection.gpioDirOutHigh;
-      }
-
-      _setPinDirection(pinNo: pinNo, direction: direction);
-
-      try {
-        final gpio = GPIO(pinNo, direction);
-        _gpioMap[pinNo] = gpio;
-        print('''
-Set GPIO pin $pinNo to $onOrOff: $direction''');
-      } catch (e, st) {
-        print('Error Setting GPIO pin state $pinNo to $onOrOff : $e');
-        print('StackTrace: $st');
-      }
-
-      _printPinStates();
-    } catch (e) {
-      print('Error toggling GPIO pin $pinNo: $e');
+      print('''Provisioned GPIO pin $pinNo to low (off)''');
+      return GPIO(pinNo, direction);
+    } on GPIOexception catch (e, st) {
+      print(
+          '''Error Setting GPIO pin state $pinNo to off : $e ${e.errorCode} ${e.errorMsg}''');
+      print('StackTrace: $st');
+      rethrow;
     }
-  }
-
-  void _setPinDirection(
-      {required int pinNo, required GPIOdirection direction}) {
-    final gpio = _gpioMap[pinNo];
-    if (gpio == null) {
-      print('Error: GPIO pin $pinNo has not been provisioned.');
-      return;
-    }
-
-    gpio.setGPIOdirection(direction);
-    _printPinStates();
   }
 
   @override
-  PinLogicStatus getCurrentStatus(EndPoint endPoint) {
+  PinLogicState getCurrentStatus(EndPoint endPoint) {
     final pinNo = endPoint.gpioPinNo;
     if (!_gpioMap.containsKey(pinNo)) {
       print('Error: GPIO pin $pinNo has not been provisioned.');
-      return PinLogicStatus.off;
+      return PinLogicState.off;
     }
     try {
       final isHigh = _gpioMap[pinNo]!.read();
-      return PinLogicStatus.getStatus(endPoint, isHigh: isHigh);
+      return PinLogicState.getStatus(endPoint, isHigh: isHigh);
     } catch (e) {
       print('Error reading GPIO pin $pinNo: $e');
-      return PinLogicStatus.off;
+      return PinLogicState.off;
     }
   }
 
@@ -145,6 +115,14 @@ Set GPIO pin $pinNo to $onOrOff: $direction''');
 
   @override
   List<GPIOPinAssignment> get availablePins => GPIOPinAssignment.values;
+
+  @override
+  void setPinVoltage({required int pinNo, required PinVoltage pinVoltage}) {
+    if (_gpioMap[pinNo] == null) {
+      qlog("Error: Pin $pinNo hasn't been provisioned");
+    }
+    _gpioMap[pinNo]?.write(pinVoltage == PinVoltage.high);
+  }
   // header pin numbers
   // const gpioPath = '/sys/class/gpio';
 

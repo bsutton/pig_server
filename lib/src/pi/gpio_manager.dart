@@ -1,7 +1,8 @@
 import 'package:dcli/dcli.dart';
 import 'package:pig_common/pig_common.dart';
 
-import '../database/types/pin_logic_status.dart';
+import '../database/dao/dao_endpoint.dart';
+import '../database/types/pin_logic_state.dart';
 import 'gpio_manager_mock.dart';
 import 'gpio_manager_rasp.dart';
 
@@ -18,30 +19,31 @@ abstract class GpioManager {
   /// Release GPIO resources and shut down gracefully.
   void shutdown();
 
-  /// Set the state of a GPIO pin.
-  void setEndPointState({required EndPoint endPoint, required bool turnOn}) {
-    setPinState(
-        pinNo: endPoint.gpioPinNo,
-        activationType: endPoint.activationType,
-        turnOn: turnOn);
+  /// Set the state of a GPIO pin. for the passed [endPoint].
+  void setEndPointState(
+      {required EndPoint endPoint, required PinLogicState pinState}) {
+    final pinVoltage = DaoEndPoint().voltageForState(endPoint, pinState);
+    setPinVoltage(pinNo: endPoint.gpioPinNo, pinVoltage: pinVoltage);
   }
 
   /// Set the state of a GPIO pin.
-  void setPinState(
-      {required int pinNo,
-      required PinActivationType activationType,
-      required bool turnOn});
+  void setPinVoltage({required int pinNo, required PinVoltage pinVoltage});
 
   /// Get the current status of a GPIO pin.
-  PinLogicStatus getCurrentStatus(EndPoint endPoint);
+  PinLogicState getCurrentStatus(EndPoint endPoint);
+
+  static bool? _isPi;
 
   /// Detect if running on a Raspberry Pi
   static bool _isRaspberryPi() {
-    const cpuInfoFile = '/proc/cpuinfo';
-    if (!exists(cpuInfoFile)) {
-      return false;
+    if (_isPi == null) {
+      const cpuInfoFile = '/proc/cpuinfo';
+      if (!exists(cpuInfoFile)) {
+        return false;
+      }
+      final cpuInfo = read(cpuInfoFile).toParagraph();
+      _isPi = cpuInfo.contains('BCM') || cpuInfo.contains('Raspberry Pi');
     }
-    final cpuInfo = read(cpuInfoFile).toParagraph();
-    return cpuInfo.contains('BCM') || cpuInfo.contains('Raspberry Pi');
+    return _isPi!;
   }
 }
