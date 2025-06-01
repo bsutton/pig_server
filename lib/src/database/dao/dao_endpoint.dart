@@ -3,7 +3,7 @@ import 'package:sqflite_common/sqlite_api.dart';
 
 import '../../controllers/end_point_bus.dart';
 import '../../pi/gpio_manager.dart';
-import '../types/pin_logic_status.dart';
+import '../types/pin_logic_state.dart';
 import 'dao.dart';
 
 class DaoEndPoint extends Dao<EndPoint> {
@@ -94,14 +94,15 @@ Found multiple EndPoints with the same gpio pin no. There should only be one. $l
   // }
 
   /// Get the current status of a GPIO pin.
-  PinLogicStatus getCurrentStatus(EndPoint endPoint) =>
+  PinLogicState getCurrentStatus(EndPoint endPoint) =>
       GpioManager().getCurrentStatus(endPoint);
 
   /// Activates a pin associated with an [EndPoint].
   Future<void> hardOn(EndPoint endPoint) async {
     final pinNo = endPoint.gpioPinNo;
 
-    GpioManager().setEndPointState(endPoint: endPoint, turnOn: true);
+    GpioManager()
+        .setEndPointState(endPoint: endPoint, pinState: PinLogicState.on);
 
     print('Pin $pinNo for EndPoint: ${endPoint.name} set On.');
   }
@@ -110,7 +111,8 @@ Found multiple EndPoints with the same gpio pin no. There should only be one. $l
   Future<void> hardOff(EndPoint endPoint) async {
     final pinNo = endPoint.gpioPinNo;
 
-    GpioManager().setEndPointState(endPoint: endPoint, turnOn: false);
+    GpioManager()
+        .setEndPointState(endPoint: endPoint, pinState: PinLogicState.off);
 
     EndPointBus.instance.notifyHardOff(endPoint);
     print('Pin $pinNo for EndPoint: ${endPoint.name} set Off.');
@@ -128,5 +130,22 @@ Found multiple EndPoints with the same gpio pin no. There should only be one. $l
   }
 
   bool isOn(EndPoint endPoint) =>
-      GpioManager().getCurrentStatus(endPoint) == PinLogicStatus.on;
+      GpioManager().getCurrentStatus(endPoint) == PinLogicState.on;
+
+  PinVoltage voltageForState(EndPoint endPoint, PinLogicState pinState) {
+    switch (pinState) {
+      case PinLogicState.on:
+        if (endPoint.activationType == PinActivationType.highIsOn) {
+          return PinVoltage.high;
+        } else {
+          return PinVoltage.low;
+        }
+      case PinLogicState.off:
+        if (endPoint.activationType == PinActivationType.lowIsOn) {
+          return PinVoltage.high;
+        } else {
+          return PinVoltage.low;
+        }
+    }
+  }
 }
