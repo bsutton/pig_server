@@ -12,9 +12,9 @@ import 'package:settings_yaml/settings_yaml.dart';
 
 void main(List<String> args) async {
   final parser = ArgParser()
-    ..addFlag('no-wasm', help: "Don't rebuild the wasm front end");
-  // 'dcli pack'.run;
-  // 'zip -r www_root.zip www_root'.run;
+    ..addFlag('wasm',
+        defaultsTo: true,
+        help: 'Build the wasm front end as well as the server');
 
   ArgResults parsed;
   try {
@@ -28,11 +28,13 @@ void main(List<String> args) async {
 
   final project = DartProject.self;
 
-  print(green('building wasm front end'));
-
-  'tool/build.dart --build --wasm'.start(workingDirectory: '../pig_app');
-
-  print(green('wasm build completed'));
+  final buildWasm = parsed.flag('wasm');
+  if (buildWasm) {
+    print(green('building wasm front end with source maps'));
+    'tool/build.dart --build --wasm --source-maps'
+        .start(workingDirectory: '../pig_app');
+    print(green('wasm build completed'));
+  }
 
   print(green('Packing deployable resources'));
   Resources().pack();
@@ -48,18 +50,19 @@ void main(List<String> args) async {
   /// We must compile iahserver and the resources as they are all
   /// compiled into the deploy script.
   ///
-  print(green('Compiling pig'));
-  DartScript.fromFile(join('bin', 'pig.dart'), project: project)
-      .compile(overwrite: true);
+  print(green('Compiling pig_install'));
 
-  'dart compile exe   --target-os=linux   --target-arch=arm64   bin/pig.dart   -o bin/pig_arm64'
+  /// this is the pig server but we call it pig_install so the user
+  /// knows what to run.
+  'dart compile exe --target-os=linux --target-arch=arm64 bin/pig.dart -o bin/pig_install'
       .run;
 
-  // print(green("deploying 'deploy' to $targetDirectory"));
-  '$scpCommand bin/pig_arm64 $targetServer:$targetDirectory'.run;
+  print(green("deploying 'pig_install' to $targetDirectory"));
+  '$scpCommand bin/pig_install $targetServer:$targetDirectory'.run;
 
   print(orange('build complete'));
-  print("log into the $targetServer and run 'pig_arm64 --install'");
+  print(
+      '''log into the $targetServer and run 'cd $targetDirectory;chmod +x pig_install;sudo PATH=\$PATH ./pig_install' ''');
 }
 
 /// Update the list of sql upgrade scripts we ship as assets.
