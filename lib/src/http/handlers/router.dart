@@ -5,6 +5,7 @@ import 'package:shelf_router/shelf_router.dart';
 import 'package:shelf_web_socket/shelf_web_socket.dart';
 
 import '../../controllers/timer_control.dart';
+import '../../logger.dart';
 import 'end_point_handler.dart';
 import 'garden_bed_handler.dart';
 import 'handle_static.dart';
@@ -31,7 +32,8 @@ Router buildRouter() {
     ..post('/garden_bed/edit_data', handleGardenBedEditData)
     ..post('/garden_bed/save', handleGardenBedSave)
     ..post('/garden_bed/delete', handleGardenBedDelete)
-     ..post('/history/list', (Request request) async => handleHistoryList(request))
+    ..post(
+        '/history/list', (Request request) async => handleHistoryList(request))
     ..post('/lighting/list', handleLightingList)
     ..post('/end_point/list', handleEndPointList)
     ..post('/end_point/edit_data', handleEndPointEditData)
@@ -46,13 +48,13 @@ Router buildRouter() {
 // Future<Response?> monitor(Request request) async {
 
 Handler monitorHandler() => webSocketHandler((socket, _) {
-      print('websocket connected');
+      qlog('websocket connected');
       TimerControl().monitor(socket.sink);
       socket.stream.listen((data) {
-        print('WebSocket received: $data');
+        qlog('WebSocket received: $data');
         socket.sink.add('Echo: $data');
       }, onDone: () {
-        print('Closing monitor');
+        qlog('Closing monitor');
         TimerControl().stopMonitor(socket.sink);
         unawaited(socket.sink.close());
       });
