@@ -8,9 +8,9 @@ import 'package:dcli/dcli.dart';
 ///
 /// GENERATED - GENERATED
 
-class A33cc55c13470dc3fb4d3eddd98d8e65f extends PackedResource {
-  /// PackedResource - ../../pig_app/build/web/assets/AssetManifest.bin.json
-  const A33cc55c13470dc3fb4d3eddd98d8e65f();
+class Ae98785a896d29ad2079099d10e675cb9 extends PackedResource {
+  /// PackedResource - sql/v3.sql
+  const Ae98785a896d29ad2079099d10e675cb9();
 
   /// A hash of the resource (pre packed) calculated by
   /// [calculateHash].
@@ -24,17 +24,15 @@ class A33cc55c13470dc3fb4d3eddd98d8e65f extends PackedResource {
   /// this checksum
   @override
   String get checksum =>
-      'd8194d8de387555910af470100464470';
+      '4fb2fe0fcb7405e43f6a517ad9420a2d';
 
   /// `<package>/resources` relative path to the original resource.
   @override
-  String get originalPath => 'www_root/assets/AssetManifest.bin.json';
+  String get originalPath => 'sql/v3.sql';
 
   @override
   String get content => '''
-IkRRSUhCQzVsYm5ZTUFRMEJCd1ZoYzNObGRBY0VMbVZ1ZGdjeGNHRmphMkZuWlhNdmFXTnZibk5oZUY5
-bWJIVjBkR1Z5TDJadmJuUnpMMFpzZFhSMFpYSkpZMjl1YzJGNExuUjBaZ3dCRFFFSEJXRnpjMlYwQnpG
-d1lXTnJZV2RsY3k5cFkyOXVjMkY0WDJac2RYUjBaWEl2Wm05dWRITXZSbXgxZEhSbGNrbGpiMjV6WVhn
-dWRIUm0i
+QUxURVIgVEFCTEUgZW5kX3BvaW50CkFERCBDT0xVTU4gb3JkaW5hbCBJTlRFR0VSIE5PVCBOVUxMIERF
+RkFVTFQgMDsK
   ''';
 }
