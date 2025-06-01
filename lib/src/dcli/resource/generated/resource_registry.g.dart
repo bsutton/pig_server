@@ -36,6 +36,7 @@ import 'Ababe17c607e66ae3cb4ef118d4c53e23.g.dart';
 import 'Ad9f6e5c8a7974e678f9b37a1c87b0cb6.g.dart';
 import 'Adbf1e04ff8d74b1d1425f128e56f73ad.g.dart';
 import 'Adc5cfd0f1851af75f39cd605a140c52d.g.dart';
+import 'Ae98785a896d29ad2079099d10e675cb9.g.dart';
 
 /// GENERATED -- GENERATED
 ///
@@ -100,5 +101,6 @@ class ResourceRegistry {
     'altbin/pig_launch.sh': Ad9f6e5c8a7974e678f9b37a1c87b0cb6(),
     'www_root/assets/FontManifest.json': Adbf1e04ff8d74b1d1425f128e56f73ad(),
     'www_root/assets/NOTICES': Adc5cfd0f1851af75f39cd605a140c52d(),
+    'sql/v3.sql': Ae98785a896d29ad2079099d10e675cb9(),
   };
 }
