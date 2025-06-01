@@ -22,7 +22,7 @@ Future<Response> handleLightingList(Request request) async {
 
     final result = <Map<String, dynamic>>[];
     for (final light in lights) {
-      final isTimerRunning = TimerControl().isTimerRunning(light) ;
+      final isTimerRunning = TimerControl().isTimerRunning(light);
       final remaining =
           isTimerRunning ? TimerControl().timeRemaining(light).inSeconds : 0;
 

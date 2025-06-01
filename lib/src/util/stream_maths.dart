@@ -2,7 +2,7 @@ import 'dart:async';
 
 /// Utility class for performing mathematical operations on streams.
 class StreamMaths {
-  /// Sums the durations in a stream using the provided [functor] 
+  /// Sums the durations in a stream using the provided [functor]
   /// to map each element.
   static Future<Duration> sum<T>(
     Stream<T> stream,

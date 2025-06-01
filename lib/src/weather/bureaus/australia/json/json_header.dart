@@ -1,5 +1,4 @@
 class JSONHeader {
-
   JSONHeader({
     this.refreshMessage,
     this.id,
@@ -13,15 +12,15 @@ class JSONHeader {
 
   /// Factory constructor to create a `JSONHeader` from a map.
   factory JSONHeader.fromJson(Map<String, dynamic> json) => JSONHeader(
-      refreshMessage: json['refresh_message'] as String?,
-      id: json['ID'] as String?,
-      mainID: json['main_ID'] as String?,
-      name: json['name'] as String?,
-      stateTimeZone: json['state_time_zone'] as String?,
-      timeZone: json['time_zone'] as String?,
-      productName: json['product_name'] as String?,
-      state: json['state'] as String?,
-    );
+        refreshMessage: json['refresh_message'] as String?,
+        id: json['ID'] as String?,
+        mainID: json['main_ID'] as String?,
+        name: json['name'] as String?,
+        stateTimeZone: json['state_time_zone'] as String?,
+        timeZone: json['time_zone'] as String?,
+        productName: json['product_name'] as String?,
+        state: json['state'] as String?,
+      );
   final String? refreshMessage;
   final String? id;
   final String? mainID;
@@ -33,15 +32,15 @@ class JSONHeader {
 
   /// Converts the `JSONHeader` instance to a map.
   Map<String, dynamic> toJson() => {
-      'refresh_message': refreshMessage,
-      'ID': id,
-      'main_ID': mainID,
-      'name': name,
-      'state_time_zone': stateTimeZone,
-      'time_zone': timeZone,
-      'product_name': productName,
-      'state': state,
-    };
+        'refresh_message': refreshMessage,
+        'ID': id,
+        'main_ID': mainID,
+        'name': name,
+        'state_time_zone': stateTimeZone,
+        'time_zone': timeZone,
+        'product_name': productName,
+        'state': state,
+      };
 
   @override
   String toString() => '''

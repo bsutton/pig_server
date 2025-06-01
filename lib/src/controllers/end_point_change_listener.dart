@@ -1,4 +1,3 @@
-
 import 'package:pig_common/pig_common.dart';
 
 /// Interface to listen for changes to an [EndPoint].

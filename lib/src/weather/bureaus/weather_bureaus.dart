@@ -21,7 +21,6 @@ class WeatherBureaus {
     _bureaus.add(bureau);
   }
 
-
   /// Gets the list of all registered weather bureaus.
   static List<WeatherBureau> getBureaus() => _bureaus;
 }

@@ -16,7 +16,7 @@ abstract class WeatherInterval {
   /// The air temperature.
   Temperature? get temperature;
 
-  /// The apparent temperature, sometimes referred to as the 
+  /// The apparent temperature, sometimes referred to as the
   /// 'feels like' temperature.
   Temperature? get apparentTemperature;
 

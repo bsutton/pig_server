@@ -1,4 +1,3 @@
-
 import 'package:sqflite_common/sqlite_api.dart';
 
 extension Db on Database {

@@ -1,4 +1,3 @@
-
 import 'weather_interval.dart';
 
 /// Represents weather history containing multiple intervals.

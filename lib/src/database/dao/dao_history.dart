@@ -23,7 +23,7 @@ class DaoHistory extends Dao<History> {
 
   /// Get all History records, ordered by event_start descending by default.
   ///
- ///
+  ///
   /// You can still override the ordering via [orderByClause].
   Future<List<History>> getLast7Days({
     String? orderByClause,

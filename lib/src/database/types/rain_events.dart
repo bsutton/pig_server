@@ -1,11 +1,11 @@
 /// Represents a rain event with the date and amount of rainfall.
 class RainEvent {
-
   /// Creates a [RainEvent] with the specified [date] and [millimeters].
   RainEvent({
     required this.date,
     required this.millimeters,
   });
+
   /// The date of the rain event.
   final DateTime date;
 

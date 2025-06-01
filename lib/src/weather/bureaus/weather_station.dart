@@ -1,4 +1,3 @@
-
 import '../weather_forecast.dart';
 
 /// Represents a weather station capable of fetching forecasts.
