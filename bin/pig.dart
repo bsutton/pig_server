@@ -6,9 +6,11 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
 import 'package:pigation/src/config.dart';
+import 'package:pigation/src/dcli/resource/generated/resource_registry.g.dart';
 import 'package:pigation/src/logger.dart';
 import 'package:pigation/src/pi/gpio_manager.dart';
 import 'package:pigation/src/startup/startup.g.dart';
+import 'package:self/self.dart';
 
 /// PiGation server side app that can install, launch and
 /// run the PiGation web server based on the command line args passed
@@ -27,7 +29,9 @@ Launches pig in server mode as a sub-process and will restart it if it crashes.'
             'Starts the web server. Use /opt/pig/config/config.yaml to control its settings')
     ..addFlag('debug', abbr: 'd', negatable: false, help: '''
 starts the server in debug mode. Opens config.yaml from ./config/config.yaml.''');
+  bool install;
   bool launch;
+
   bool server;
   bool debug;
 
@@ -35,6 +39,7 @@ starts the server in debug mode. Opens config.yaml from ./config/config.yaml.'''
 
   try {
     parsed = parser.parse(args);
+    install = parsed['install'] as bool? ?? false;
     launch = parsed['launch'] as bool? ?? false;
     server = parsed['server'] as bool? ?? false;
     debug = parsed['debug'] as bool? ?? false;
@@ -44,8 +49,7 @@ starts the server in debug mode. Opens config.yaml from ./config/config.yaml.'''
     exit(1);
   }
 
-  if (!isOneOrNoneTrue(
-      install: parsed.wasParsed('install'), launch: launch, server: server)) {
+  if (!isOneOrNoneTrue(install: install, launch: launch, server: server)) {
     print(
         red('''You may select only one of 'install', 'launch' or 'server' '''));
     usage(parser);
@@ -55,9 +59,26 @@ starts the server in debug mode. Opens config.yaml from ./config/config.yaml.'''
   if (debug) {
     Settings().setVerbose(enabled: true);
   }
+
+  final self = Self(
+    logger: Logger(),
+    installPath: '$HOME/myapp',
+    executableName: 'myapp',
+    resources: ResourceRegistry.resources,
+  );
+
+
+  if (install) {
+    await doInstall(self, debug: debug);
+
+    exit(0);
+  }
+
   if (launch) {
-    await doLaunch(_loadConfig(debug), debug: debug);
-  } else if (server) {
+    await doLaunch(self, config, _loadConfig(debug), debug: debug);
+    exit(0);
+  }
+  if (server) {
     final server = await runServer(_loadConfig(debug));
 
     print('Pig Server is running - CTRL-C to stop it gracefully');
@@ -68,8 +89,7 @@ starts the server in debug mode. Opens config.yaml from ./config/config.yaml.'''
     await server.close();
 
     shutdown();
-  } else {
-    await doInstall(debug: debug);
+    exit(0);
   }
 }
 

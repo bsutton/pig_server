@@ -4,6 +4,7 @@ import 'package:dcli/dcli.dart';
 import 'package:dcli/posix.dart';
 import 'package:path/path.dart';
 import 'package:posix/posix.dart' as posix;
+import 'package:self/src/self.dart';
 
 import '../config.dart';
 import '../database/factory/cli_database_factory.dart';
@@ -23,18 +24,23 @@ final pathToPigServer = join(pathToPigationBin, 'pig');
 final pathToLauncher = join(pathToPigationBin, 'pig');
 final pathToLauncherScript = join(pathToPigationBin, 'pig_launch.sh');
 
-Future<void> doInstall({required bool debug}) async {
+Future<void> doInstall(Self self, {required bool debug}) async {
   if (debug) {
     Settings().setVerbose(enabled: true);
   }
-
   if (!Shell.current.isPrivilegedUser) {
     printerr(red(r'''
 You must run this script as sudo
-sudo env PATH="$PATH" pig_install
+sudo env PATH="$PATH" pig --install
     '''));
     exit(1);
   }
+
+  await self.install();
+
+  self.addBootLauncher(
+      args: ['--launch'], runAsUser: Shell.current.loggedInUser!);
+
   await _getConfigFromUser();
 
   await _deploy();
@@ -131,7 +137,7 @@ Future<void> _deploy() async {
 
   final owner = Shell.current.loggedInUser!;
 
-  unpackResources(pathToPigation);
+  // unpackResources(pathToPigation);
 
   /// copy this exe (the pig_installer) into altbin as we are also the
   /// pig server.
@@ -152,7 +158,7 @@ Future<void> _deploy() async {
   chown(pathToLogFile, user: owner, group: owner);
   chmod(pathToLogFile, permission: '644');
 
-  _addCronBoot(pathToLauncherScript, owner);
+  // _addCronBoot(pathToLauncherScript, owner);
 
   /// start the service.
   await start(owner);
@@ -161,7 +167,6 @@ Future<void> _deploy() async {
 /// Restart the the pig  in server mode by killing the existing processes
 /// and spawning them detached.
 Future<void> start(String owner) async {
-  killProcess('pig_launch.sh');
   killProcess('dart:pig');
 
   /// give the killed processes a moment to be cleanup
@@ -282,15 +287,15 @@ void unpackResources(String pathToPigation) {
   }
 }
 
-/// Add cron job so we get rebooted each time the system is rebooted.
-void _addCronBoot(String pathToLauncher, String user) {
-  print(green('Adding cronjob to restart pig --server on reboot'));
-  join(rootPath, 'etc', 'cron.d', 'pig --server').write('''
-@reboot $user $pathToLauncher
-''');
+// /// Add cron job so we get rebooted each time the system is rebooted.
+// void _addCronBoot(String pathToLauncher, String user) {
+//   print(green('Adding cronjob to restart pig --server on reboot'));
+//   join(rootPath, 'etc', 'cron.d', 'pig').write('''
+// @reboot $user $pathToLauncher --server
+// ''');
 
-  // ('(crontab -l ; echo "@reboot $pathToPigServer")' | 'crontab -').run;
-}
+//   // ('(crontab -l ; echo "@reboot $pathToPigServer")' | 'crontab -').run;
+// }
 
 void _createDir(String pathToDir) {
   if (!exists(pathToDir)) {

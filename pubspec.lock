@@ -245,10 +245,10 @@ packages:
     dependency: "direct main"
     description:
       name: dcli_core
-      sha256: "106256ef9a40569f937b9e39aa89d033edb22cdea838d74ddf2d58cddcc25c08"
+      sha256: "2843396a9fd0b6c31c30fe930fd7af4ea592cba5c9a856b5d099bd19169226ac"
       url: "https://pub.dev"
     source: hosted
-    version: "7.0.2"
+    version: "7.0.3"
   dcli_terminal:
     dependency: transitive
     description:
@@ -656,6 +656,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.1.0"
+  self:
+    dependency: "direct main"
+    description:
+      path: "../../self"
+      relative: true
+    source: path
+    version: "0.1.0"
   settings_yaml:
     dependency: "direct main"
     description:
