@@ -1,10 +1,11 @@
 import 'package:pig_common/pig_common.dart';
-import 'package:sqflite_common/sqlite_api.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import '../../controllers/end_point_bus.dart';
 import 'dao.dart';
 import 'dao_endpoint.dart';
 import 'dao_garden_feature.dart';
+import 'dao_history.dart';
 
 class DaoLighting extends Dao<Lighting> with DaoGardenFeature {
   @override
@@ -67,6 +68,10 @@ class DaoLighting extends Dao<Lighting> with DaoGardenFeature {
   @override
   Future<int> delete(int id, [Transaction? transaction]) async {
     final db = withinTransaction(transaction);
+    final lighting = await getById(id);
+    if (lighting != null) {
+      await DaoHistory().deleteByGardenFeature(lighting);
+    }
     return db.delete(
       tableName,
       where: 'id = ?',

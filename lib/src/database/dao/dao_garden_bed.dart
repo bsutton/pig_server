@@ -1,5 +1,5 @@
 import 'package:pig_common/pig_common.dart';
-import 'package:sqflite_common/sqlite_api.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import '../../controllers/end_point_bus.dart';
 import 'dao.dart';
@@ -27,7 +27,10 @@ class DaoGardenBed extends Dao<GardenBed> with DaoGardenFeature {
 
   @override
   Future<int> delete(int id, [Transaction? transaction]) async {
-    DaoHistory().deleteByGardenBed(id);
+    final bed = await getById(id);
+    if (bed != null) {
+      await DaoHistory().deleteByGardenFeature(bed);
+    }
 
     return super.delete(id, transaction);
   }
