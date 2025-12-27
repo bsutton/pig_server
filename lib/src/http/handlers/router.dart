@@ -6,6 +6,7 @@ import 'package:shelf_web_socket/shelf_web_socket.dart';
 
 import '../../controllers/timer_control.dart';
 import '../../logger.dart';
+import 'auth_handler.dart';
 import 'end_point_handler.dart';
 import 'garden_bed_handler.dart';
 import 'handle_static.dart';
@@ -24,6 +25,8 @@ Router buildRouter() {
     ..get('/images/<.*>', handleStatic)
     ..get('/images/samples/<.*>', handleStatic)
     ..get('/js/<.*>', handleStatic)
+    ..post('/auth/challenge', handleAuthChallenge)
+    ..post('/auth/login', handleAuthLogin)
     ..post('/lighting/toggle', handleLightingToggle)
     ..post('/garden_bed/list', handleGardenBedList)
     ..post('/garden_bed/toggle', handleGardenBedToggle)
@@ -35,10 +38,12 @@ Router buildRouter() {
     ..post(
         '/history/list', (Request request) async => handleHistoryList(request))
     ..post('/lighting/list', handleLightingList)
+    ..post('/lighting/delete', handleLightingDelete)
     ..post('/end_point/list', handleEndPointList)
     ..post('/end_point/edit_data', handleEndPointEditData)
     ..post('/end_point/save', handleEndPointSave)
     ..post('/end_point/toggle', handleEndPointToggle)
+    ..post('/end_point/pulse_pin', handleEndPointPulsePin)
     ..post('/end_point/delete', handleEndPointDelete)
     ..post('/overview', (Request request) async => handleOverview(request));
 
@@ -47,7 +52,7 @@ Router buildRouter() {
 
 // Future<Response?> monitor(Request request) async {
 
-Handler monitorHandler() => webSocketHandler((socket, _) {
+Handler monitorHandler() => webSocketHandler((socket, __) {
       qlog('websocket connected');
       TimerControl().monitor(socket.sink);
       socket.stream.listen((data) {

@@ -238,16 +238,16 @@ Future<Response> handleGardenBedEditData(Request request) async {
   }
 }
 
-Future<List<EndPointInfo>> _getMasterValves(DaoEndPoint daoEndPoint) async {
+Future<List<EndPointData>> _getMasterValves(DaoEndPoint daoEndPoint) async {
   final masterValves = (await daoEndPoint.getMasterValves())
-      .map(EndPointInfo.fromEndPoint)
+      .map(EndPointData.fromEndPoint)
       .toList();
   return masterValves;
 }
 
-Future<List<EndPointInfo>> _getValves(DaoEndPoint daoEndPoint) async {
+Future<List<EndPointData>> _getValves(DaoEndPoint daoEndPoint) async {
   final valves = (await daoEndPoint.getAllValves())
-      .map(EndPointInfo.fromEndPoint)
+      .map(EndPointData.fromEndPoint)
       .toList();
   return valves;
 }
@@ -330,6 +330,7 @@ Future<Response> handleGardenBedDelete(Request request) async {
       return Response.notFound(jsonEncode({'error': 'Garden bed not found'}));
     }
 
+    await DaoHistory().deleteByGardenFeature(bed);
     await daoGardenBed.delete(bedId);
     return Response.ok(jsonEncode({'result': 'OK'}));
   } catch (e) {

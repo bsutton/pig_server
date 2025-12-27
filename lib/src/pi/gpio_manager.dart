@@ -6,6 +6,8 @@ import 'gpio_manager_mock.dart';
 import 'gpio_manager_rasp.dart';
 
 abstract class GpioManager {
+  static bool? _isPi;
+
   /// Factory method to create the correct instance
   factory GpioManager() =>
       _isRaspberryPi() ? GpioManagerRaspPi() : GpioManagerMock();
@@ -25,7 +27,12 @@ abstract class GpioManager {
   /// Get the current status of a GPIO pin.
   PinLogicState getCurrentStatus(EndPoint endPoint);
 
-  static bool? _isPi;
+  /// Pulse a GPIO pin directly without requiring an EndPoint mapping.
+  Future<void> pulsePin({
+    required int pinNo,
+    required PinActivationType activationType,
+    required Duration duration,
+  });
 
   /// Detect if running on a Raspberry Pi
   static bool _isRaspberryPi() {

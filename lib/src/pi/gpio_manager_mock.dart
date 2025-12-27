@@ -7,6 +7,11 @@ import '../logger.dart';
 import 'gpio_manager.dart';
 
 class GpioManagerMock implements GpioManager {
+  static GpioManagerMock? _instance;
+
+  /// Simulated pin states for mock mode
+  final Map<int, PinVoltage> _mockPinStates = {};
+
   factory GpioManagerMock() {
     _instance ??= GpioManagerMock._();
     return _instance!;
@@ -15,10 +20,6 @@ class GpioManagerMock implements GpioManager {
   GpioManagerMock._() {
     qlog(red('Starting in rPI mock mode'));
   }
-  static GpioManagerMock? _instance;
-
-  /// Simulated pin states for mock mode
-  final Map<int, PinVoltage> _mockPinStates = {};
 
   @override
   Future<void> provisionPins() async {
@@ -67,6 +68,23 @@ Mock provisioned GPIO pin $pinNo with initial state: ${_mockPinStates[pinNo.gpio
     }
     final pinVoltage = _mockPinStates[pinNo]!;
     return PinLogicState.getStatus(endPoint, pinVoltage: pinVoltage);
+  }
+
+  @override
+  Future<void> pulsePin({
+    required int pinNo,
+    required PinActivationType activationType,
+    required Duration duration,
+  }) async {
+    qlog(
+      'Mock pulse pin $pinNo: activation=${activationType.name}, '
+      'duration=${duration.inMilliseconds}ms, '
+      'on=${activationType.onState.name}, off=${activationType.offState.name}',
+    );
+    _setPinVoltage(pinNo: pinNo, pinVoltage: activationType.onState);
+    await Future<void>.delayed(duration);
+    _setPinVoltage(pinNo: pinNo, pinVoltage: activationType.offState);
+    qlog('Mock pulse pin $pinNo complete.');
   }
 
   void _qlogPinStates() {

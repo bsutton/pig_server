@@ -22,46 +22,52 @@ import '../../weather/bureaus/weather_bureaus.dart';
 ///   "weatherBureaus": [ { "id": "...", "countryName": "..." }, ...],
 ///   "weatherStations": [ ... ]
 /// }
+/// POST /api/end_point/list
+/// Request: {}
+/// Response (JSON):
+/// {
+///   "endPoints": [ { …EndPointData JSON… }, … ],
+///   "weatherBureaus": [ { …WeatherBureauInfo JSON… }, … ],
+///   "weatherStations": [ { …WeatherStationInfo JSON… }, … ]
+/// }
 Future<Response> handleEndPointList(Request request) async {
   try {
     final dao = DaoEndPoint();
-    final endPoints = await dao.getAll();
+    final allEndpoints = await dao.getAllOrderedByOrdinal();
 
-    // Build the list of endPoints for JSON
-    final endPointList = <EndPointInfo>[];
-    for (final ep in endPoints) {
-      endPointList.add(EndPointInfo.fromEndPoint(ep,
-          on: dao.getCurrentStatus(ep) == PinLogicState.on));
-
-      //     {
-      //     'id': ep.id,
-      //     'name': ep.name,
-      //     'isOn': dao.isOn(ep), // or ep.getCurrentStatus()==ON
-      //   });
+    // Build List<EndPointData>
+    final endPointList = <EndPointData>[];
+    for (final ep in allEndpoints) {
+      final isOn = (dao.getCurrentStatus(ep)) == PinLogicState.on;
+      endPointList.add(
+        EndPointData.fromEndPoint(ep, on: isOn),
+      );
     }
 
-    // If you have WeatherBureaus, WeatherStations:
-    final bureaus = WeatherBureaus.getBureaus(); // e.g. [BureauOfXYZ...]
-    final bureauList = bureaus
-        .map((b) => {
-              'id': b.hashCode, // or some real ID if needed
-              'countryName': b.countryName,
-            })
+    // Build List<WeatherBureauInfo>
+    final rawBureaus = WeatherBureaus.getBureaus();
+    final bureauList = rawBureaus
+        .map((b) => WeatherBureauData(
+              id: b.id,
+              countryName: b.countryName,
+            ))
         .toList();
 
-    // If each bureau has stations
-    // You might flatten them or fetch them from the selected bureau
-    final stationList = <Map<String, dynamic>>[];
-    // for demonstration, leave it empty or fill it as needed
+    // Build List<WeatherStationInfo> (if you have station objects)
+    // Here we’ll just return an empty list, but you can populate it similarly:
+    final stationList = <WeatherStationData>[];
+    // e.g., rawStations.map((s) =>
+    //  WeatherStationInfo(id: s.id, name: s.name)).toList();
 
-    final responseMap = {
-      'endPoints': endPointList,
-      'weatherBureaus': bureauList,
-      'weatherStations': stationList, // or ignore if not needed
-    };
+    // Create our typed DTO
+    final dto = EndPointListData(
+      endPoints: endPointList,
+      bureaus: bureauList,
+      stations: stationList,
+    );
 
     return Response.ok(
-      jsonEncode(responseMap),
+      jsonEncode(dto.toJson()),
       headers: {'Content-Type': 'application/json'},
     );
   } catch (e) {
@@ -109,7 +115,7 @@ Future<Response> handleEndPointEditData(Request request) async {
         .toList();
 
     final endPointJson =
-        endPoint == null ? null : EndPointInfo.fromEndPoint(endPoint).toJson();
+        endPoint == null ? null : EndPointData.fromEndPoint(endPoint).toJson();
 
     final responseMap = {
       'endPoint': endPointJson,
@@ -169,6 +175,54 @@ Future<Response> handleEndPointToggle(Request request) async {
   }
 }
 
+/// POST /api/end_point/pulse_pin
+/// Request body: {
+///   "pinNo": 17,
+///   "durationMs": 700,
+///   "activationType": "highIsOn"
+/// }
+/// Response: { "result": "OK" }
+Future<Response> handleEndPointPulsePin(Request request) async {
+  try {
+    final bodyStr = await request.readAsString();
+    final body = jsonDecode(bodyStr) as Map<String, dynamic>? ?? {};
+    final pinNo = body['pinNo'] as int?;
+    final durationMs = body['durationMs'] as int?;
+    final activationTypeName = body['activationType'] as String?;
+
+    if (pinNo == null || durationMs == null) {
+      qlog('end_point/pulse_pin Missing pinNo or durationMs');
+      return Response.badRequest(
+        body: jsonEncode({'error': 'Missing pinNo or durationMs'}),
+      );
+    }
+
+    final availablePins = GpioManager().availablePins;
+    if (!availablePins.any((pin) => pin.gpioPin == pinNo)) {
+      return Response.badRequest(
+        body: jsonEncode({'error': 'Pin $pinNo is not available'}),
+      );
+    }
+
+    final activationType = activationTypeName == null
+        ? PinActivationType.highIsOn
+        : PinActivationType.fromJson(activationTypeName);
+
+    await GpioManager().pulsePin(
+      pinNo: pinNo,
+      activationType: activationType,
+      duration: Duration(milliseconds: durationMs),
+    );
+
+    return Response.ok(jsonEncode({'result': 'OK'}));
+  } catch (e) {
+    return Response.internalServerError(
+      body: jsonEncode({'error': e.toString()}),
+      headers: {'Content-Type': 'application/json'},
+    );
+  }
+}
+
 /// POST /api/end_point/save
 ///
 /// Request body: {
@@ -184,7 +238,7 @@ Future<Response> handleEndPointSave(Request request) async {
     final bodyStr = await request.readAsString();
     final body = jsonDecode(bodyStr) as Map<String, dynamic>? ?? {};
 
-    final endPointInfo = EndPointInfo.fromJson(body);
+    final endPointInfo = EndPointData.fromJson(body);
 
     // final id = body['id'] as int?;
     // final name = body['name'] as String?;
@@ -204,7 +258,7 @@ Future<Response> handleEndPointSave(Request request) async {
       return Response.badRequest(
           body: jsonEncode({
         'error': '''
-The GPIO Pin ${endPointInfo.pinAssignment.gpioPin} is already in use.'''
+The GPIO Pin ${endPointInfo.gpioPinAssignment.gpioPin} is already in use.'''
       }));
     }
 
@@ -214,8 +268,9 @@ The GPIO Pin ${endPointInfo.pinAssignment.gpioPin} is already in use.'''
       // Create a new EndPoint
       final newEndPoint = EndPoint(
           id: 0, // or auto-assigned
+          ordinal: endPointInfo.ordinal,
           name: endPointInfo.name,
-          gpioPinNo: endPointInfo.pinAssignment.gpioPin,
+          gpioPinNo: endPointInfo.gpioPinAssignment.gpioPin,
           endPointType: endPointInfo.endPointType,
           activationType: endPointInfo.activationType,
           createdDate: DateTime.now(),
@@ -228,8 +283,9 @@ The GPIO Pin ${endPointInfo.pinAssignment.gpioPin} is already in use.'''
         return Response.notFound(jsonEncode({'error': 'EndPoint not found'}));
       }
       existing
+        ..ordinal = endPointInfo.ordinal
         ..name = endPointInfo.name
-        ..gpioPinNo = endPointInfo.pinAssignment.gpioPin
+        ..gpioPinNo = endPointInfo.gpioPinAssignment.gpioPin
         ..activationType = endPointInfo.activationType
         ..endPointType = endPointInfo.endPointType;
       await dao.update(existing);
@@ -247,9 +303,9 @@ The GPIO Pin ${endPointInfo.pinAssignment.gpioPin} is already in use.'''
   }
 }
 
-Future<bool> _pinInUse(EndPointInfo endPointInfo) async {
+Future<bool> _pinInUse(EndPointData endPointInfo) async {
   final endPoint =
-      await DaoEndPoint().getByPin(endPointInfo.pinAssignment.gpioPin);
+      await DaoEndPoint().getByPin(endPointInfo.gpioPinAssignment.gpioPin);
 
   return endPoint != null && endPoint.id != endPointInfo.id;
 }

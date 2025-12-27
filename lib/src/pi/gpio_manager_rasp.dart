@@ -8,6 +8,11 @@ import '../logger.dart';
 import 'gpio_manager.dart';
 
 class GpioManagerRaspPi implements GpioManager {
+  static GpioManagerRaspPi? _instance;
+
+  /// Map to manage GPIO pin instances
+  final Map<int, GPIO> _gpioMap = {};
+
   factory GpioManagerRaspPi() {
     _instance ??= GpioManagerRaspPi._();
     return _instance!;
@@ -16,10 +21,6 @@ class GpioManagerRaspPi implements GpioManager {
   GpioManagerRaspPi._() {
     qlog(red('Starting in rPI mode'));
   }
-  static GpioManagerRaspPi? _instance;
-
-  /// Map to manage GPIO pin instances
-  final Map<int, GPIO> _gpioMap = {};
 
   /// Ensures that all pins are in an off
   /// state.
@@ -108,13 +109,16 @@ class GpioManagerRaspPi implements GpioManager {
     }
   }
 
-  void _printPinStates() {
-    final buffer = StringBuffer();
-    _gpioMap.forEach((pin, gpio) {
-      final isHigh = gpio.read();
-      buffer.write('p$pin:${isHigh ? 'on' : 'off'};');
-    });
-    qlog(buffer);
+
+  @override
+  Future<void> pulsePin({
+    required int pinNo,
+    required PinActivationType activationType,
+    required Duration duration,
+  }) async {
+    _setPinVoltage(pinNo: pinNo, pinVoltage: activationType.onState);
+    await Future<void>.delayed(duration);
+    _setPinVoltage(pinNo: pinNo, pinVoltage: activationType.offState);
   }
 
   @override
