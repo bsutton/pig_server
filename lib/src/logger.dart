@@ -4,23 +4,25 @@ import 'package:self/self.dart';
 import 'config.dart';
 
 class Logger implements SelfLogger {
+  static Logger? _self;
+
+  late final String pathToLog;
+
   factory Logger() => _self ??= Logger._();
 
   Logger._() : pathToLog = Config().pathToLogfile;
-  static Logger? _self;
-  late final String pathToLog;
 
   void log(Object? message) {
-    if (pathToLog == 'console') {
-      qlog(message);
+    if (pathToLog == 'console' || pathToLog == 'print') {
+      print(message);
     } else {
       pathToLog.append(message.toString());
     }
   }
 
   void logerr(String message) {
-    if (pathToLog == 'console') {
-      qlogerr(message);
+    if (pathToLog == 'console' || pathToLog == 'print') {
+      printerr(message);
     } else {
       pathToLog.append(message);
     }
@@ -28,6 +30,11 @@ class Logger implements SelfLogger {
 
   @override
   void fine(Object? message, {Object? error, StackTrace? stackTrace}) {
+    log(message.toString());
+  }
+
+  @override
+  void finer(Object? message, {Object? error, StackTrace? stackTrace}) {
     log(message.toString());
   }
 

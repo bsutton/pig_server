@@ -17,6 +17,9 @@ void main(List<String> args) async {
 
   final project = DartProject.self;
 
+  print(green('Building pig_app wasm target'));
+  'tool/build.dart --build --wasm'.start(workingDirectory: '../pig_app');
+
   print(green('Packing deployable resources'));
   Resources().pack();
 
@@ -32,8 +35,8 @@ void main(List<String> args) async {
   /// compiled into the deploy script.
   ///
   print(green('Compiling pig'));
-  DartScript.fromFile(join('bin', 'pig.dart'), project: project)
-      .compile(overwrite: true);
+  // DartScript.fromFile(join('bin', 'pig.dart'), project: project)
+  //     .compile(overwrite: true);
 
   'dart compile exe   --target-os=linux   --target-arch=arm64   bin/pig.dart   -o bin/pig_arm64'
       .run;
@@ -42,7 +45,8 @@ void main(List<String> args) async {
   // '$scpCommand tool/deploy $targetServer:$targetDirectory'.run;
 
   print(orange('build complete'));
-  print("log into the $targetServer and run 'pig_arm64 --install'");
+  print(
+      '''log into the $targetServer and run 'sudo env PATH=-"\$PATH" chmod +x pig_install;./pig_arm64 --install' ''');
 }
 
 /// Update the list of sql upgrade scripts we ship as assets.

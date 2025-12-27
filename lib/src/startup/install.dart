@@ -4,7 +4,7 @@ import 'package:dcli/dcli.dart';
 import 'package:dcli/posix.dart';
 import 'package:path/path.dart';
 import 'package:posix/posix.dart' as posix;
-import 'package:self/src/self.dart';
+import 'package:self/self.dart';
 
 import '../config.dart';
 import '../database/factory/cli_database_factory.dart';
@@ -133,11 +133,7 @@ To secure access to PiGation you need to create a password that will be entered 
 }
 
 Future<void> _deploy() async {
-  _createDirectory(pathToWwwRoot);
-
   final owner = Shell.current.loggedInUser!;
-
-  // unpackResources(pathToPigation);
 
   /// copy this exe (the pig_installer) into altbin as we are also the
   /// pig server.
@@ -155,6 +151,7 @@ Future<void> _deploy() async {
 
   fixDirectoryPermissions(pathToPigation, owner);
 
+  'chmod +x $pathToPigServer'.run;
   chown(pathToLogFile, user: owner, group: owner);
   chmod(pathToLogFile, permission: '644');
 
@@ -199,6 +196,7 @@ Future<void> start(String owner) async {
   pathToLauncherScript.start(detached: true);
 
   print(red('The pig web server has been launched'));
+  print('Log files are located at: ${Config().pathToLogfile}');
 }
 
 /// Allow the pig server to bind to port 80/443 without
@@ -301,13 +299,4 @@ void _createDir(String pathToDir) {
   if (!exists(pathToDir)) {
     createDir(pathToDir, recursive: true);
   }
-}
-
-void _createDirectory(String pathToWwwRoot) {
-  if (exists(pathToWwwRoot)) {
-    deleteDir(pathToWwwRoot);
-  }
-  createDir(pathToWwwRoot, recursive: true);
-
-  chown(pathToWwwRoot, user: 'bsutton', group: 'bsutton');
 }

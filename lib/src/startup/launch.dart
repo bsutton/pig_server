@@ -6,7 +6,7 @@ import '../config.dart';
 /// We expect the pig_server to be in the same directory as the piglaunch exe
 ///
 Future<void> doLaunch(Self self, Config config, {required bool debug}) async {
-  print('Logging to: ${Config().pathToLogfile}');
+  print('Launching Pig Server...');
 
-  self.launch(args: ['--server']);
+  await self.launch(args: ['--server']);
 }

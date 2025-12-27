@@ -60,13 +60,14 @@ starts the server in debug mode. Opens config.yaml from ./config/config.yaml.'''
     Settings().setVerbose(enabled: true);
   }
 
+  final config = _loadConfig(debug);
+
   final self = Self(
     logger: Logger(),
-    installPath: '$HOME/myapp',
-    executableName: 'myapp',
+    installPath: '/opt/pigation',
+    executableName: 'pig',
     resources: ResourceRegistry.resources,
   );
-
 
   if (install) {
     await doInstall(self, debug: debug);
@@ -75,11 +76,13 @@ starts the server in debug mode. Opens config.yaml from ./config/config.yaml.'''
   }
 
   if (launch) {
-    await doLaunch(self, config, _loadConfig(debug), debug: debug);
+    await doLaunch(self, config, debug: debug);
     exit(0);
   }
   if (server) {
-    final server = await runServer(_loadConfig(debug));
+    final server = await runServer(config);
+
+    print('Logging to: ${config.pathToLogfile}');
 
     print('Pig Server is running - CTRL-C to stop it gracefully');
 
