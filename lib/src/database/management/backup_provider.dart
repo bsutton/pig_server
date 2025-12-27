@@ -12,9 +12,15 @@ import 'database_helper.dart';
 import 'zip_isolate.dart';
 
 abstract class BackupProvider {
-  BackupProvider(this.databaseFactory);
-
   final _progressController = StreamController<ProgressUpdate>.broadcast();
+
+  PigDatabaseFactory databaseFactory;
+
+  static const _restoreStageCount = 9;
+
+  final useDebugPath = false;
+
+  BackupProvider(this.databaseFactory);
 
   Stream<ProgressUpdate> get progressStream => _progressController.stream;
 
@@ -26,8 +32,6 @@ abstract class BackupProvider {
   /// A descrive name of the provider we show to the
   /// user when offering a backup option.
   String get name;
-
-  PigDatabaseFactory databaseFactory;
 
   /// Stores the zipped backup file to a [BackupProvider]s
   /// defined location.
@@ -94,8 +98,6 @@ abstract class BackupProvider {
         }
       });
 
-// ProgressUpdate class
-
   Future<void> performRestore(
     Backup backup,
     ScriptSource src,
@@ -151,8 +153,6 @@ abstract class BackupProvider {
     });
   }
 
-  static const _restoreStageCount = 9;
-
   /// Fetchs the backup from storage and makes
   /// it available on the local file system
   /// returning a [File] object to the local file.
@@ -187,8 +187,6 @@ abstract class BackupProvider {
       }
     }
   }
-
-  //i am amazing. u r not.
 
   /// copied here so we can use the [BackupProvider] from the cli.
   String formatDate(DateTime dateTime, {String format = 'D, j M'}) =>
@@ -227,11 +225,24 @@ abstract class BackupProvider {
   /// as the [BackupProvider]s already understand the
   /// need for different database storage locations.
   String get databasePath;
-
-  final useDebugPath = false;
 }
 
 class BackupResult {
+  /// Path to the database that was backed up.
+  String pathToSource;
+
+  /// Path to the location of the backup zip file
+  /// which contains the db and photos.
+  String pathToBackup;
+
+  bool success;
+
+  late int sourceSize;
+
+  late int backupSize;
+
+  late String status;
+
   BackupResult(
       {required this.pathToSource,
       required this.pathToBackup,
@@ -245,18 +256,6 @@ class BackupResult {
       backupSize = stat(pathToBackup).size;
     }
   }
-
-  /// Path to the database that was backed up.
-  String pathToSource;
-
-  /// Path to the location of the backup zip file
-  /// which contains the db and photos.
-  String pathToBackup;
-  bool success;
-
-  late int sourceSize;
-  late int backupSize;
-  late String status;
 
   @override
   String toString() {
@@ -276,6 +275,18 @@ class BackupResult {
 }
 
 class Backup {
+  String id;
+
+  DateTime when;
+
+  String pathTo;
+
+  String size;
+
+  String status;
+
+  String error;
+
   Backup(
       {required this.id,
       required this.when,
@@ -283,23 +294,18 @@ class Backup {
       required this.size,
       required this.status,
       required this.error});
-
-  String id;
-  DateTime when;
-  String pathTo;
-  String size;
-  String status;
-  String error;
 }
 
 class ProgressUpdate {
+  final String stageDescription;
+
+  final int stageNo;
+
+  final int stageCount;
+
   ProgressUpdate(this.stageDescription, this.stageNo, this.stageCount);
 
   ProgressUpdate.upload(this.stageDescription)
       : stageNo = 6,
         stageCount = 7;
-
-  final String stageDescription;
-  final int stageNo;
-  final int stageCount;
 }

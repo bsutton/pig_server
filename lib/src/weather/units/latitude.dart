@@ -1,12 +1,13 @@
 import 'package:fixed/fixed.dart';
 
 class Latitude {
+  final Fixed latitude;
+
   Latitude(String latitude) : latitude = Fixed.parse(latitude);
 
   // Factory constructor to create a Latitude from JSON
   factory Latitude.fromJson(Map<String, dynamic> json) =>
       Latitude(json['latitude'] as String);
-  final Fixed latitude;
 
   @override
   String toString() => 'Latitude=$latitude';

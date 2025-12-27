@@ -1,4 +1,20 @@
 class JSONHeader {
+  final String? refreshMessage;
+
+  final String? id;
+
+  final String? mainID;
+
+  final String? name;
+
+  final String? stateTimeZone;
+
+  final String? timeZone;
+
+  final String? productName;
+
+  final String? state;
+
   JSONHeader({
     this.refreshMessage,
     this.id,
@@ -21,14 +37,6 @@ class JSONHeader {
         productName: json['product_name'] as String?,
         state: json['state'] as String?,
       );
-  final String? refreshMessage;
-  final String? id;
-  final String? mainID;
-  final String? name;
-  final String? stateTimeZone;
-  final String? timeZone;
-  final String? productName;
-  final String? state;
 
   /// Converts the `JSONHeader` instance to a map.
   Map<String, dynamic> toJson() => {

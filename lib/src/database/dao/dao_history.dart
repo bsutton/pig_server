@@ -1,5 +1,5 @@
 import 'package:pig_common/pig_common.dart';
-import 'package:sqflite_common/sqlite_api.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'dao.dart';
 

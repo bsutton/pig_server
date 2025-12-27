@@ -1,4 +1,12 @@
 class JSONNotice {
+  final String? copyright;
+
+  final String? copyrightUrl;
+
+  final String? disclaimerUrl;
+
+  final String? feedbackUrl;
+
   JSONNotice({
     this.copyright,
     this.copyrightUrl,
@@ -13,10 +21,6 @@ class JSONNotice {
         disclaimerUrl: json['disclaimer_url'] as String?,
         feedbackUrl: json['feedback_url'] as String?,
       );
-  final String? copyright;
-  final String? copyrightUrl;
-  final String? disclaimerUrl;
-  final String? feedbackUrl;
 
   /// Converts the `JSONNotice` instance to a JSON map.
   Map<String, dynamic> toJson() => {

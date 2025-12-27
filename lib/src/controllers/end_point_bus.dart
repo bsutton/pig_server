@@ -5,12 +5,13 @@ import 'end_point_change_listener.dart';
 
 /// Singleton class to manage notifications for EndPoint changes.
 class EndPointBus {
-  /// Private constructor for singleton pattern.
-  EndPointBus._internal();
   static final _instance = EndPointBus._internal();
 
   /// A map of EndPoints to their listeners.
   final Map<EndPoint, List<EndPointChangeListener>> _listenerMap = {};
+
+  /// Private constructor for singleton pattern.
+  EndPointBus._internal();
 
   /// Access the singleton instance.
   static EndPointBus get instance => _instance;

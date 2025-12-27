@@ -9,6 +9,14 @@ import 'end_point_bus.dart';
 
 /// A controller for managing a master valve and its associated garden beds.
 class MasterValveController {
+  final EndPoint masterValve;
+
+  final List<GardenBed> controlledBeds;
+
+  GardenBed? drainOutVia;
+
+  Timer? drainOutTimer;
+
   // Private constructor
   MasterValveController._(this.masterValve, this.controlledBeds);
 
@@ -17,11 +25,6 @@ class MasterValveController {
     final controlledBeds = await DaoGardenBed().getControlledBy(masterValve);
     return MasterValveController._(masterValve, controlledBeds);
   }
-
-  final EndPoint masterValve;
-  final List<GardenBed> controlledBeds;
-  GardenBed? drainOutVia;
-  Timer? drainOutTimer;
 
   /// Turn off the specified garden bed's valve with additional master
   /// valve logic.
@@ -67,8 +70,6 @@ class MasterValveController {
     drainOutTimer = null;
     EndPointBus.instance.timerFinished(drainOutValve);
   }
-
-// ... other imports
 
   /// Check if any other valve associated with the master valve is running.
   Future<bool> isOtherValveRunning(GardenBed gardenBed) async {

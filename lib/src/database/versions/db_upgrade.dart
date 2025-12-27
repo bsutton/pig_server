@@ -1,6 +1,6 @@
 import 'package:dcli/dcli.dart';
 import 'package:pig_common/pig_common.dart';
-import 'package:sqflite_common/sqlite_api.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:strings/strings.dart';
 
 import '../../../src/version/version.g.dart' as code;

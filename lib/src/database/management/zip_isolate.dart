@@ -127,6 +127,16 @@ Future<void> _expandZippedFileToDisk(
 }
 
 class _ZipParams {
+  final SendPort sendPort;
+
+  final String pathToZip;
+
+  final String pathToBackupFile;
+
+  final int progressStageStart;
+
+  final int progressStageEnd;
+
   _ZipParams({
     required this.sendPort,
     required this.pathToZip,
@@ -134,9 +144,4 @@ class _ZipParams {
     required this.progressStageStart,
     required this.progressStageEnd,
   });
-  final SendPort sendPort;
-  final String pathToZip;
-  final String pathToBackupFile;
-  final int progressStageStart;
-  final int progressStageEnd;
 }

@@ -2,6 +2,8 @@ import 'package:fixed/fixed.dart';
 
 /// Represents a temperature measurement.
 class Temperature {
+  final Fixed temperature;
+
   /// Creates a [Temperature] object from a string representation of
   /// the temperature value.
   Temperature(String temperature) : temperature = Fixed.parse(temperature);
@@ -9,8 +11,6 @@ class Temperature {
   /// Creates a [Temperature] object from a JSON representation.
   factory Temperature.fromJson(Map<String, dynamic> json) =>
       Temperature(json['temperature'] as String);
-
-  final Fixed temperature;
 
   @override
   String toString() => 'Temperature=$temperature °C';

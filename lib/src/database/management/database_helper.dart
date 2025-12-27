@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:sqflite_common/sqlite_api.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import '../../logger.dart';
 import '../factory/pig_database_factory.dart';
@@ -9,10 +9,13 @@ import '../versions/script_source.dart';
 import 'backup_provider.dart';
 
 class DatabaseHelper {
-  factory DatabaseHelper() => instance;
-  DatabaseHelper._();
   static Database? _database;
+
   static final instance = DatabaseHelper._();
+
+  factory DatabaseHelper() => instance;
+
+  DatabaseHelper._();
 
   Database get database => _database!;
 

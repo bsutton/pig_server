@@ -3,6 +3,12 @@ import 'json_notice.dart';
 import 'json_observation.dart';
 
 class JSONObservations {
+  final List<JSONNotice> notice;
+
+  final List<JSONHeader> header;
+
+  final List<JSONObservation> observations;
+
   JSONObservations({
     required this.notice,
     required this.header,
@@ -27,9 +33,6 @@ class JSONObservations {
                 .toList() ??
             [],
       );
-  final List<JSONNotice> notice;
-  final List<JSONHeader> header;
-  final List<JSONObservation> observations;
 
   Map<String, dynamic> toJson() => {
         'notice': notice.map((item) => item.toJson()).toList(),

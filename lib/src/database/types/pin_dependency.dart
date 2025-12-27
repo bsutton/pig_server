@@ -12,13 +12,6 @@ enum DependencyType {
 
 /// Represents a pin dependency relationship.
 class PinDependency {
-  PinDependency({
-    required this.primaryPin,
-    required this.dependency,
-    required this.relatedPins,
-    required this.interval,
-  });
-
   /// The primary pin in the dependency relationship.
   final EndPoint primaryPin;
 
@@ -30,6 +23,13 @@ class PinDependency {
 
   /// The duration of the delay in the dependency.
   final Duration interval;
+
+  PinDependency({
+    required this.primaryPin,
+    required this.dependency,
+    required this.relatedPins,
+    required this.interval,
+  });
 
   /// Activates the pins based on the dependency type and interval.
   Future<void> setOn() async {

@@ -10,11 +10,6 @@ import '../util/delay.dart';
 
 /// A controller for managing timers and notifying WebSocket clients.
 class TimerControl {
-  /// Factory to create instances of TimerControl.
-  factory TimerControl() => _instance ??= TimerControl._internal();
-
-  TimerControl._internal();
-
   static TimerControl? _instance;
 
   /// Holds active timers, keyed by the [GardenFeature.id].
@@ -22,6 +17,11 @@ class TimerControl {
 
   /// Collection of listening WebSocket clients for real-time updates.
   final List<WebSocketSink> _listening = [];
+
+  /// Factory to create instances of TimerControl.
+  factory TimerControl() => _instance ??= TimerControl._internal();
+
+  TimerControl._internal();
 
   /// Start a timer for [feature] with [description] and [duration].
   /// [completionAction] is called when the timer completes normally.
@@ -103,20 +103,24 @@ class TimerControl {
 }
 
 class FeatureTimer {
+  final GardenFeature feature;
+
+  final String description;
+
+  final Duration duration;
+
+  final DateTime startTime;
+
+  final Future<void> Function(GardenFeature) completionAction;
+
+  Delay<GardenFeature>? _delay;
+
   FeatureTimer({
     required this.feature,
     required this.description,
     required this.duration,
     required this.completionAction,
   }) : startTime = DateTime.now();
-
-  final GardenFeature feature;
-  final String description;
-  final Duration duration;
-  final DateTime startTime;
-  final Future<void> Function(GardenFeature) completionAction;
-
-  Delay<GardenFeature>? _delay;
 
   /// Starts the timer and schedules [completionAction].
   void start() {

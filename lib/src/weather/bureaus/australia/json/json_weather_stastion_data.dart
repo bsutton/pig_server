@@ -1,6 +1,8 @@
 import 'json_observations.dart';
 
 class JSONWeatherStationData {
+  final JSONObservations observations;
+
   JSONWeatherStationData({required this.observations});
 
   factory JSONWeatherStationData.fromJson(Map<String, dynamic> json) =>
@@ -8,7 +10,6 @@ class JSONWeatherStationData {
         observations: JSONObservations.fromJson(
             json['observations'] as Map<String, dynamic>),
       );
-  final JSONObservations observations;
 
   Map<String, dynamic> toJson() => {
         'observations': observations.toJson(),

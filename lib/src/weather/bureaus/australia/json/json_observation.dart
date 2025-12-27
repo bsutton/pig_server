@@ -9,6 +9,66 @@ import '../../../weather_interval.dart';
 import '../../../weather_interval_type.dart';
 
 class JSONObservation implements WeatherInterval {
+  final int sortOrder;
+
+  final int wmo;
+
+  final String name;
+
+  final String historyProduct;
+
+  final String localDateTime;
+
+  final DateTime? localDateTimeFull;
+
+  final DateTime? aifstimeUtc;
+
+  final Latitude? lat;
+
+  final Longitude? lon;
+
+  final Temperature? apparentT;
+
+  final String? cloud;
+
+  final String? cloudType;
+
+  final Temperature? deltaT;
+
+  final Speed? gustKmh;
+
+  final Speed? gustKt;
+
+  final Temperature? airTemp;
+
+  final Temperature? dewpt;
+
+  final Pressure? press;
+
+  final Pressure? pressMsl;
+
+  final Pressure? pressQnh;
+
+  final String? pressTend;
+
+  final int? rainTrace;
+
+  final Humidity? relHum;
+
+  final String? seaState;
+
+  final String? swellDirWorded;
+
+  final String? visKm;
+
+  final String? weather;
+
+  final WindDirection? windDir;
+
+  final Speed? windSpdKmh;
+
+  final Speed? windSpdKt;
+
   JSONObservation({
     required this.sortOrder,
     required this.wmo,
@@ -109,36 +169,6 @@ class JSONObservation implements WeatherInterval {
             ? Speed.fromJson(json['wind_spd_kt'] as Map<String, dynamic>)
             : null,
       );
-  final int sortOrder;
-  final int wmo;
-  final String name;
-  final String historyProduct;
-  final String localDateTime;
-  final DateTime? localDateTimeFull;
-  final DateTime? aifstimeUtc;
-  final Latitude? lat;
-  final Longitude? lon;
-  final Temperature? apparentT;
-  final String? cloud;
-  final String? cloudType;
-  final Temperature? deltaT;
-  final Speed? gustKmh;
-  final Speed? gustKt;
-  final Temperature? airTemp;
-  final Temperature? dewpt;
-  final Pressure? press;
-  final Pressure? pressMsl;
-  final Pressure? pressQnh;
-  final String? pressTend;
-  final int? rainTrace;
-  final Humidity? relHum;
-  final String? seaState;
-  final String? swellDirWorded;
-  final String? visKm;
-  final String? weather;
-  final WindDirection? windDir;
-  final Speed? windSpdKmh;
-  final Speed? windSpdKt;
 
   Map<String, dynamic> toJson() => {
         'sort_order': sortOrder,

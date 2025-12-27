@@ -103,7 +103,7 @@ keytool -list -v -storepass:file $tmpFile -keystore $keystorePath -alias $alias'
 }
 
 class FailedToGenerate implements Exception {
-  FailedToGenerate(this.message);
-
   String message;
+
+  FailedToGenerate(this.message);
 }

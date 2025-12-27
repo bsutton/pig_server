@@ -5,14 +5,6 @@ import '../logger.dart';
 /// A utility class for handling delays with optional cancellation
 /// and callbacks.
 class Delay<F> {
-  /// Constructor to initialize the delay.
-  Delay({
-    required this.description,
-    required this.duration,
-    required this.feature,
-    required this.callback,
-  });
-
   /// The description of the delay.
   final String description;
 
@@ -27,6 +19,14 @@ class Delay<F> {
 
   /// A flag to indicate whether the delay has been canceled.
   var _isCancelled = false;
+
+  /// Constructor to initialize the delay.
+  Delay({
+    required this.description,
+    required this.duration,
+    required this.feature,
+    required this.callback,
+  });
 
   /// Starts the delay and executes the callback after the duration,
   /// unless canceled.

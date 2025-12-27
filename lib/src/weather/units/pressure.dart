@@ -1,12 +1,13 @@
 import 'package:fixed/fixed.dart';
 
 class Pressure {
+  final Fixed pressure;
+
   Pressure(String pressure) : pressure = Fixed.parse(pressure);
 
   // Factory constructor to create a Pressure from JSON
   factory Pressure.fromJson(Map<String, dynamic> json) =>
       Pressure(json['pressure'] as String);
-  final Fixed pressure;
 
   @override
   String toString() => 'Pressure=$pressure';

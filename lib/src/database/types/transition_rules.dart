@@ -3,13 +3,6 @@
 ///
 /// Transition rules are typically used to avoid power or pressure overloads.
 class TransitionRules {
-  /// Creates a [TransitionRules] instance with optional parameters.
-  TransitionRules({
-    this.delay = 0,
-    this.powerSaving = false,
-    this.pressureManagement = false,
-  });
-
   /// Delay in milliseconds before transitioning the state.
   final int delay;
 
@@ -18,6 +11,13 @@ class TransitionRules {
 
   /// Indicates whether pressure management rules are enforced.
   final bool pressureManagement;
+
+  /// Creates a [TransitionRules] instance with optional parameters.
+  TransitionRules({
+    this.delay = 0,
+    this.powerSaving = false,
+    this.pressureManagement = false,
+  });
 
   /// Converts the [TransitionRules] instance to a string representation.
   @override

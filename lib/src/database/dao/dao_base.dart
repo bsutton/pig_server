@@ -1,7 +1,16 @@
 import 'package:pig_common/pig_common.dart';
-import 'package:sqflite_common/sqlite_api.dart';
+// import '../fake_sqlite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class DaoBase<T extends Entity<T>> {
+  Database db;
+
+  final void Function(DaoBase<T> dao) _notify;
+
+  late T Function(Map<String, dynamic> map) _fromMap;
+
+  late String _tableName;
+
   DaoBase(this.db, this._notify);
 
   /// Use this method when you need to do db operations
@@ -13,13 +22,6 @@ class DaoBase<T extends Entity<T>> {
       .._fromMap = fromMap;
     return dao;
   }
-
-  Database db;
-
-  final void Function(DaoBase<T> dao) _notify;
-
-  late T Function(Map<String, dynamic> map) _fromMap;
-  late String _tableName;
 
   // ignore: avoid_setters_without_getters
   set tableName(String tableName) => _tableName = tableName;
@@ -47,8 +49,8 @@ class DaoBase<T extends Entity<T>> {
   ///  ```name desc, age```
   Future<List<T>> getAll({String? orderByClause}) async {
     final executor = db;
-    final List<Map<String, dynamic>> maps =
-        await executor.query(_tableName, orderBy: orderByClause);
+    final maps =
+        await executor.query(_tableName, orderBy: orderByClause, where: '');
     final list = List.generate(maps.length, (i) => _fromMap(maps[i]));
 
     return list;

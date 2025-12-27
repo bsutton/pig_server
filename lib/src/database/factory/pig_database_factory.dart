@@ -1,6 +1,5 @@
-import 'package:sqflite_common/sqlite_api.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-// ignore: one_member_abstracts
 abstract class PigDatabaseFactory {
   Future<Database> openDatabase(String path,
       {required OpenDatabaseOptions options});

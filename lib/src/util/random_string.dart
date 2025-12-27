@@ -2,6 +2,20 @@ import 'dart:math';
 
 /// Utility class for generating random strings.
 class RandomString {
+  static const _upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+  static const _lower = 'abcdefghijklmnopqrstuvwxyz';
+
+  static const _digits = '0123456789';
+
+  static const _alphanum = '$_upper$_lower$_digits';
+
+  final Random _random;
+
+  final String _symbols;
+
+  final int _length;
+
   /// Creates a [RandomString] generator with the given [length], [random]
   /// instance, and character [symbols].
   RandomString({int length = 21, Random? random, String? symbols})
@@ -15,14 +29,6 @@ class RandomString {
       throw ArgumentError('Symbols must contain at least 2 characters');
     }
   }
-  static const _upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  static const _lower = 'abcdefghijklmnopqrstuvwxyz';
-  static const _digits = '0123456789';
-  static const _alphanum = '$_upper$_lower$_digits';
-
-  final Random _random;
-  final String _symbols;
-  final int _length;
 
   /// Generates a random string of the specified length.
   String nextString() => List.generate(
