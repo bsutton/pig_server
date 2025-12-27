@@ -12,3 +12,5 @@ bin/pig_arm64
 test/letsencrypt
 .failed_tracker
 bin/pig_install
+print
+custom_lint.log
