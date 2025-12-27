@@ -29,6 +29,7 @@ Future<Response> handleLightingList(Request request) async {
       result.add({
         'id': light.id,
         'name': light.name, // Or however you reference the name
+        'lightSwitchId': light.lightSwitchId,
         'isOn': DaoLighting().isOn(light),
         'lastOnDate': _getLastActivation(light),
         'timerRunning': isTimerRunning,
@@ -110,6 +111,37 @@ Future<Response> handleLightingToggle(Request request) async {
       await DaoLighting().softOff(lighting);
       return Response.ok(jsonEncode({'result': 'OK'}));
     }
+  } catch (e) {
+    return Response.internalServerError(
+      body: jsonEncode({'error': e.toString()}),
+    );
+  }
+}
+
+/// POST /api/lighting/delete
+/// Request body: { "lightId": 123 }
+/// Response: { "result": "OK" }
+Future<Response> handleLightingDelete(Request request) async {
+  try {
+    final bodyStr = await request.readAsString();
+    final body = jsonDecode(bodyStr) as Map<String, dynamic>? ?? {};
+    final lightId = body['lightId'] as int?;
+
+    if (lightId == null) {
+      return Response.badRequest(
+        body: jsonEncode({'error': 'Missing lightId'}),
+      );
+    }
+
+    final dao = DaoLighting();
+    final light = await dao.getById(lightId);
+    if (light == null) {
+      return Response.notFound(jsonEncode({'error': 'Light not found'}));
+    }
+
+    await DaoHistory().deleteByGardenFeature(light);
+    await dao.delete(lightId);
+    return Response.ok(jsonEncode({'result': 'OK'}));
   } catch (e) {
     return Response.internalServerError(
       body: jsonEncode({'error': e.toString()}),
