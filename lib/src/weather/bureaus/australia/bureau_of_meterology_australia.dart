@@ -31,6 +31,9 @@ class BureauOfMeterologyAustralia implements WeatherBureau {
   String get countryName => 'Australia';
 
   @override
+  int get id => 1;
+
+  @override
   List<WeatherStation> get stations => BOMWeatherStation.values;
 
   WeatherForecast fetchForecast(DateTime date) =>
