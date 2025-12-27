@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
 import 'package:pigation/src/config.dart';
+import 'package:pigation/src/database/dao/password.dart';
 import 'package:pigation/src/dcli/resource/generated/resource_registry.g.dart';
 import 'package:pigation/src/logger.dart';
 import 'package:pigation/src/pi/gpio_manager.dart';
@@ -20,6 +21,10 @@ void main(List<String> args) async {
     ..options
     ..addFlag('install',
         abbr: 'i', negatable: false, help: 'Installs PiGation into /opt/pig')
+    ..addFlag('reset-password',
+        abbr: 'p',
+        negatable: false,
+        help: 'Reset the PiGation server password in config.yaml')
     ..addFlag('launch', abbr: 'l', negatable: false, help: '''
 Launches pig in server mode as a sub-process and will restart it if it crashes.''')
     ..addFlag('server',
@@ -30,6 +35,7 @@ Launches pig in server mode as a sub-process and will restart it if it crashes.'
     ..addFlag('debug', abbr: 'd', negatable: false, help: '''
 starts the server in debug mode. Opens config.yaml from ./config/config.yaml.''');
   bool install;
+  bool resetPassword;
   bool launch;
 
   bool server;
@@ -40,6 +46,7 @@ starts the server in debug mode. Opens config.yaml from ./config/config.yaml.'''
   try {
     parsed = parser.parse(args);
     install = parsed['install'] as bool? ?? false;
+    resetPassword = parsed['reset-password'] as bool? ?? false;
     launch = parsed['launch'] as bool? ?? false;
     server = parsed['server'] as bool? ?? false;
     debug = parsed['debug'] as bool? ?? false;
@@ -49,9 +56,14 @@ starts the server in debug mode. Opens config.yaml from ./config/config.yaml.'''
     exit(1);
   }
 
-  if (!isOneOrNoneTrue(install: install, launch: launch, server: server)) {
+  if (!isOneOrNoneTrue(
+      install: install,
+      resetPassword: resetPassword,
+      launch: launch,
+      server: server,
+    )) {
     print(
-        red('''You may select only one of 'install', 'launch' or 'server' '''));
+        red('''You may select only one of 'install', 'reset-password', 'launch' or 'server' '''));
     usage(parser);
     exit(1);
   }
@@ -72,6 +84,11 @@ starts the server in debug mode. Opens config.yaml from ./config/config.yaml.'''
   if (install) {
     await doInstall(self, debug: debug);
 
+    exit(0);
+  }
+
+  if (resetPassword) {
+    await _resetPassword(config);
     exit(0);
   }
 
@@ -107,11 +124,17 @@ Config _loadConfig(bool debug) {
 }
 
 bool isOneOrNoneTrue(
-    {required bool install, required bool launch, required bool server}) {
+    {required bool install,
+    required bool resetPassword,
+    required bool launch,
+    required bool server}) {
   // Count the number of true values.
   var trueCount = 0;
 
   if (install) {
+    trueCount++;
+  }
+  if (resetPassword) {
     trueCount++;
   }
   if (launch) {
@@ -127,6 +150,27 @@ bool isOneOrNoneTrue(
 
 void usage(ArgParser parser) {
   print(parser.usage);
+}
+
+Future<void> _resetPassword(Config config) async {
+  print(green('''
+Resetting the PiGation server password.
+'''));
+  var password = 'not set';
+  var confirm = 'also not set';
+
+  while (password != confirm) {
+    password = ask('Password:', hidden: true);
+    confirm = ask('Confirm your password', hidden: true);
+
+    if (password != confirm) {
+      print(red('The passwords did not match'));
+    }
+  }
+
+  config.password = Password.getSaltedHash(password);
+  await config.save();
+  print(green('Password updated in ${config.loadedFrom}'));
 }
 
 void shutdown() {

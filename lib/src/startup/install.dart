@@ -7,11 +7,10 @@ import 'package:posix/posix.dart' as posix;
 import 'package:self/self.dart';
 
 import '../config.dart';
+import '../database/dao/password.dart' as db_password;
 import '../database/factory/cli_database_factory.dart';
 import '../database/management/local_backup_provider.dart';
 import '../dcli/resource/generated/resource_registry.g.dart';
-import '../security/password.dart';
-import '../security/pbkdf2.dart';
 
 final pathToPigation = join(rootPath, 'opt', 'pigation');
 final pathToPigationBin = join(rootPath, 'opt', 'pigation', 'bin');
@@ -129,7 +128,7 @@ To secure access to PiGation you need to create a password that will be entered 
     }
   }
 
-  return Password.hash(password, PBKDF2());
+  return db_password.Password.getSaltedHash(password);
 }
 
 Future<void> _deploy() async {

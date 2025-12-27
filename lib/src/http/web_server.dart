@@ -18,6 +18,7 @@ import '../logger.dart';
 import '../pi/gpio_manager.dart';
 import '../weather/bureaus/weather_bureaus.dart';
 import 'handlers/router.dart';
+import 'middleware/auth_middleware.dart';
 import 'middleware/wasm.dart';
 
 enum CertificateMode { staging, production }
@@ -96,13 +97,14 @@ Future<HttpServer> _startWebServer() async {
   final router = buildRouter();
 
   final handler = const Pipeline()
+      .addMiddleware(addWasmHeaders)
+      .addMiddleware(authMiddleware())
       .addMiddleware(logRequests(logger: _log))
       .addMiddleware(rateLimiter.rateLimiter())
-      .addMiddleware(addWasmHeaders)
       .addHandler(router.call);
   // .addHandler(router.call);
 
-  qlog('Serving at http://${Config().bindingAddress}:${Config().httpPort}');
+  print('Serving at http://${Config().bindingAddress}:${Config().httpPort}');
   return serve(handler, Config().bindingAddress, Config().httpPort);
 }
 
@@ -114,9 +116,10 @@ Future<HttpServer> _startHttpsServer(
 
   final handler = const Pipeline()
       .addMiddleware(redirectToHttps)
+      .addMiddleware(addWasmHeaders)
+      .addMiddleware(authMiddleware())
       .addMiddleware(logRequests(logger: _log))
       .addMiddleware(rateLimiter.rateLimiter())
-      .addMiddleware(addWasmHeaders)
       .addHandler(router.call);
 
   final servers = await letsEncrypt.startServer(
@@ -131,8 +134,8 @@ Future<HttpServer> _startHttpsServer(
   server.autoCompress = true;
   secureServer.autoCompress = true;
 
-  qlog('Serving at http://${server.address.host}:${server.port}');
-  qlog('Serving at https://${secureServer.address.host}:${secureServer.port}');
+  print('Serving at http://${server.address.host}:${server.port}');
+  print('Serving at https://${secureServer.address.host}:${secureServer.port}');
 
   return secureServer;
 }
