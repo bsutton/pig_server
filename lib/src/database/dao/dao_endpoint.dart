@@ -1,5 +1,5 @@
 import 'package:pig_common/pig_common.dart';
-import 'package:sqflite_common/sqlite_api.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import '../../controllers/end_point_bus.dart';
 import '../../logger.dart';
@@ -22,7 +22,16 @@ class DaoEndPoint extends Dao<EndPoint> {
       tableName,
       orderBy: orderByClause ?? 'LOWER(end_point_name)',
     );
-    return List.generate(data.length, (i) => fromMap(data[i]));
+    return data.map(fromMap).toList();
+  }
+
+  Future<List<EndPoint>> getAllOrderedByOrdinal() async {
+    final db = withoutTransaction();
+    final rows = await db.query(
+      tableName,
+      orderBy: 'ordinal ASC, end_point_name ASC', // primary sort on `ordinal`
+    );
+    return rows.map(fromMap).toList();
   }
 
   /// Get all valves
@@ -42,7 +51,7 @@ class DaoEndPoint extends Dao<EndPoint> {
       whereArgs: [type.name],
       orderBy: 'LOWER(end_point_name)',
     );
-    return List.generate(data.length, (i) => fromMap(data[i]));
+    return data.map(fromMap).toList();
   }
 
   /// Get EndPoints by pin number
@@ -73,26 +82,6 @@ Found multiple EndPoints with the same gpio pin no. There should only be one. $l
       whereArgs: [id],
     );
   }
-
-  // /// Provision GPIO pins based on the database configuration.
-  // Future<void> provisionPins() async {
-  //   // Fetch all configured pins from the database.
-  //   final configuredPins = await getAll();
-
-  //   for (final endPoint in configuredPins) {
-  //     final pinNo = endPoint.pinNo;
-
-  //     // Open the GPIO pin using dart_periphery
-  //     try {
-  //       // Add the provisioned pin to the map
-  //       GpioManager().setEndPointState(endPoint: endPoint, turnOn: false);
-  //       qlog('Provisioned GPIO pin $pinNo with initial state: off');
-  //     } catch (e) {
-  //       qlog('Error provisioning GPIO pin $pinNo: $e');
-  //       // Handle the error appropriately (e.g., log, retry, skip the pin)
-  //     }
-  //   }
-  // }
 
   /// Get the current status of a GPIO pin.
   PinLogicState getCurrentStatus(EndPoint endPoint) =>
