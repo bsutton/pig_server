@@ -4,9 +4,10 @@ import 'A096c423cca85364b9286a37e4757b806.g.dart';
 import 'A0a7af7b64f829701b85034b6d9034d88.g.dart';
 import 'A16557bc1fd50bbef0079852c66381045.g.dart';
 import 'A177d806e699053a7021cc3563ad9dd4e.g.dart';
-import 'A1fc99e400622ed6b506f45269507fc63.g.dart';
+import 'A1b255e2738715de794d8d2db4167d884.g.dart';
 import 'A2147853b69653f82ec24948d7736a20d.g.dart';
 import 'A26c4f86ae73a46dd68b587a9b70da67b.g.dart';
+import 'A28f6d3082b8a85c71f474144836d9ee4.g.dart';
 import 'A293989817beda999f0e1ff94751698e5.g.dart';
 import 'A2952fca0beeb0987a0d0e4088f9eab2c.g.dart';
 import 'A2b21d2d877adc6081e1e7fc07bed7be7.g.dart';
@@ -27,16 +28,18 @@ import 'A7fbf67045324fba4f28ebf8c5eabf850.g.dart';
 import 'A8c38e09cc50ef80467033cd8ca4ff2ef.g.dart';
 import 'A916cd6b04a8474cfe31e53820d8c3949.g.dart';
 import 'A933a3ddb758239427ea8c071f5169c5d.g.dart';
-import 'A94d3ce5f5163d9aa5bf65ca170a1ff89.g.dart';
+import 'A939d1108d79bf9486a203264b9e17c47.g.dart';
 import 'A987e99c5a0672de63a2c4db3c123bdbf.g.dart';
 import 'A9e76318cf387fb01992b9ab23d950e22.g.dart';
 import 'Ab01380d65ed0a47775740943e6e584cf.g.dart';
 import 'Ab827cb1e3f2b7e7e15b4882a5295bf6e.g.dart';
-import 'Ababe17c607e66ae3cb4ef118d4c53e23.g.dart';
-import 'Ad9f6e5c8a7974e678f9b37a1c87b0cb6.g.dart';
+import 'Abbcf427d662734ff35115a41de4f0fdf.g.dart';
+import 'Ad638aa8ff50cd62a6ea49b75c8c73984.g.dart';
+import 'Ad8486349ebc9dd2919ac420f65d0873f.g.dart';
 import 'Adbf1e04ff8d74b1d1425f128e56f73ad.g.dart';
 import 'Adc5cfd0f1851af75f39cd605a140c52d.g.dart';
-import 'Ae98785a896d29ad2079099d10e675cb9.g.dart';
+import 'Aeb768bf0cdaca7f18c0d576481423989.g.dart';
+import 'Afd6c13ae9b439af714cbd3c00b4ef1af.g.dart';
 
 /// GENERATED -- GENERATED
 ///
@@ -63,10 +66,12 @@ class ResourceRegistry {
     'www_root/main.dart.mjs': A16557bc1fd50bbef0079852c66381045(),
     'www_root/canvaskit/chromium/canvaskit.js.symbols':
         A177d806e699053a7021cc3563ad9dd4e(),
-    'www_root/main.dart.wasm.map': A1fc99e400622ed6b506f45269507fc63(),
+    'sql/upgrade_scripts/v3.sql': A1b255e2738715de794d8d2db4167d884(),
     'www_root/canvaskit/canvaskit.js.symbols':
         A2147853b69653f82ec24948d7736a20d(),
     'www_root/icons/Icon-192.png': A26c4f86ae73a46dd68b587a9b70da67b(),
+    'www_root/canvaskit/skwasm_heavy.js.symbols':
+        A28f6d3082b8a85c71f474144836d9ee4(),
     'www_root/flutter_bootstrap.js': A293989817beda999f0e1ff94751698e5(),
     'www_root/icons/Icon-maskable-512.png': A2952fca0beeb0987a0d0e4088f9eab2c(),
     'www_root/version.json': A2b21d2d877adc6081e1e7fc07bed7be7(),
@@ -91,16 +96,19 @@ class ResourceRegistry {
     'www_root/icons/Icon-512.png': A916cd6b04a8474cfe31e53820d8c3949(),
     'www_root/assets/packages/iconsax_flutter/fonts/FlutterIconsax.ttf':
         A933a3ddb758239427ea8c071f5169c5d(),
-    'www_root/assets/AssetManifest.json': A94d3ce5f5163d9aa5bf65ca170a1ff89(),
+    'www_root/canvaskit/wimp.wasm': A939d1108d79bf9486a203264b9e17c47(),
     'sql/upgrade_scripts/v1.sql': A987e99c5a0672de63a2c4db3c123bdbf(),
     'www_root/favicon.png': A9e76318cf387fb01992b9ab23d950e22(),
     'www_root/assets/shaders/ink_sparkle.frag':
         Ab01380d65ed0a47775740943e6e584cf(),
     'www_root/main.dart.wasm': Ab827cb1e3f2b7e7e15b4882a5295bf6e(),
-    'www_root/main.dart.js.map': Ababe17c607e66ae3cb4ef118d4c53e23(),
-    'altbin/pig_launch.sh': Ad9f6e5c8a7974e678f9b37a1c87b0cb6(),
+    'www_root/canvaskit/wimp.js': Abbcf427d662734ff35115a41de4f0fdf(),
+    'www_root/canvaskit/skwasm_heavy.js': Ad638aa8ff50cd62a6ea49b75c8c73984(),
+    'www_root/canvaskit/wimp.js.symbols': Ad8486349ebc9dd2919ac420f65d0873f(),
     'www_root/assets/FontManifest.json': Adbf1e04ff8d74b1d1425f128e56f73ad(),
     'www_root/assets/NOTICES': Adc5cfd0f1851af75f39cd605a140c52d(),
-    'sql/v3.sql': Ae98785a896d29ad2079099d10e675cb9(),
+    'www_root/canvaskit/skwasm_heavy.wasm': Aeb768bf0cdaca7f18c0d576481423989(),
+    'www_root/assets/shaders/stretch_effect.frag':
+        Afd6c13ae9b439af714cbd3c00b4ef1af(),
   };
 }

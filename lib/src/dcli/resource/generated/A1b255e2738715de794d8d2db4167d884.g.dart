@@ -8,9 +8,9 @@ import 'package:dcli/dcli.dart';
 ///
 /// GENERATED - GENERATED
 
-class Ad9f6e5c8a7974e678f9b37a1c87b0cb6 extends PackedResource {
-  /// PackedResource - ../bin/pig_launch.sh
-  const Ad9f6e5c8a7974e678f9b37a1c87b0cb6();
+class A1b255e2738715de794d8d2db4167d884 extends PackedResource {
+  /// PackedResource - sql/upgrade_scripts/v3.sql
+  const A1b255e2738715de794d8d2db4167d884();
 
   /// A hash of the resource (pre packed) calculated by
   /// [calculateHash].
@@ -24,18 +24,15 @@ class Ad9f6e5c8a7974e678f9b37a1c87b0cb6 extends PackedResource {
   /// this checksum
   @override
   String get checksum =>
-      '6532538a68cc6ef2a136337265823282';
+      '4fb2fe0fcb7405e43f6a517ad9420a2d';
 
   /// `<package>/resources` relative path to the original resource.
   @override
-  String get originalPath => 'altbin/pig_launch.sh';
+  String get originalPath => 'sql/upgrade_scripts/v3.sql';
 
   @override
   String get content => '''
-IyBXZSBpbnN0YWxsIHRoaXMgc2NyaXB0IGluIGNyb24uZCBvbiBwcm9kdWN0aW9uIHN5c3RlbXMKIyBz
-byB0aGF0IHRoZSBQSUdTZXJ2ZXIgaXMgcmVzdGFydGVkIGFmdGVyIGEgcmVib290LgojIFN0YXJ0IHRo
-ZSBzZXJ2ZXIgaW4gdGhlIGNvcnJlY3QgZGlyZWN0b3J5CmNkIC9vcHQvcGlnYXRpb24KIyBXZSB1c2Ug
-aWhsYXVuY2ggd2hpY2ggd2lsbCByZXN0YXJ0IHRoZSBpYWhzZXJ2ZXIgaWYgdGhlIGlhaHNlcnZlciBj
-cmFzaGVzIG91dC4KL29wdC9waWdhdGlvbi9iaW4vcGlnIC0tbGF1bmNoCg==
+QUxURVIgVEFCTEUgZW5kX3BvaW50CkFERCBDT0xVTU4gb3JkaW5hbCBJTlRFR0VSIE5PVCBOVUxMIERF
+RkFVTFQgMDsK
   ''';
 }
