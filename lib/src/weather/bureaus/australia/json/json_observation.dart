@@ -104,71 +104,119 @@ class JSONObservation implements WeatherInterval {
 
   factory JSONObservation.fromJson(Map<String, dynamic> json) =>
       JSONObservation(
-        sortOrder: json['sort_order'] as int,
-        wmo: json['wmo'] as int,
-        name: json['name'] as String,
-        historyProduct: json['history_product'] as String,
-        localDateTime: json['local_date_time'] as String,
-        localDateTimeFull: json['local_date_time_full'] != null
-            ? DateTime.parse(json['local_date_time_full'] as String)
-            : null,
-        aifstimeUtc: json['aifstime_utc'] != null
-            ? DateTime.parse(json['aifstime_utc'] as String)
-            : null,
-        lat: json['lat'] != null
-            ? Latitude.fromJson(json['lat'] as Map<String, dynamic>)
-            : null,
-        lon: json['lon'] != null
-            ? Longitude.fromJson(json['lon'] as Map<String, dynamic>)
-            : null,
+        sortOrder: _parseInt(json['sort_order']) ?? 0,
+        wmo: _parseInt(json['wmo']) ?? 0,
+        name: json['name']?.toString() ?? '',
+        historyProduct: json['history_product']?.toString() ?? '',
+        localDateTime: json['local_date_time']?.toString() ?? '',
+        localDateTimeFull:
+            _parseBomLocal(json['local_date_time_full'] as String?),
+        aifstimeUtc: _parseBomUtc(json['aifstime_utc'] as String?),
+        lat: json['lat'] != null ? Latitude(json['lat'].toString()) : null,
+        lon: json['lon'] != null ? Longitude(json['lon'].toString()) : null,
         apparentT: json['apparent_t'] != null
-            ? Temperature.fromJson(json['apparent_t'] as Map<String, dynamic>)
+            ? Temperature(json['apparent_t'].toString())
             : null,
-        cloud: json['cloud'] as String?,
-        cloudType: json['cloud_type'] as String?,
+        cloud: json['cloud']?.toString(),
+        cloudType: json['cloud_type']?.toString(),
         deltaT: json['delta_t'] != null
-            ? Temperature.fromJson(json['delta_t'] as Map<String, dynamic>)
+            ? Temperature(json['delta_t'].toString())
             : null,
         gustKmh: json['gust_kmh'] != null
-            ? Speed.fromJson(json['gust_kmh'] as Map<String, dynamic>)
+            ? Speed(json['gust_kmh'].toString())
             : null,
-        gustKt: json['gust_kt'] != null
-            ? Speed.fromJson(json['gust_kt'] as Map<String, dynamic>)
-            : null,
+        gustKt:
+            json['gust_kt'] != null ? Speed(json['gust_kt'].toString()) : null,
         airTemp: json['air_temp'] != null
-            ? Temperature.fromJson(json['air_temp'] as Map<String, dynamic>)
+            ? Temperature(json['air_temp'].toString())
             : null,
         dewpt: json['dewpt'] != null
-            ? Temperature.fromJson(json['dewpt'] as Map<String, dynamic>)
+            ? Temperature(json['dewpt'].toString())
             : null,
-        press: json['press'] != null
-            ? Pressure.fromJson(json['press'] as Map<String, dynamic>)
-            : null,
+        press:
+            json['press'] != null ? Pressure(json['press'].toString()) : null,
         pressMsl: json['press_msl'] != null
-            ? Pressure.fromJson(json['press_msl'] as Map<String, dynamic>)
+            ? Pressure(json['press_msl'].toString())
             : null,
         pressQnh: json['press_qnh'] != null
-            ? Pressure.fromJson(json['press_qnh'] as Map<String, dynamic>)
+            ? Pressure(json['press_qnh'].toString())
             : null,
-        pressTend: json['press_tend'] as String?,
-        rainTrace: json['rain_trace'] as int?,
+        pressTend: json['press_tend']?.toString(),
+        rainTrace: _parseInt(json['rain_trace']),
         relHum: json['rel_hum'] != null
-            ? Humidity.fromJson(json['rel_hum'] as Map<String, dynamic>)
+            ? Humidity(json['rel_hum'].toString())
             : null,
-        seaState: json['sea_state'] as String?,
-        swellDirWorded: json['swell_dir_worded'] as String?,
-        visKm: json['vis_km'] as String?,
-        weather: json['weather'] as String?,
+        seaState: json['sea_state']?.toString(),
+        swellDirWorded: json['swell_dir_worded']?.toString(),
+        visKm: json['vis_km']?.toString(),
+        weather: json['weather']?.toString(),
         windDir: json['wind_dir'] != null
             ? WindDirection.fromAbbreviation(json['wind_dir'] as String)
             : null,
         windSpdKmh: json['wind_spd_kmh'] != null
-            ? Speed.fromJson(json['wind_spd_kmh'] as Map<String, dynamic>)
+            ? Speed(json['wind_spd_kmh'].toString())
             : null,
         windSpdKt: json['wind_spd_kt'] != null
-            ? Speed.fromJson(json['wind_spd_kt'] as Map<String, dynamic>)
+            ? Speed(json['wind_spd_kt'].toString())
             : null,
       );
+
+  static DateTime? _parseBomLocal(String? value) {
+    final cleaned = value?.trim();
+    if (cleaned == null || cleaned.isEmpty) {
+      return null;
+    }
+    if (cleaned.contains('T')) {
+      return DateTime.tryParse(cleaned);
+    }
+    return _parseCompactDateTime(cleaned, isUtc: false);
+  }
+
+  static DateTime? _parseBomUtc(String? value) {
+    final cleaned = value?.trim();
+    if (cleaned == null || cleaned.isEmpty) {
+      return null;
+    }
+    if (cleaned.contains('T')) {
+      return DateTime.tryParse(cleaned)?.toUtc();
+    }
+    return _parseCompactDateTime(cleaned, isUtc: true);
+  }
+
+  static DateTime? _parseCompactDateTime(String value, {required bool isUtc}) {
+    if (value.length != 14 || !RegExp(r'^\d{14}$').hasMatch(value)) {
+      return null;
+    }
+    try {
+      final year = int.parse(value.substring(0, 4));
+      final month = int.parse(value.substring(4, 6));
+      final day = int.parse(value.substring(6, 8));
+      final hour = int.parse(value.substring(8, 10));
+      final minute = int.parse(value.substring(10, 12));
+      final second = int.parse(value.substring(12, 14));
+      return isUtc
+          ? DateTime.utc(year, month, day, hour, minute, second)
+          : DateTime(year, month, day, hour, minute, second);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  static int? _parseInt(dynamic value) {
+    if (value == null) {
+      return null;
+    }
+    if (value is int) {
+      return value;
+    }
+    if (value is num) {
+      return value.toInt();
+    }
+    if (value is String) {
+      return int.tryParse(value);
+    }
+    return null;
+  }
 
   Map<String, dynamic> toJson() => {
         'sort_order': sortOrder,

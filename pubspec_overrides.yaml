@@ -1,8 +1,13 @@
 dependency_overrides:
+  sqlite3: 2.9.4
   pig_common:
     path: ../pig_common
   self:
     path: ../../self
+
+  # sqflite_common_ffi:
+  #   path: ../sqflite/sqflite_common_ffi
+  
   # shelf_letsencrypt:
   #   path: ../../shelf_letsencrypt
   # simple_mysql_orm:

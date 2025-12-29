@@ -53,11 +53,10 @@ Future<Response> handleEndPointList(Request request) async {
             ))
         .toList();
 
-    // Build List<WeatherStationInfo> (if you have station objects)
-    // Here we’ll just return an empty list, but you can populate it similarly:
     final stationList = <WeatherStationData>[];
-    // e.g., rawStations.map((s) =>
-    //  WeatherStationInfo(id: s.id, name: s.name)).toList();
+    for (final bureau in rawBureaus) {
+      stationList.addAll(bureau.stations);
+    }
 
     // Create our typed DTO
     final dto = EndPointListData(
@@ -239,11 +238,22 @@ Future<Response> handleEndPointSave(Request request) async {
     final body = jsonDecode(bodyStr) as Map<String, dynamic>? ?? {};
 
     final endPointInfo = EndPointData.fromJson(body);
+    final pinAssignment = endPointInfo.gpioPinAssignment;
 
     // final id = body['id'] as int?;
     // final name = body['name'] as String?;
     // final pinNo = body['pinNo'] as int?;
     // final activationTypeStr = body['activationType'] as String?;
+
+    if (pinAssignment == GPIOPinAssignment.none) {
+      if (endPointInfo.id != null) {
+        await DaoEndPoint().delete(endPointInfo.id!);
+      }
+      return Response.ok(
+        jsonEncode({'result': 'OK'}),
+        headers: {'Content-Type': 'application/json'},
+      );
+    }
 
     if (Strings.isBlank(endPointInfo.name)) {
       return Response.badRequest(
@@ -258,7 +268,7 @@ Future<Response> handleEndPointSave(Request request) async {
       return Response.badRequest(
           body: jsonEncode({
         'error': '''
-The GPIO Pin ${endPointInfo.gpioPinAssignment.gpioPin} is already in use.'''
+The GPIO Pin ${pinAssignment.gpioPin} is already in use.'''
       }));
     }
 
@@ -304,8 +314,11 @@ The GPIO Pin ${endPointInfo.gpioPinAssignment.gpioPin} is already in use.'''
 }
 
 Future<bool> _pinInUse(EndPointData endPointInfo) async {
-  final endPoint =
-      await DaoEndPoint().getByPin(endPointInfo.gpioPinAssignment.gpioPin);
+  final assignment = endPointInfo.gpioPinAssignment;
+  if (assignment == GPIOPinAssignment.none) {
+    return false;
+  }
+  final endPoint = await DaoEndPoint().getByPin(assignment.gpioPin);
 
   return endPoint != null && endPoint.id != endPointInfo.id;
 }

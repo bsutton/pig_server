@@ -8,13 +8,15 @@ with general IO pins on your Rapsberry PI.
 
 Pigation is written in Dart and easy to install.
 
-Start by installing Dart on your raspberry PI.
-
-Once Dart is installed you can install PiGation.
-
-NOTE: you can run up a test system on any linux system as PiGation
-comes with a IO simulator that simply logs out any IO PIN changes when
+NOTE: you can run up a test system on any Linux system as PiGation
+comes with an IO simulator that simply logs out any IO PIN changes when
 not run on a RiPi.
+
+# Installation
+
+## Release install (from pub.dev)
+
+These steps run on your Raspberry Pi.
 
 ```bash
 dart pub global activate pigation
@@ -22,32 +24,60 @@ dart pub global activate dcli_sdk
 sudo env PATH="$PATH" dcli install
 ```
 
-Follow the dcli instructions on adding the ~/.dcli/bin directory to your path.
+Follow the dcli instructions on adding the `~/.dcli/bin` directory to your PATH.
 
-Now compile pigation.
+Compile the executable:
 
 ```bash
 dcli compile --package pigation
 ```
 
-
-Now run the pigation installer. This will install pigation into /opt/pigation.
-
-As part of the install you need to decide if you will use HTTP or HTTPS to
-access PiGation.  If you want to use HTTPS then your PI must be exposed on
-the internet (using NAT) with both port 80 and 443 open.
-
-If you don't understand how to configure NAT then just choose HTTP.
-
+Now run the installer. This installs PiGation into `/opt/pigation` and
+prompts for configuration.
 
 ```bash
-sudo env PATH="$PATH" pig
+sudo env PATH="$PATH" pig --install
+```
+
+During install you choose HTTP or HTTPS. If you want HTTPS then your PI must be
+exposed on the internet (using NAT) with both ports 80 and 443 open. If you
+don't understand how to configure NAT then just choose HTTP.
+
+## Release install (cross-compile, recommended)
+
+Compiling on a Pi is slow. You can cross-compile on a desktop machine and copy
+the installer to the Pi instead.
+
+```bash
+git clone https://github.com/bsutton/pig_server.git
+cd pig_server
+tool/cross_build.dart
+```
+
+`tool/cross_build.dart` uses `tool/build.yaml` to decide the target host and
+destination directory. Update that file before running the script.
+
+It builds `bin/pig_install`, copies it to the Pi, and prints the command to run
+on the Pi (typically `sudo PATH=$PATH ./pig_install`).
+
+`tool/build.yaml` controls the target host and destination used by the
+cross-build script.
+
+## Development install
+
+Clone the repo and run the server in debug mode so it uses the local config file.
+
+```bash
+git clone https://github.com/bsutton/pig_server.git
+cd pig_server
+dart pub get
+dart run bin/pig.dart --server --debug
 ```
 
 # Accessing 
 The pigation server has an embedded front end.
 
-To access the Pigation front end navigate to the IP address of FQDN of
+To access the Pigation front end navigate to the IP address or FQDN of
 your RiPI from a browser.
 
 `http://mypi`
@@ -57,9 +87,13 @@ If you have enabled HTTPS then:
 
 # Getting Started
 The first thing you need to do is connect the GIO pins to your irrigation
-values, you will need a relay device to provide enough power to trigger the vales.
+values, you will need a relay device to provide enough power to trigger the valves.
 
 Once the hardware is configured you need to define End Points and Garden Beds
+via the pigation front end.
+
+From a browser navigate to http://mypi or https://mypi - where mypi is the IP 
+address or FQDN of the pigation server.
 
 An EndPoint creates a named mapping to a GIO pin on the pie.
 Once you have defined you End Points you can go in and configure your
@@ -89,6 +123,13 @@ The pig installer installs itself into /opt/pigation.
 
 It also installs a cron job so that the pigation server restarts if
 your RiPi reboots.
+
+# Install troubleshooting
+
+- If the installer fails with permission errors, make sure you used
+  `sudo env PATH="$PATH" pig --install`.
+- The installer writes to `/opt/pigation` and uses the current login user
+  as the owner for files it creates there.
 
 
 # Release
@@ -182,12 +223,14 @@ To debug the pig server you can simply launch bin/pig.dart --server in your favo
 
 # Build on the PI
 
+See the notes on cross compilation below, as compiling on the PI can be slow.
+
 ```bash
 dart pub global activate dcli_sdk
-udo env PATH="$PATH" dcli install
+sudo env PATH="$PATH" dcli install
 git clone https://github.com/bsutton/pig_server.git
 dcli compile bin/pig.dart
-sudo env PATH="$PATH" pig
+sudo env PATH="$PATH" pig --install
 ```
 
 # publishing to pub.dev
@@ -206,7 +249,7 @@ There is a pub_release hook too/pre_release_hook/build_and_pack_wasm.dart which
 builds the wasm target and packs it into the pigation server.
 
 
-# cross platform compliation
+# cross platform compilation
 
 * requires dart 3.8
 

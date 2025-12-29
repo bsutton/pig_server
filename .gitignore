@@ -14,3 +14,5 @@ test/letsencrypt
 bin/pig_install
 print
 custom_lint.log
+.codex_tmp/
+backups

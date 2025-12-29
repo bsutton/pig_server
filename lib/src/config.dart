@@ -22,6 +22,18 @@ class Config {
 
   bool? _production;
 
+  bool? _debugMode;
+
+  String? _weatherLocationQuery;
+
+  String? _weatherLocationId;
+
+  String? _weatherLocationName;
+
+  String? _weatherLocationState;
+
+  String? _weatherGeohash;
+
   String? _fqdn;
 
   String? _domainEmail;
@@ -37,6 +49,8 @@ class Config {
   var _bindingAddress = '0.0.0.0';
 
   String _pathToLogfile = pathToLog;
+
+  static var cliDebug = false;
 
   factory Config() => _config ??= Config._(pathToConfigFile);
 
@@ -62,11 +76,18 @@ class Config {
         _settings.asString('binding_address', defaultValue: '0.0.0.0');
     pathToLogfile =
         _settings.asString('logger_path', defaultValue: 'pigserver.log');
+    debugMode = _settings.asBool('debug_mode', defaultValue: false);
+    weatherLocationQuery = _settings.asString('weather_location_query');
+    weatherLocationId = _settings.asString('weather_location_id');
+    weatherLocationName = _settings.asString('weather_location_name');
+    weatherLocationState = _settings.asString('weather_location_state');
+    weatherGeohash = _settings.asString('weather_geohash');
   }
 
   Future<void> save() async => _settings.save();
 
   String get loadedFrom => _settings.filePath;
+
 
   set useHttps(bool useHttps) {
     _useHttps = useHttps;
@@ -105,6 +126,54 @@ class Config {
   set production(bool? value) {
     _production = value;
     _settings['production'] = value;
+  }
+
+  // Getter and Setter for debugMode
+  bool? get debugMode => _debugMode;
+
+  set debugMode(bool? value) {
+    _debugMode = value;
+    _settings['debug_mode'] = value;
+  }
+
+  // Getter and Setter for weatherLocationQuery
+  String? get weatherLocationQuery => _weatherLocationQuery;
+
+  set weatherLocationQuery(String? value) {
+    _weatherLocationQuery = value;
+    _settings['weather_location_query'] = value;
+  }
+
+  // Getter and Setter for weatherLocationId
+  String? get weatherLocationId => _weatherLocationId;
+
+  set weatherLocationId(String? value) {
+    _weatherLocationId = value;
+    _settings['weather_location_id'] = value;
+  }
+
+  // Getter and Setter for weatherLocationName
+  String? get weatherLocationName => _weatherLocationName;
+
+  set weatherLocationName(String? value) {
+    _weatherLocationName = value;
+    _settings['weather_location_name'] = value;
+  }
+
+  // Getter and Setter for weatherLocationState
+  String? get weatherLocationState => _weatherLocationState;
+
+  set weatherLocationState(String? value) {
+    _weatherLocationState = value;
+    _settings['weather_location_state'] = value;
+  }
+
+  // Getter and Setter for weatherGeohash
+  String? get weatherGeohash => _weatherGeohash;
+
+  set weatherGeohash(String? value) {
+    _weatherGeohash = value;
+    _settings['weather_geohash'] = value;
   }
 
   // Getter and Setter for fqdn

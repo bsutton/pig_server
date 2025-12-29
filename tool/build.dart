@@ -18,7 +18,7 @@ void main(List<String> args) async {
   final project = DartProject.self;
 
   print(green('Building pig_app wasm target'));
-  'tool/build.dart --build --wasm'.start(workingDirectory: '../pig_app');
+  'tool/build.dart --build --wasm --source-maps'.start(workingDirectory: '../pig_app');
 
   print(green('Packing deployable resources'));
   Resources().pack();
@@ -46,7 +46,7 @@ void main(List<String> args) async {
 
   print(orange('build complete'));
   print(
-      '''log into the $targetServer and run 'sudo env PATH=-"\$PATH" chmod +x pig_install;./pig_arm64 --install' ''');
+      '''log into the $targetServer and run 'sudo env PATH=-"\$PATH" chmod +x pig_arm64;./pig_arm64 --install' ''');
 }
 
 /// Update the list of sql upgrade scripts we ship as assets.

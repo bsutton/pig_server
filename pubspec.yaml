@@ -12,31 +12,33 @@ dependencies:
   cron: ^0.6.0
   dart_periphery: ^0.9.12
   date_time_format: ^2.0.1
-  dcli: ^7.0.3
-  dcli_core: ^7.0.2
+  dcli: ^8.2.1
+  dcli_core: ^8.0.0
   dnsolve: ^1.0.0
-  fixed: ^5.3.1
+  fixed: ^6.1.1
   http_parser: ^4.1.2
-  intl: ^0.19.0
+  intl: ^0.20.2
   mime: ^2.0.0
   path: ^1.9.0
   pig_common: ^1.0.0
 
   pointycastle: ^4.0.0
   posix: ^6.0.1
-  self: ^0.1.0
+  self: ^0.6.1
   settings_yaml: ^8.2.0
   shelf: ^1.4.1
   shelf_letsencrypt: ^2.0.1
   shelf_rate_limiter: ^1.0.1
   shelf_router: ^1.1.4
   shelf_static: ^1.1.2
+  
   shelf_web_socket: ^3.0.0
-  sqflite_common: ^2.5.4+6
-  sqflite_common_ffi: ^2.3.4+4
-  strings: ^3.1.2
+  # It is critical that this is set to 2.3.4+4 (not with no ^ as we must use the exact version)
+  sqflite_common_ffi: 2.3.4+4 # 2.4.0 and above won't cross compile as they use a build hooks
+  strings: ^4.0.1
   timezone: ^0.10.0
   web_socket_channel: ^3.0.2
+  xml: ^6.5.0
 
 
   
@@ -45,10 +47,9 @@ dev_dependencies:
   lint_hard: ^6.1.1
   mockito: ^5.4.5
   pub_release: ^11.2.0
-  pubspec_manager: ^1.0.1
+  pubspec_manager: ^3.0.1
   test: ^1.25.14
  
 executables:
   pig:
-
 

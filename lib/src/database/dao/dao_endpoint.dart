@@ -84,12 +84,20 @@ Found multiple EndPoints with the same gpio pin no. There should only be one. $l
   }
 
   /// Get the current status of a GPIO pin.
-  PinLogicState getCurrentStatus(EndPoint endPoint) =>
-      GpioManager().getCurrentStatus(endPoint);
+  PinLogicState getCurrentStatus(EndPoint endPoint) {
+    if (endPoint.gpioPinNo < 0) {
+      return PinLogicState.off;
+    }
+    return GpioManager().getCurrentStatus(endPoint);
+  }
 
   /// Activates a pin associated with an [EndPoint].
   Future<void> hardOn(EndPoint endPoint) async {
     final pinNo = endPoint.gpioPinNo;
+    if (pinNo < 0) {
+      qlog('Pin not assigned for EndPoint: ${endPoint.name}. Skipping.');
+      return;
+    }
 
     GpioManager()
         .setEndPointState(endPoint: endPoint, pinState: PinLogicState.on);
@@ -100,6 +108,10 @@ Found multiple EndPoints with the same gpio pin no. There should only be one. $l
   /// Deactivates a pin associated with an [EndPoint].
   Future<void> hardOff(EndPoint endPoint) async {
     final pinNo = endPoint.gpioPinNo;
+    if (pinNo < 0) {
+      qlog('Pin not assigned for EndPoint: ${endPoint.name}. Skipping.');
+      return;
+    }
 
     GpioManager()
         .setEndPointState(endPoint: endPoint, pinState: PinLogicState.off);

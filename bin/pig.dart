@@ -57,13 +57,13 @@ starts the server in debug mode. Opens config.yaml from ./config/config.yaml.'''
   }
 
   if (!isOneOrNoneTrue(
-      install: install,
-      resetPassword: resetPassword,
-      launch: launch,
-      server: server,
-    )) {
-    print(
-        red('''You may select only one of 'install', 'reset-password', 'launch' or 'server' '''));
+    install: install,
+    resetPassword: resetPassword,
+    launch: launch,
+    server: server,
+  )) {
+    print(red(
+        '''You may select only one of 'install', 'reset-password', 'launch' or 'server' '''));
     usage(parser);
     exit(1);
   }
@@ -120,6 +120,7 @@ Config _loadConfig(bool debug) {
   } else {
     config = Config();
   }
+  Config.cliDebug = debug;
   return config;
 }
 

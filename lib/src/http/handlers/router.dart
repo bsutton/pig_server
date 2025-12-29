@@ -13,6 +13,7 @@ import 'handle_static.dart';
 import 'history_handler.dart';
 import 'lighting_handler.dart';
 import 'overview_handler.dart';
+import 'weather_handler.dart';
 
 Router buildRouter() {
   final router = Router()
@@ -45,6 +46,8 @@ Router buildRouter() {
     ..post('/end_point/toggle', handleEndPointToggle)
     ..post('/end_point/pulse_pin', handleEndPointPulsePin)
     ..post('/end_point/delete', handleEndPointDelete)
+    ..post('/weather/search', handleWeatherSearch)
+    ..post('/weather/location', handleWeatherLocation)
     ..post('/overview', (Request request) async => handleOverview(request));
 
   return router;

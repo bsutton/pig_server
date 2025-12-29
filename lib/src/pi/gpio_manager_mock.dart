@@ -49,12 +49,18 @@ Mock provisioned GPIO pin $pinNo with initial state: ${_mockPinStates[pinNo.gpio
   @override
   void setEndPointState(
       {required EndPoint endPoint, required PinLogicState pinState}) {
+    if (endPoint.gpioPinNo < 0) {
+      return;
+    }
     final pinVoltage = DaoEndPoint().voltageForState(endPoint, pinState);
     qlog('$endPoint set to $pinState voltage: $pinVoltage');
     _setPinVoltage(pinNo: endPoint.gpioPinNo, pinVoltage: pinVoltage);
   }
 
   void _setPinVoltage({required int pinNo, required PinVoltage pinVoltage}) {
+    if (pinNo < 0) {
+      return;
+    }
     _mockPinStates[pinNo] = pinVoltage;
     _qlogPinStates();
   }
@@ -62,6 +68,9 @@ Mock provisioned GPIO pin $pinNo with initial state: ${_mockPinStates[pinNo.gpio
   @override
   PinLogicState getCurrentStatus(EndPoint endPoint) {
     final pinNo = endPoint.gpioPinNo;
+    if (pinNo < 0) {
+      return PinLogicState.off;
+    }
     if (!_mockPinStates.containsKey(pinNo)) {
       qlog('Mock error: GPIO pin $pinNo has not been provisioned.');
       return PinLogicState.off;
@@ -76,6 +85,9 @@ Mock provisioned GPIO pin $pinNo with initial state: ${_mockPinStates[pinNo.gpio
     required PinActivationType activationType,
     required Duration duration,
   }) async {
+    if (pinNo < 0) {
+      return;
+    }
     qlog(
       'Mock pulse pin $pinNo: activation=${activationType.name}, '
       'duration=${duration.inMilliseconds}ms, '
@@ -96,5 +108,8 @@ Mock provisioned GPIO pin $pinNo with initial state: ${_mockPinStates[pinNo.gpio
   }
 
   @override
-  List<GPIOPinAssignment> get availablePins => GPIOPinAssignment.values;
+  List<GPIOPinAssignment> get availablePins =>
+      GPIOPinAssignment.values
+          .where((pin) => pin != GPIOPinAssignment.none)
+          .toList();
 }

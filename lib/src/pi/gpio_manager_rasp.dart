@@ -33,10 +33,15 @@ class GpioManagerRaspPi implements GpioManager {
       final endPoint = await daoEndPoint.getByPin(pinNo.gpioPin);
 
       final GPIO pin;
-      pin = _provisionPin(
-        pinNo: pinNo.gpioPin,
-        activationType: PinActivationType.highIsOn,
-      );
+      try {
+        pin = _provisionPin(
+          pinNo: pinNo.gpioPin,
+          activationType: PinActivationType.highIsOn,
+        );
+      } catch (e) {
+        qlog(red('Failed to provision pin ${pinNo.gpioPin}: $e'));
+        continue;
+      }
 
       _gpioMap[pinNo.gpioPin] = pin;
 
@@ -47,6 +52,7 @@ class GpioManagerRaspPi implements GpioManager {
   }
 
   /// Initialises the pin, and sets it to off.
+  /// throws [GPIOexception] on error.
   GPIO _provisionPin({
     required int pinNo,
     required PinActivationType activationType,
@@ -61,7 +67,7 @@ class GpioManagerRaspPi implements GpioManager {
       return gpio;
     } on GPIOexception catch (e, st) {
       qlog(
-          '''Error Setting GPIO pin state $pinNo to off : $e ${e.errorCode} ${e.errorMsg}''');
+          '''Error Setting GPIO pin state $pinNo to off : $e err: ${e.errorCode} msg: ${e.errorMsg}''');
       qlog('StackTrace: $st');
       rethrow;
     }
@@ -88,6 +94,9 @@ class GpioManagerRaspPi implements GpioManager {
   @override
   void setEndPointState(
       {required EndPoint endPoint, required PinLogicState pinState}) {
+    if (endPoint.gpioPinNo < 0) {
+      return;
+    }
     final pinVoltage = DaoEndPoint().voltageForState(endPoint, pinState);
     _setPinVoltage(pinNo: endPoint.gpioPinNo, pinVoltage: pinVoltage);
   }
@@ -95,6 +104,9 @@ class GpioManagerRaspPi implements GpioManager {
   @override
   PinLogicState getCurrentStatus(EndPoint endPoint) {
     final pinNo = endPoint.gpioPinNo;
+    if (pinNo < 0) {
+      return PinLogicState.off;
+    }
     if (!_gpioMap.containsKey(pinNo)) {
       qlog('Error: GPIO pin $pinNo has not been provisioned.');
       return PinLogicState.off;
@@ -109,22 +121,30 @@ class GpioManagerRaspPi implements GpioManager {
     }
   }
 
-
   @override
   Future<void> pulsePin({
     required int pinNo,
     required PinActivationType activationType,
     required Duration duration,
   }) async {
+    if (pinNo < 0) {
+      return;
+    }
     _setPinVoltage(pinNo: pinNo, pinVoltage: activationType.onState);
     await Future<void>.delayed(duration);
     _setPinVoltage(pinNo: pinNo, pinVoltage: activationType.offState);
   }
 
   @override
-  List<GPIOPinAssignment> get availablePins => GPIOPinAssignment.values;
+  List<GPIOPinAssignment> get availablePins =>
+      GPIOPinAssignment.values
+          .where((pin) => pin != GPIOPinAssignment.none)
+          .toList();
 
   void _setPinVoltage({required int pinNo, required PinVoltage pinVoltage}) {
+    if (pinNo < 0) {
+      return;
+    }
     if (_gpioMap[pinNo] == null) {
       qlog('Error: Pin $pinNo has not been provisioned');
     }
