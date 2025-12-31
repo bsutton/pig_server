@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:pig_common/pig_common.dart';
 import 'package:shelf/shelf.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:strings/strings.dart';
 
 import '../../controllers/garden_bed_controller.dart';
@@ -303,6 +304,17 @@ The GPIO Pin ${pinAssignment.gpioPin} is already in use.'''
 
     return Response.ok(
       jsonEncode({'result': 'OK'}),
+      headers: {'Content-Type': 'application/json'},
+    );
+  } on DatabaseException catch (e) {
+    if (e.getResultCode() == 2067) {
+      return Response.badRequest(
+        body: jsonEncode({'error': 'End Point name must be unique.'}),
+        headers: {'Content-Type': 'application/json'},
+      );
+    }
+    return Response.internalServerError(
+      body: jsonEncode({'error': e.toString()}),
       headers: {'Content-Type': 'application/json'},
     );
   } catch (e) {
