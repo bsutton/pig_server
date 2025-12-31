@@ -45,6 +45,7 @@ Router buildRouter() {
     ..post('/end_point/save', handleEndPointSave)
     ..post('/end_point/toggle', handleEndPointToggle)
     ..post('/end_point/pulse_pin', handleEndPointPulsePin)
+    ..post('/end_point/set_pin_state', handleEndPointSetPinState)
     ..post('/end_point/delete', handleEndPointDelete)
     ..post('/weather/search', handleWeatherSearch)
     ..post('/weather/location', handleWeatherLocation)

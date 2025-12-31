@@ -99,6 +99,16 @@ Mock provisioned GPIO pin $pinNo with initial state: ${_mockPinStates[pinNo.gpio
     qlog('Mock pulse pin $pinNo complete.');
   }
 
+  @override
+  void setPinState({
+    required int pinNo,
+    required PinActivationType activationType,
+    required bool isOn,
+  }) {
+    final pinVoltage = isOn ? activationType.onState : activationType.offState;
+    _setPinVoltage(pinNo: pinNo, pinVoltage: pinVoltage);
+  }
+
   void _qlogPinStates() {
     final buffer = StringBuffer();
     _mockPinStates.forEach((pin, pinVoltage) {

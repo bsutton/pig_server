@@ -34,6 +34,13 @@ abstract class GpioManager {
     required Duration duration,
   });
 
+  /// Set a GPIO pin on or off without requiring an EndPoint mapping.
+  void setPinState({
+    required int pinNo,
+    required PinActivationType activationType,
+    required bool isOn,
+  });
+
   /// Detect if running on a Raspberry Pi
   static bool _isRaspberryPi() {
     if (_isPi == null) {

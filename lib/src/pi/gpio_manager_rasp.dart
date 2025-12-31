@@ -136,10 +136,22 @@ class GpioManagerRaspPi implements GpioManager {
   }
 
   @override
-  List<GPIOPinAssignment> get availablePins =>
-      GPIOPinAssignment.values
-          .where((pin) => pin != GPIOPinAssignment.none)
-          .toList();
+  void setPinState({
+    required int pinNo,
+    required PinActivationType activationType,
+    required bool isOn,
+  }) {
+    if (pinNo < 0) {
+      return;
+    }
+    final pinVoltage = isOn ? activationType.onState : activationType.offState;
+    _setPinVoltage(pinNo: pinNo, pinVoltage: pinVoltage);
+  }
+
+  @override
+  List<GPIOPinAssignment> get availablePins => GPIOPinAssignment.values
+      .where((pin) => pin != GPIOPinAssignment.none)
+      .toList();
 
   void _setPinVoltage({required int pinNo, required PinVoltage pinVoltage}) {
     if (pinNo < 0) {

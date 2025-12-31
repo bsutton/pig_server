@@ -223,6 +223,54 @@ Future<Response> handleEndPointPulsePin(Request request) async {
   }
 }
 
+/// POST /api/end_point/set_pin_state
+/// Request body: {
+///   "pinNo": 17,
+///   "activationType": "highIsOn",
+///   "isOn": true
+/// }
+/// Response: { "result": "OK" }
+Future<Response> handleEndPointSetPinState(Request request) async {
+  try {
+    final bodyStr = await request.readAsString();
+    final body = jsonDecode(bodyStr) as Map<String, dynamic>? ?? {};
+    final pinNo = body['pinNo'] as int?;
+    final activationTypeName = body['activationType'] as String?;
+    final isOn = body['isOn'] as bool?;
+
+    if (pinNo == null || activationTypeName == null || isOn == null) {
+      qlog('end_point/set_pin_state Missing pinNo, activationType, or isOn');
+      return Response.badRequest(
+        body: jsonEncode(
+          {'error': 'Missing pinNo, activationType, or isOn'},
+        ),
+      );
+    }
+
+    final availablePins = GpioManager().availablePins;
+    if (!availablePins.any((pin) => pin.gpioPin == pinNo)) {
+      return Response.badRequest(
+        body: jsonEncode({'error': 'Pin $pinNo is not available'}),
+      );
+    }
+
+    final activationType = PinActivationType.fromJson(activationTypeName);
+
+    GpioManager().setPinState(
+      pinNo: pinNo,
+      activationType: activationType,
+      isOn: isOn,
+    );
+
+    return Response.ok(jsonEncode({'result': 'OK'}));
+  } catch (e) {
+    return Response.internalServerError(
+      body: jsonEncode({'error': e.toString()}),
+      headers: {'Content-Type': 'application/json'},
+    );
+  }
+}
+
 /// POST /api/end_point/save
 ///
 /// Request body: {
