@@ -4,6 +4,14 @@ import 'dart:io';
 import '../logger.dart';
 
 class BomLocation {
+  final String id;
+
+  final String name;
+
+  final String state;
+
+  final String geohash;
+
   BomLocation({
     required this.id,
     required this.name,
@@ -44,11 +52,6 @@ class BomLocation {
         'state': state,
         'geohash': geohash,
       };
-
-  final String id;
-  final String name;
-  final String state;
-  final String geohash;
 }
 
 class BomV1Api {

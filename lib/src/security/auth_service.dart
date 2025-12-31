@@ -8,17 +8,20 @@ import '../config.dart';
 import 'helper.dart';
 
 class AuthChallenge {
+  final String nonce;
+
+  final String algorithm;
+
+  final List<int> params;
+
+  final String salt;
+
   AuthChallenge({
     required this.nonce,
     required this.algorithm,
     required this.params,
     required this.salt,
   });
-
-  final String nonce;
-  final String algorithm;
-  final List<int> params;
-  final String salt;
 
   Map<String, dynamic> toJson() => {
         'nonce': nonce,
@@ -29,26 +32,33 @@ class AuthChallenge {
 }
 
 class AuthToken {
-  AuthToken(this.value, this.expiresAt);
-
   final String value;
+
   final DateTime expiresAt;
+
+  AuthToken(this.value, this.expiresAt);
 }
 
 class AuthService {
   static final instance = AuthService._();
 
-  AuthService._();
-
   static const _nonceTtl = Duration(minutes: 5);
+
   static const _tokenTtl = Duration(hours: 12);
+
   static const _pbkdf2BlockLength = 64;
+
   static const _pbkdf2Iterations = 20000;
+
   static const _pbkdf2KeyLength = 32;
+
   static const _algorithmId = 'pbkdf2-sha256';
 
   final Map<String, DateTime> _nonceExpiry = {};
+
   final Map<String, DateTime> _tokenExpiry = {};
+
+  AuthService._();
 
   AuthChallenge createChallenge() {
     final stored = Config().password;
@@ -162,15 +172,18 @@ class AuthService {
 }
 
 class _ParsedPassword {
+  final String algorithm;
+
+  final List<int> params;
+
+  final String salt;
+
+  final String hash;
+
   _ParsedPassword({
     required this.algorithm,
     required this.params,
     required this.salt,
     required this.hash,
   });
-
-  final String algorithm;
-  final List<int> params;
-  final String salt;
-  final String hash;
 }

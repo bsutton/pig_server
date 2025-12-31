@@ -106,6 +106,18 @@ Future<Response> handleOverview(Request request) async {
 }
 
 class _WeatherSnapshot {
+  final double currentTemp;
+
+  final double forecastHigh;
+
+  final double forecastLow;
+
+  final double rain24;
+
+  final double rain7days;
+
+  final List<WeatherDayForecastData> rainForecastNext3Days;
+
   _WeatherSnapshot({
     required this.currentTemp,
     required this.forecastHigh,
@@ -114,13 +126,6 @@ class _WeatherSnapshot {
     required this.rain7days,
     required this.rainForecastNext3Days,
   });
-
-  final double currentTemp;
-  final double forecastHigh;
-  final double forecastLow;
-  final double rain24;
-  final double rain7days;
-  final List<WeatherDayForecastData> rainForecastNext3Days;
 }
 
 ({String bureauName, String stationName}) _resolveWeatherNames(Config config) {
