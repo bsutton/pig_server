@@ -15,6 +15,7 @@ class DaoBase<T extends Entity<T>> {
 
   /// Use this method when you need to do db operations
   /// from a non-flutter app - e.g. CLI apps.
+  /// throws a [DatabaseException]
   factory DaoBase.direct(Database db, String tableName,
       T Function(Map<String, dynamic> map) fromMap) {
     final dao = DaoBase<T>(db, (_) {})
@@ -32,6 +33,7 @@ class DaoBase<T extends Entity<T>> {
 
   /// Insert [entity] into the database.
   /// Updating the passed in entity so that it has the assigned id.
+  /// throws a [DatabaseException]
   Future<int> insert(covariant T entity, [Transaction? transaction]) async {
     final executor = transaction ?? db;
     entity
@@ -47,6 +49,7 @@ class DaoBase<T extends Entity<T>> {
 
   /// [orderByClause] is the list of columns followed by the collation order
   ///  ```name desc, age```
+  /// throws a [DatabaseException]
   Future<List<T>> getAll({String? orderByClause}) async {
     final executor = db;
     final maps =
@@ -56,6 +59,7 @@ class DaoBase<T extends Entity<T>> {
     return list;
   }
 
+  /// throws a [DatabaseException]
   Future<T?> getById(int? entityId) async {
     if (entityId == null) {
       return null;
@@ -69,6 +73,7 @@ class DaoBase<T extends Entity<T>> {
     return entity;
   }
 
+  /// throws a [DatabaseException]
   Future<int> update(covariant T entity, [Transaction? transaction]) async {
     final executor = transaction ?? db;
     entity.modifiedDate = DateTime.now();
@@ -82,7 +87,8 @@ class DaoBase<T extends Entity<T>> {
     return id;
   }
 
-  //// Returns the number of rows deleted.
+  /// Returns the number of rows deleted.
+  /// throws a [DatabaseException]
   Future<int> delete(int id, [Transaction? transaction]) async {
     final executor = transaction ?? db;
     final rowsDeleted = await executor.delete(
@@ -94,6 +100,7 @@ class DaoBase<T extends Entity<T>> {
     return rowsDeleted;
   }
 
+  /// throws a [DatabaseException]
   Future<int> deleteAll([Transaction? transaction]) async {
     final db = withinTransaction(transaction);
     return db.delete(_tableName);
@@ -108,6 +115,7 @@ class DaoBase<T extends Entity<T>> {
 
   /// Allows you to execute a command against the db
   /// optionally within a transaction.
+  /// throws a [DatabaseException]
   DatabaseExecutor withinTransaction(Transaction? transaction) =>
       transaction ?? db;
 
