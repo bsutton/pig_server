@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
 import 'package:path/path.dart' as path;
 import 'package:path/path.dart';
@@ -10,15 +11,42 @@ import 'package:pigation/src/database/management/db_utility.dart';
 import 'package:settings_yaml/settings_yaml.dart';
 
 void main(List<String> args) async {
+  final argParser = ArgParser()
+    ..addFlag('assets', abbr: 'a', help: 'Update the sql asset list.')
+    ..addFlag('build',
+        abbr: 'b',
+        negatable: false,
+        defaultsTo: true,
+        help: 'Build the pig_app wasm target.')
+    // ..addFlag('wasm',
+    //     abbr: 'w', negatable: false, help: 'Build the pig_app wasm target.')
+    ..addFlag('source-maps',
+        abbr: 's',
+        negatable: false,
+        help: 'Include source maps in the wasm build.');
   // 'dcli pack'.run;
   // 'zip -r www_root.zip www_root'.run;
 
-  await updateAssetList();
+  final parsedArgs = argParser.parse(args);
+  final doAssets = parsedArgs['assets'] as bool;
+  final doBuild = parsedArgs['build'] as bool;
+  // final doWasm = parsedArgs['wasm'] as bool;
+  final doSourceMaps = parsedArgs['source-maps'] as bool;
 
+  if (doAssets || doBuild) {
+    await updateAssetList();
+    if (!parsedArgs.wasParsed('build')) {
+      Resources().pack();
+      return;
+    }
+  }
   final project = DartProject.self;
 
   print(green('Building pig_app wasm target'));
-  'tool/build.dart --build --wasm --source-maps'.start(workingDirectory: '../pig_app');
+
+  final sourceMapsArg = genSourceMapsArg(doSourceMaps: doSourceMaps);
+  'tool/build.dart --build --wasm $sourceMapsArg'
+      .start(workingDirectory: '../pig_app');
 
   print(green('Packing deployable resources'));
   Resources().pack();
@@ -47,6 +75,17 @@ void main(List<String> args) async {
   print(orange('build complete'));
   print(
       '''log into the $targetServer and run 'sudo env PATH=-"\$PATH" chmod +x pig_arm64;./pig_arm64 --install' ''');
+}
+
+String genSourceMapsArg({required bool doSourceMaps}) {
+  final String sourceMapsArg;
+  if (doSourceMaps) {
+    print(orange('Including source maps in wasm build'));
+    sourceMapsArg = '--source-maps';
+  } else {
+    sourceMapsArg = '';
+  }
+  return sourceMapsArg;
 }
 
 /// Update the list of sql upgrade scripts we ship as assets.
