@@ -16,7 +16,6 @@ import 'A2b33496de14c67d1b9dc846821e35d79.g.dart';
 import 'A33cc55c13470dc3fb4d3eddd98d8e65f.g.dart';
 import 'A39378c5ab31f34e1217d74deeac55d26.g.dart';
 import 'A3cba337ede00b4e14d2c17aa1be24b12.g.dart';
-import 'A3f5fec7b111e6732a3cb9926fe049c4e.g.dart';
 import 'A4873d41e9bb093108e2f0882b159de17.g.dart';
 import 'A503e6bda004f26adffd925b02f58c43d.g.dart';
 import 'A51152dcf01c195da96dee17e6e2bc0f4.g.dart';
@@ -33,11 +32,11 @@ import 'A987e99c5a0672de63a2c4db3c123bdbf.g.dart';
 import 'A9e76318cf387fb01992b9ab23d950e22.g.dart';
 import 'Ab01380d65ed0a47775740943e6e584cf.g.dart';
 import 'Ab827cb1e3f2b7e7e15b4882a5295bf6e.g.dart';
-import 'Ababe17c607e66ae3cb4ef118d4c53e23.g.dart';
 import 'Ad638aa8ff50cd62a6ea49b75c8c73984.g.dart';
 import 'Adbf1e04ff8d74b1d1425f128e56f73ad.g.dart';
 import 'Adc5cfd0f1851af75f39cd605a140c52d.g.dart';
 import 'Aeb768bf0cdaca7f18c0d576481423989.g.dart';
+import 'Af12b38aa41ec389294aaace0aa11af56.g.dart';
 import 'Afd6c13ae9b439af714cbd3c00b4ef1af.g.dart';
 
 /// GENERATED -- GENERATED
@@ -80,7 +79,6 @@ class ResourceRegistry {
         A33cc55c13470dc3fb4d3eddd98d8e65f(),
     'www_root/canvaskit/canvaskit.js': A39378c5ab31f34e1217d74deeac55d26(),
     'www_root/icons/Icon-maskable-192.png': A3cba337ede00b4e14d2c17aa1be24b12(),
-    'www_root/main.dart.js': A3f5fec7b111e6732a3cb9926fe049c4e(),
     'sql/upgrade_scripts/v2.sql': A4873d41e9bb093108e2f0882b159de17(),
     'www_root/canvaskit/chromium/canvaskit.wasm':
         A503e6bda004f26adffd925b02f58c43d(),
@@ -101,11 +99,11 @@ class ResourceRegistry {
     'www_root/assets/shaders/ink_sparkle.frag':
         Ab01380d65ed0a47775740943e6e584cf(),
     'www_root/main.dart.wasm': Ab827cb1e3f2b7e7e15b4882a5295bf6e(),
-    'www_root/main.dart.js.map': Ababe17c607e66ae3cb4ef118d4c53e23(),
     'www_root/canvaskit/skwasm_heavy.js': Ad638aa8ff50cd62a6ea49b75c8c73984(),
     'www_root/assets/FontManifest.json': Adbf1e04ff8d74b1d1425f128e56f73ad(),
     'www_root/assets/NOTICES': Adc5cfd0f1851af75f39cd605a140c52d(),
     'www_root/canvaskit/skwasm_heavy.wasm': Aeb768bf0cdaca7f18c0d576481423989(),
+    'sql/upgrade_scripts/v4.sql': Af12b38aa41ec389294aaace0aa11af56(),
     'www_root/assets/shaders/stretch_effect.frag':
         Afd6c13ae9b439af714cbd3c00b4ef1af(),
   };

@@ -8,9 +8,9 @@ import 'package:dcli/dcli.dart';
 ///
 /// GENERATED - GENERATED
 
-class A010fe6141d32553924f5bb267db2f892 extends PackedResource {
-  /// PackedResource - ../../pig_app/build/web/flutter_service_worker.js
-  const A010fe6141d32553924f5bb267db2f892();
+class Af12b38aa41ec389294aaace0aa11af56 extends PackedResource {
+  /// PackedResource - sql/upgrade_scripts/v4.sql
+  const Af12b38aa41ec389294aaace0aa11af56();
 
   /// A hash of the resource (pre packed) calculated by
   /// [calculateHash].
@@ -24,13 +24,16 @@ class A010fe6141d32553924f5bb267db2f892 extends PackedResource {
   /// this checksum
   @override
   String get checksum =>
-      '00';
+      '23b74d3ce7fcc00b1c6369cd03b64d75';
 
   /// `<package>/resources` relative path to the original resource.
   @override
-  String get originalPath => 'www_root/flutter_service_worker.js';
+  String get originalPath => 'sql/upgrade_scripts/v4.sql';
 
   @override
   String get content => '''
+QUxURVIgVEFCTEUgZ2FyZGVuX2JlZApBREQgQ09MVU1OIG9yZGluYWwgSU5URUdFUiBOT1QgTlVMTCBE
+RUZBVUxUIDA7CgpVUERBVEUgZ2FyZGVuX2JlZApTRVQgb3JkaW5hbCA9IGlkCldIRVJFIG9yZGluYWwg
+PSAwOwo=
   ''';
 }
