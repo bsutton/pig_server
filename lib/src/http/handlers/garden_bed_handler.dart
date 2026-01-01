@@ -149,15 +149,7 @@ Future<Response> handleGardenBedStopTimer(Request request) async {
 
     await daoGardenBed.softOff(bed);
 
-    final existingTimer = TimerControl().getTimer(bed);
-
     if (TimerControl().isTimerRunning(bed)) {
-      final startTime = existingTimer?.startTime ?? DateTime.now();
-      await DaoHistory().insert(History.forInsert(
-          gardenFeatureId: bedId,
-          eventStart: startTime,
-          eventDuration: DateTime.now().difference(startTime)));
-
       TimerControl().stopTimer(bed);
     }
 
@@ -194,9 +186,17 @@ Future<Response> handleGardenBedEditData(Request request) async {
     final daoBed = DaoGardenBed();
     final daoEndPoint = DaoEndPoint();
 
-    final valves = await _getValves(daoEndPoint);
-
     final masterValves = await _getMasterValves(daoEndPoint);
+
+    final assignedValveIds = (await daoBed.getAll())
+        .where((bed) => bed.id != gardenBedId)
+        .map((bed) => bed.valveId)
+        .whereType<int>()
+        .toSet();
+    final valves = (await _getValves(daoEndPoint))
+        .where(
+            (valve) => valve.id != null && !assignedValveIds.contains(valve.id))
+        .toList();
 
     /// We always pass the valves even if there is no garden bed
     /// to handle adding new beds.
@@ -275,13 +275,17 @@ Future<Response> handleGardenBedSave(Request request) async {
 
     final daoGardenBed = DaoGardenBed();
     if (bedData.id == null) {
+      final ordinal = bedData.ordinal == 0
+          ? await daoGardenBed.nextOrdinal()
+          : bedData.ordinal;
       // Insert
       final bed = GardenBed.forInsert(
           name: bedData.name!,
           description: bedData.description,
           valveId: bedData.valveId!,
           masterValveId: bedData.masterValveId,
-          moistureContent: 0);
+          moistureContent: 0,
+          ordinal: ordinal);
       final newBedId = await daoGardenBed.insert(bed);
       return Response.ok(jsonEncode({
         'result': 'OK',
@@ -297,7 +301,8 @@ Future<Response> handleGardenBedSave(Request request) async {
         ..name = bedData.name!
         ..description = bedData.description
         ..valveId = bedData.valveId!
-        ..masterValveId = bedData.masterValveId;
+        ..masterValveId = bedData.masterValveId
+        ..ordinal = bedData.ordinal;
 
       await daoGardenBed.update(existingBed);
       return Response.ok(jsonEncode({
