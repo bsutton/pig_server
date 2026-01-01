@@ -96,6 +96,9 @@ starts the server in debug mode. Opens config.yaml from ./config/config.yaml.'''
     await doLaunch(self, config, debug: debug);
     exit(0);
   }
+  if (config.debugMode ?? false) {
+    print(red('Running in debug mode, CORS protection is disabled'));
+  }
   if (server) {
     final server = await runServer(config);
 
@@ -120,7 +123,7 @@ Config _loadConfig(bool debug) {
   } else {
     config = Config();
   }
-  Config.cliDebug = debug;
+
   return config;
 }
 
