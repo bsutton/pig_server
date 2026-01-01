@@ -20,9 +20,18 @@ class DaoGardenBed extends Dao<GardenBed> with DaoGardenFeature {
     final db = withoutTransaction();
     final data = await db.query(
       tableName,
-      orderBy: orderByClause ?? 'id ASC',
+      orderBy: orderByClause ?? 'ordinal ASC',
     );
     return List.generate(data.length, (i) => fromMap(data[i]));
+  }
+
+  Future<int> nextOrdinal() async {
+    final db = withoutTransaction();
+    final result = await db.rawQuery(
+      'SELECT MAX(ordinal) as max_ordinal FROM $tableName',
+    );
+    final maxOrdinal = result.first['max_ordinal'] as int? ?? 0;
+    return maxOrdinal + 1;
   }
 
   @override
