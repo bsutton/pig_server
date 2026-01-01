@@ -28,9 +28,10 @@ Future<void> doInstall(Self self, {required bool debug}) async {
     Settings().setVerbose(enabled: true);
   }
   if (!Shell.current.isPrivilegedUser) {
-    printerr(red(r'''
+    final scriptName = basename(DartScript.self.pathToExe);
+    printerr(red('''
 You must run this script as sudo
-sudo env PATH="$PATH" pig --install
+sudo env PATH="\$PATH" ./$scriptName --install
     '''));
     exit(1);
   }
@@ -133,6 +134,8 @@ To secure access to PiGation you need to create a password that will be entered 
 
 Future<void> _deploy() async {
   final owner = Shell.current.loggedInUser!;
+
+  print(green('Deploying pig server to $pathToPigation'));
 
   /// copy this exe (the pig_installer) into altbin as we are also the
   /// pig server.
