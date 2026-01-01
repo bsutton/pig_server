@@ -50,8 +50,6 @@ class Config {
 
   String _pathToLogfile = pathToLog;
 
-  static var cliDebug = false;
-
   factory Config() => _config ??= Config._(pathToConfigFile);
 
   factory Config.fromDebugPath() {

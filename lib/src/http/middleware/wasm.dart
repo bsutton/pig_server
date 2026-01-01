@@ -13,7 +13,7 @@ const _flutterWasmBaseHeaders = <String, String>{
 };
 
 Map<String, String> _flutterWasmHeaders() {
-  final allowWildcardOrigin = Config.cliDebug || (Config().debugMode ?? false);
+  final allowWildcardOrigin = Config().debugMode ?? false;
   final headers = Map<String, String>.from(_flutterWasmBaseHeaders);
   if (allowWildcardOrigin) {
     headers['Access-Control-Allow-Origin'] = '*';
