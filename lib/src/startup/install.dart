@@ -27,19 +27,12 @@ Future<void> doInstall(Self self, {required bool debug}) async {
   if (debug) {
     Settings().setVerbose(enabled: true);
   }
-  if (!Shell.current.isPrivilegedUser) {
-    final scriptName = basename(DartScript.self.pathToExe);
-    printerr(red('''
-You must run this script as sudo
-sudo env PATH="\$PATH" ./$scriptName --install
-    '''));
-    exit(1);
-  }
+ 
 
   await self.install();
 
-  self.addBootLauncher(
-      args: ['--launch'], runAsUser: Shell.current.loggedInUser!);
+  /// we need root priviledges to bind to http and https ports.
+  self.addBootLauncher(args: ['--launch'], runAsUser: 'root');
 
   await _getConfigFromUser();
 

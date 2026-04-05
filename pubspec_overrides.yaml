@@ -5,6 +5,8 @@ dependency_overrides:
   self:
     path: ../../self
 
+  dcli:
+    path: ../../dcli/dcli
   # sqflite_common_ffi:
   #   path: ../sqflite/sqflite_common_ffi
   

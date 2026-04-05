@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:dcli/dcli.dart';
+import 'package:path/path.dart';
 import 'package:pigation/src/config.dart';
 import 'package:pigation/src/database/dao/password.dart';
 import 'package:pigation/src/dcli/resource/generated/resource_registry.g.dart';
@@ -42,6 +43,17 @@ starts the server in debug mode. Opens config.yaml from ./config/config.yaml.'''
   bool debug;
 
   ArgResults parsed;
+
+  if (!Shell.current.isPrivilegedUser) {
+    final scriptName = basename(DartScript.self.pathToExe);
+    printerr(red('''
+You must run this script as sudo
+sudo env PATH="\$PATH" ./$scriptName --install
+    '''));
+    exit(1);
+  }
+
+  Shell.current.releasePrivileges();
 
   try {
     parsed = parser.parse(args);

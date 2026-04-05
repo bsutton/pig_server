@@ -105,7 +105,12 @@ Future<HttpServer> _startWebServer() async {
   // .addHandler(router.call);
 
   print('Serving at http://${Config().bindingAddress}:${Config().httpPort}');
-  return serve(handler, Config().bindingAddress, Config().httpPort);
+
+  late final HttpServer server;
+  await Shell.current.withPrivilegesAsync(() async {
+    server = await serve(handler, Config().bindingAddress, Config().httpPort);
+  });
+  return server;
 }
 
 Future<HttpServer> _startHttpsServer(
@@ -122,10 +127,13 @@ Future<HttpServer> _startHttpsServer(
       .addMiddleware(rateLimiter.rateLimiter())
       .addHandler(router.call);
 
-  final servers = await letsEncrypt.startServer(
-    handler,
-    [domain],
-  );
+  late final ({HttpServer http, HttpServer https}) servers;
+  await Shell.current.withPrivilegesAsync(() async {
+    servers = await letsEncrypt.startServer(
+      handler,
+      [domain],
+    );
+  });
 
   server = servers.http;
   secureServer = servers.https;
@@ -214,7 +222,7 @@ Future<void> _initDb() async {
   }
 }
 
-/// define a memory backed ratelimiter to 10 requests per minute.
+/// define a memory backed ratelimiter to 100 requests per minute.
 final memoryStorage = MemStorage();
 final rateLimiter = ShelfRateLimiter(
     storage: memoryStorage,

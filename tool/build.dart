@@ -66,7 +66,7 @@ void main(List<String> args) async {
   // DartScript.fromFile(join('bin', 'pig.dart'), project: project)
   //     .compile(overwrite: true);
 
-  'dart compile exe   --target-os=linux   --target-arch=arm64   bin/pig.dart   -o bin/pig_arm64'
+  'dart compile exe  bin/pig.dart   -o bin/pig_install'
       .run;
 
   // print(green("deploying 'deploy' to $targetDirectory"));
@@ -74,7 +74,7 @@ void main(List<String> args) async {
 
   print(orange('build complete'));
   print(
-      '''log into the $targetServer and run 'sudo env PATH=-"\$PATH" chmod +x pig_arm64;./pig_arm64 --install' ''');
+      '''log into the $targetServer and run 'sudo env PATH=-"\$PATH" chmod +x pig_install;./pig_install --install' ''');
 }
 
 String genSourceMapsArg({required bool doSourceMaps}) {

@@ -1,3 +1,3 @@
-target_server:  irrigation.noojee.org
+target_server:  irrigation.squarephone.biz
 target_directory: /opt/pigation
 scp_command: scp
