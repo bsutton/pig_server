@@ -5,6 +5,8 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 class DaoBase<T extends Entity<T>> {
   Database db;
 
+  // This callback is only invoked with this DAO's exact type argument.
+  // ignore: unsafe_variance
   final void Function(DaoBase<T> dao) _notify;
 
   late T Function(Map<String, dynamic> map) _fromMap;
@@ -42,7 +44,7 @@ class DaoBase<T extends Entity<T>> {
     final id = await executor.insert(_tableName, entity.toMap()..remove('id'));
     entity.id = id;
 
-    _notify(this);
+    _notifyDao();
 
     return id;
   }
@@ -83,7 +85,7 @@ class DaoBase<T extends Entity<T>> {
       where: 'id = ?',
       whereArgs: [entity.id],
     );
-    _notify(this);
+    _notifyDao();
     return id;
   }
 
@@ -103,7 +105,7 @@ class DaoBase<T extends Entity<T>> {
   /// throws a [DatabaseException]
   Future<int> deleteAll([Transaction? transaction]) async {
     final db = withinTransaction(transaction);
-    return db.delete(_tableName);
+    return await db.delete(_tableName);
   }
 
   List<T> toList(List<Map<String, Object?>> data) {
@@ -120,4 +122,6 @@ class DaoBase<T extends Entity<T>> {
       transaction ?? db;
 
   DatabaseExecutor withoutTransaction() => db;
+
+  void _notifyDao() => _notify(this);
 }

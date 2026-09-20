@@ -1,6 +1,4 @@
 #! /usr/bin/env dart
-// ignore_for_file: avoid_types_on_closure_parameters
-
 import 'dart:io';
 
 import 'package:args/args.dart';

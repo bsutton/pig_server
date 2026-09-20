@@ -15,7 +15,10 @@ class Delay<F> {
   final F feature;
 
   /// The callback function to execute after the delay.
-  final Future<void> Function(F) callback;
+  // Keep the contravariant callback private and invoke it through a typed
+  // method so the public generic class remains safe.
+  // ignore: unsafe_variance
+  final Future<void> Function(F) _callback;
 
   /// A flag to indicate whether the delay has been canceled.
   var _isCancelled = false;
@@ -25,8 +28,10 @@ class Delay<F> {
     required this.description,
     required this.duration,
     required this.feature,
-    required this.callback,
-  });
+    required Future<void> Function(F) callback,
+  }) : _callback = callback;
+
+  Future<void> callback(F feature) => _callback(feature);
 
   /// Starts the delay and executes the callback after the duration,
   /// unless canceled.
