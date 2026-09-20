@@ -41,7 +41,7 @@ class DaoGardenBed extends Dao<GardenBed> with DaoGardenFeature {
       await DaoHistory().deleteByGardenFeature(bed);
     }
 
-    return super.delete(id, transaction);
+    return await super.delete(id, transaction);
   }
 
   /// Get all GardenBeds controlled by a specific master valve

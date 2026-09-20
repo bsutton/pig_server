@@ -46,7 +46,7 @@ class DaoHistory extends Dao<History> {
 
   /// Get History records by a specific GardenBed
   Future<List<History>> getByGardenFeature(GardenFeature gardenFeature) async =>
-      getByGardenFeatureId(gardenFeature.id);
+     await  getByGardenFeatureId(gardenFeature.id);
 
   Future<List<History>> getByGardenFeatureId(int featureId) async {
     final db = withoutTransaction();
@@ -73,7 +73,7 @@ class DaoHistory extends Dao<History> {
   /// Delete History records by a specific GardenBed
   Future<int> deleteByGardenFeature(GardenFeature gardenFeature) async {
     final db = withoutTransaction();
-    return db.delete(
+    return await db.delete(
       tableName,
       where: 'garden_feature_id = ?',
       whereArgs: [gardenFeature.id],
@@ -83,14 +83,14 @@ class DaoHistory extends Dao<History> {
   /// Persist a new History record
   Future<int> persist(History history) async {
     final db = withoutTransaction();
-    return db.insert(tableName, history.toMap());
+    return await db.insert(tableName, history.toMap());
   }
 
   /// Delete a specific History record
   @override
   Future<int> delete(int id, [Transaction? transaction]) async {
     final db = withinTransaction(transaction);
-    return db.delete(
+    return await db.delete(
       tableName,
       where: 'id = ?',
       whereArgs: [id],
@@ -100,7 +100,7 @@ class DaoHistory extends Dao<History> {
   /// Update (merge) an existing History record
   Future<int> merge(History history) async {
     final db = withoutTransaction();
-    return db.update(
+    return await db.update(
       tableName,
       history.toMap(),
       where: 'id = ?',

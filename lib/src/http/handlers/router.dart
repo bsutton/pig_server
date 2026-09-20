@@ -37,7 +37,7 @@ Router buildRouter() {
     ..post('/garden_bed/save', handleGardenBedSave)
     ..post('/garden_bed/delete', handleGardenBedDelete)
     ..post(
-        '/history/list', (Request request) async => handleHistoryList(request))
+        '/history/list', (Request request) async => await handleHistoryList(request))
     ..post('/lighting/list', handleLightingList)
     ..post('/lighting/delete', handleLightingDelete)
     ..post('/end_point/list', handleEndPointList)
@@ -49,7 +49,7 @@ Router buildRouter() {
     ..post('/end_point/delete', handleEndPointDelete)
     ..post('/weather/search', handleWeatherSearch)
     ..post('/weather/location', handleWeatherLocation)
-    ..post('/overview', (Request request) async => handleOverview(request));
+    ..post('/overview', (Request request) async => await  handleOverview(request));
 
   return router;
 }

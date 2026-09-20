@@ -6,7 +6,7 @@ import '../../security/auth_service.dart';
 
 Middleware authMiddleware() => (innerHandler) => (request) async {
       if (_isPublic(request)) {
-        return innerHandler(request);
+        return await innerHandler(request);
       }
       final authHeader = request.headers['authorization'];
       if (authHeader == null || !authHeader.startsWith('Bearer ')) {
@@ -22,7 +22,7 @@ Middleware authMiddleware() => (innerHandler) => (request) async {
           headers: {'Content-Type': 'application/json'},
         );
       }
-      return innerHandler(request);
+      return await innerHandler(request);
     };
 
 bool _isPublic(Request request) {

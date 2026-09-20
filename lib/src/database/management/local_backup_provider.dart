@@ -69,7 +69,7 @@ class LocalBackupProvider extends BackupProvider {
   }
 
   @override
-  Future<String> get backupLocation async => _pathToBackupDir;
+  Future<String> get backupLocation async => await _pathToBackupDir;
 
   Future<String> get _pathToBackupDir async => 'backups';
 

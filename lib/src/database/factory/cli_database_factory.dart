@@ -31,5 +31,5 @@ class CliDatabaseFactory implements local.PigDatabaseFactory {
   @override
   Future<Database> openDatabase(String path,
           {required OpenDatabaseOptions options}) async =>
-      databaseFactory.openDatabase(path, options: options);
+      await databaseFactory.openDatabase(path, options: options);
 }

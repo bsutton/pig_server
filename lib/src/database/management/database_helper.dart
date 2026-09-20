@@ -61,7 +61,7 @@ class DatabaseHelper {
 
   bool isOpen() => _database != null;
 
-  Future<int> getVersion() async => database.getVersion();
+  Future<int> getVersion() async => await database.getVersion();
 
   Future<void> withOpenDatabase(PigDatabaseFactory databaseFactory,
       String pathToDb, Future<void> Function() action) async {

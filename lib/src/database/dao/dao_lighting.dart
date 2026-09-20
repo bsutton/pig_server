@@ -51,7 +51,7 @@ class DaoLighting extends Dao<Lighting> with DaoGardenFeature {
   /// Delete Lighting entities associated with a specific EndPoint
   Future<int> deleteByEndPoint(EndPoint endPoint) async {
     final db = withoutTransaction();
-    return db.delete(
+    return await db.delete(
       tableName,
       where: 'light_switch_id = ?',
       whereArgs: [endPoint.id],
@@ -61,7 +61,7 @@ class DaoLighting extends Dao<Lighting> with DaoGardenFeature {
   /// Persist a new Lighting entity
   Future<int> persist(Lighting lighting) async {
     final db = withoutTransaction();
-    return db.insert(tableName, lighting.toMap());
+    return await db.insert(tableName, lighting.toMap());
   }
 
   /// Delete a specific Lighting entity
@@ -72,7 +72,7 @@ class DaoLighting extends Dao<Lighting> with DaoGardenFeature {
     if (lighting != null) {
       await DaoHistory().deleteByGardenFeature(lighting);
     }
-    return db.delete(
+    return await db.delete(
       tableName,
       where: 'id = ?',
       whereArgs: [id],
@@ -82,7 +82,7 @@ class DaoLighting extends Dao<Lighting> with DaoGardenFeature {
   /// Update (merge) an existing Lighting entity
   Future<int> merge(Lighting lighting) async {
     final db = withoutTransaction();
-    return db.update(
+    return await db.update(
       tableName,
       lighting.toMap(),
       where: 'id = ?',
@@ -102,7 +102,7 @@ class DaoLighting extends Dao<Lighting> with DaoGardenFeature {
   }
 
   Future<bool> isOn(Lighting light) async =>
-      DaoEndPoint().isOnById(light.lightSwitchId);
+      await DaoEndPoint().isOnById(light.lightSwitchId);
 
   @override
   Future<void> softOn(covariant Lighting feature) async {

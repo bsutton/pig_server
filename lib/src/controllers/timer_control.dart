@@ -130,7 +130,7 @@ class FeatureTimer {
       feature: feature,
       callback: (_) async {
         cancel();
-        return completionAction(feature);
+        return await completionAction(feature);
       },
     );
 

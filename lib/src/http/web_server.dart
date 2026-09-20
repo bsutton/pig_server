@@ -49,7 +49,7 @@ Future<HttpServer> startWebServer(Config config) async {
     await _startRenewalService(letsEncrypt, domain);
     return server;
   } else {
-    return _startWebServer();
+    return await _startWebServer();
   }
 }
 
@@ -215,7 +215,6 @@ Future<void> _initDb() async {
         backup: true,
         databaseFactory: CliDatabaseFactory());
     qlog('Database located at: ${backupProvider.databasePath}');
-    // ignore: avoid_catches_without_on_clauses
   } catch (e) {
     qlogerr('Db open failed. Try rebooting your phone or restore the db $e');
     rethrow;

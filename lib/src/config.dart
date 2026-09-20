@@ -3,9 +3,10 @@ import 'package:path/path.dart';
 import 'package:settings_yaml/settings_yaml.dart';
 
 class Config {
-  static final pathToLog = join(rootPath, 'var', 'log', 'pig_server.log');
+  static final String pathToLog =
+      join(rootPath, 'var', 'log', 'pig_server.log');
 
-  static final pathToConfigFile =
+  static final String pathToConfigFile =
       join(rootPath, 'opt', 'pigation', 'config', 'config.yaml');
 
   static Config? _config;
@@ -82,10 +83,9 @@ class Config {
     weatherGeohash = _settings.asString('weather_geohash');
   }
 
-  Future<void> save() async => _settings.save();
+  Future<void> save() async => await _settings.save();
 
   String get loadedFrom => _settings.filePath;
-
 
   set useHttps(bool useHttps) {
     _useHttps = useHttps;

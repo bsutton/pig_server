@@ -12,22 +12,21 @@ import '../database/factory/cli_database_factory.dart';
 import '../database/management/local_backup_provider.dart';
 import '../dcli/resource/generated/resource_registry.g.dart';
 
-final pathToPigation = join(rootPath, 'opt', 'pigation');
-final pathToPigationBin = join(rootPath, 'opt', 'pigation', 'bin');
+final String pathToPigation = join(rootPath, 'opt', 'pigation');
+final String pathToPigationBin = join(rootPath, 'opt', 'pigation', 'bin');
 
 /// when deploying we copy the executable to an alternate location as the
 /// existing execs will be running and therefore locked.
-final pathToPigationAltBin = join(rootPath, 'opt', 'pigation', 'altbin');
-final pathToWwwRoot = join(pathToPigation, 'www_root');
-final pathToPigServer = join(pathToPigationBin, 'pig');
-final pathToLauncher = join(pathToPigationBin, 'pig');
-final pathToLauncherScript = join(pathToPigationBin, 'pig_launch.sh');
+final String pathToPigationAltBin = join(rootPath, 'opt', 'pigation', 'altbin');
+final String pathToWwwRoot = join(pathToPigation, 'www_root');
+final String pathToPigServer = join(pathToPigationBin, 'pig');
+final String pathToLauncher = join(pathToPigationBin, 'pig');
+final String pathToLauncherScript = join(pathToPigationBin, 'pig_launch.sh');
 
 Future<void> doInstall(Self self, {required bool debug}) async {
   if (debug) {
     Settings().setVerbose(enabled: true);
   }
- 
 
   await self.install();
 

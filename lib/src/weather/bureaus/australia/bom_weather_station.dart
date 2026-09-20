@@ -29,8 +29,7 @@ extension BOMWeatherStationFetch on BOMWeatherStation {
       final response = await request.close();
       if (response.statusCode >= 400) {
         final body = await response.transform(utf8.decoder).join();
-        throw HttpException(
-            '''
+        throw HttpException('''
 BOM request failed: ${response.statusCode} ${response.reasonPhrase} $body''');
       }
 
@@ -65,8 +64,7 @@ BOM request failed: ${response.statusCode} ${response.reasonPhrase} $body''');
 }
 
 Future<String> _downloadText(String url) async {
-  final client = HttpClient()
-    ..connectionTimeout = const Duration(seconds: 10);
+  final client = HttpClient()..connectionTimeout = const Duration(seconds: 10);
   try {
     final request = await client.getUrl(Uri.parse(url));
     request.headers.set(
@@ -76,8 +74,7 @@ Future<String> _downloadText(String url) async {
     final response = await request.close();
     if (response.statusCode >= 400) {
       final body = await response.transform(utf8.decoder).join();
-      throw HttpException(
-          '''
+      throw HttpException('''
 BOM request failed: ${response.statusCode} ${response.reasonPhrase} $body''');
     }
     return await response.transform(utf8.decoder).join();
@@ -111,9 +108,8 @@ List<WeatherDayForecastData> _parseForecastXml(
 
   final needle = locationName.toLowerCase();
   final selected = locations.firstWhere(
-    (area) => (area.getAttribute('description') ?? '')
-        .toLowerCase()
-        .contains(needle),
+    (area) =>
+        (area.getAttribute('description') ?? '').toLowerCase().contains(needle),
     orElse: () => locations.first,
   );
 
@@ -127,9 +123,8 @@ List<WeatherDayForecastData> _parseForecastXml(
     if (results.length >= 3) {
       break;
     }
-    final date = (period.getAttribute('start-time-local') ?? '')
-        .split('T')
-        .first;
+    final date =
+        (period.getAttribute('start-time-local') ?? '').split('T').first;
     final minTemp = _elementValue(period, 'air_temperature_minimum');
     final maxTemp = _elementValue(period, 'air_temperature_maximum');
     final rainRange = _elementText(period, 'precipitation_range');
@@ -156,46 +151,37 @@ List<WeatherDayForecastData> _parseForecastXml(
 }
 
 double _elementValue(XmlElement period, String type) {
-  final element = period
-      .findElements('element')
-      .firstWhere(
+  final element = period.findElements('element').firstWhere(
         (node) => node.getAttribute('type') == type,
-        orElse: () => XmlElement(XmlName('element')),
+        orElse: () => XmlElement(const XmlName.parts('element')),
       );
   final value = element.innerText.trim();
   return double.tryParse(value) ?? 0.0;
 }
 
 String _elementText(XmlElement period, String type) {
-  final element = period
-      .findElements('element')
-      .firstWhere(
+  final element = period.findElements('element').firstWhere(
         (node) => node.getAttribute('type') == type,
-        orElse: () => XmlElement(XmlName('element')),
+        orElse: () => XmlElement(const XmlName.parts('element')),
       );
   return element.innerText.trim();
 }
 
 String _textValue(XmlElement period, String type) {
-  final node = period
-      .findElements('text')
-      .firstWhere(
+  final node = period.findElements('text').firstWhere(
         (text) => text.getAttribute('type') == type,
-        orElse: () => XmlElement(XmlName('text')),
+        orElse: () => XmlElement(const XmlName.parts('text')),
       );
   return node.innerText.trim();
 }
 
 double _parsePercent(String value) {
-  final number =
-      RegExp(r'-?\d+(?:\.\d+)?').firstMatch(value)?.group(0);
+  final number = RegExp(r'-?\d+(?:\.\d+)?').firstMatch(value)?.group(0);
   return number == null ? 0.0 : double.tryParse(number) ?? 0.0;
 }
 
 ({double min, double max}) _parseRange(String value) {
-  final matches = RegExp(r'-?\d+(?:\.\d+)?')
-      .allMatches(value)
-      .toList();
+  final matches = RegExp(r'-?\d+(?:\.\d+)?').allMatches(value).toList();
   if (matches.isEmpty) {
     return (min: 0.0, max: 0.0);
   }

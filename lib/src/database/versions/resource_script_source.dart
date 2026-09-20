@@ -7,7 +7,7 @@ class ResourceScriptSource implements ScriptSource {
   ResourceScriptSource();
   @override
   Future<String> loadSQL(PackedResource packedScript) async =>
-      withTempFileAsync((unpackedFile) async {
+      await withTempFileAsync((unpackedFile) async {
         packedScript.unpack(unpackedFile);
         return read(unpackedFile).toParagraph();
       });

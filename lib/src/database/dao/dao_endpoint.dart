@@ -36,11 +36,11 @@ class DaoEndPoint extends Dao<EndPoint> {
 
   /// Get all valves
   Future<List<EndPoint>> getAllValves() async =>
-      getAllByType(EndPointType.valve);
+      await getAllByType(EndPointType.valve);
 
   /// Get all master valves
   Future<List<EndPoint>> getMasterValves() async =>
-      getAllByType(EndPointType.masterValve);
+      await getAllByType(EndPointType.masterValve);
 
   /// Get all EndPoints by type
   Future<List<EndPoint>> getAllByType(EndPointType type) async {
@@ -76,7 +76,7 @@ Found multiple EndPoints with the same gpio pin no. There should only be one. $l
   @override
   Future<int> delete(int id, [Transaction? transaction]) async {
     final db = withinTransaction(transaction);
-    return db.delete(
+    return await db.delete(
       tableName,
       where: 'id = ?',
       whereArgs: [id],

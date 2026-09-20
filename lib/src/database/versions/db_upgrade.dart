@@ -3,8 +3,8 @@ import 'package:pig_common/pig_common.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:strings/strings.dart';
 
-import '../../../src/version/version.g.dart' as code;
 import '../../logger.dart';
+import '../../version/version.g.dart' as code;
 import '../management/backup_provider.dart';
 import '../management/db_utility.dart';
 import 'script_source.dart';
@@ -102,7 +102,7 @@ Future<void> _executeScript(
       continue;
     }
     qlog('running: $statement');
-    await db.transaction((txn) async => txn.execute(statement));
+    await db.transaction((txn) async => await txn.execute(statement));
   }
 }
 

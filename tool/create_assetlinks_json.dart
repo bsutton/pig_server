@@ -74,7 +74,7 @@ Future<String?> getFingerprint(
   print('Generating fingerprint for $alias');
 
   Progress result;
-  return core.withTempFileAsync((tmpFile) async {
+  return await core.withTempFileAsync((tmpFile) async {
     tmpFile.write(password);
     result = '''
 keytool -list -v -storepass:file $tmpFile -keystore $keystorePath -alias $alias'''
@@ -99,7 +99,6 @@ keytool -list -v -storepass:file $tmpFile -keystore $keystorePath -alias $alias'
     throw FailedToGenerate(
         'Error: SHA-256 fingerprint not found in keytool output.');
   });
-  // ignore: avoid_catches_without_on_clauses
 }
 
 class FailedToGenerate implements Exception {
