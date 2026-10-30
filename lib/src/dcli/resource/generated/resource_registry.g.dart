@@ -1,5 +1,6 @@
 import 'package:dcli/dcli.dart';
 import 'A010fe6141d32553924f5bb267db2f892.g.dart';
+import 'A073417c4b8e1b0ca53849c9686129af2.g.dart';
 import 'A096c423cca85364b9286a37e4757b806.g.dart';
 import 'A0a7af7b64f829701b85034b6d9034d88.g.dart';
 import 'A16557bc1fd50bbef0079852c66381045.g.dart';
@@ -26,19 +27,26 @@ import 'A6ab048d4560a138ed7618aae90b3d081.g.dart';
 import 'A6de7c1db0cc81666e1c4d302a8ac6360.g.dart';
 import 'A6e8cefba322591b685e4ffbf9d0adc93.g.dart';
 import 'A7fbf67045324fba4f28ebf8c5eabf850.g.dart';
+import 'A85ebd26281f6a84f3d28f5e49dff036a.g.dart';
 import 'A8c38e09cc50ef80467033cd8ca4ff2ef.g.dart';
 import 'A916cd6b04a8474cfe31e53820d8c3949.g.dart';
 import 'A933a3ddb758239427ea8c071f5169c5d.g.dart';
+import 'A939d1108d79bf9486a203264b9e17c47.g.dart';
 import 'A987e99c5a0672de63a2c4db3c123bdbf.g.dart';
 import 'A9e76318cf387fb01992b9ab23d950e22.g.dart';
 import 'Ab01380d65ed0a47775740943e6e584cf.g.dart';
 import 'Ab827cb1e3f2b7e7e15b4882a5295bf6e.g.dart';
+import 'Aba1059aa5a5e1001a7e9a9220e31f989.g.dart';
 import 'Ababe17c607e66ae3cb4ef118d4c53e23.g.dart';
+import 'Abbcf427d662734ff35115a41de4f0fdf.g.dart';
+import 'Acf77538a217ed8a6f10441b36e60f093.g.dart';
 import 'Ad638aa8ff50cd62a6ea49b75c8c73984.g.dart';
+import 'Ad8486349ebc9dd2919ac420f65d0873f.g.dart';
 import 'Adbf1e04ff8d74b1d1425f128e56f73ad.g.dart';
 import 'Adc5cfd0f1851af75f39cd605a140c52d.g.dart';
 import 'Aeb768bf0cdaca7f18c0d576481423989.g.dart';
 import 'Af12b38aa41ec389294aaace0aa11af56.g.dart';
+import 'Af4f120b660fcdb42e82ef4a1dc2dd11a.g.dart';
 import 'Afd6c13ae9b439af714cbd3c00b4ef1af.g.dart';
 
 /// GENERATED -- GENERATED
@@ -60,6 +68,8 @@ class ResourceRegistry {
   /// ```
   static const resources = <String, PackedResource>{
     'www_root/flutter_service_worker.js': A010fe6141d32553924f5bb267db2f892(),
+    'www_root/canvaskit/webparagraph/canvaskit.js.symbols':
+        A073417c4b8e1b0ca53849c9686129af2(),
     'www_root/canvaskit/canvaskit.wasm': A096c423cca85364b9286a37e4757b806(),
     'www_root/assets/fonts/MaterialIcons-Regular.otf':
         A0a7af7b64f829701b85034b6d9034d88(),
@@ -93,21 +103,32 @@ class ResourceRegistry {
     'www_root/canvaskit/skwasm.wasm': A6e8cefba322591b685e4ffbf9d0adc93(),
     'www_root/canvaskit/chromium/canvaskit.js':
         A7fbf67045324fba4f28ebf8c5eabf850(),
+    'www_root/canvaskit/webparagraph/canvaskit.wasm':
+        A85ebd26281f6a84f3d28f5e49dff036a(),
     'sql/upgrade_list.json': A8c38e09cc50ef80467033cd8ca4ff2ef(),
     'www_root/icons/Icon-512.png': A916cd6b04a8474cfe31e53820d8c3949(),
     'www_root/assets/packages/iconsax_flutter/fonts/FlutterIconsax.ttf':
         A933a3ddb758239427ea8c071f5169c5d(),
+    'www_root/canvaskit/wimp.wasm': A939d1108d79bf9486a203264b9e17c47(),
     'sql/upgrade_scripts/v1.sql': A987e99c5a0672de63a2c4db3c123bdbf(),
     'www_root/favicon.png': A9e76318cf387fb01992b9ab23d950e22(),
     'www_root/assets/shaders/ink_sparkle.frag':
         Ab01380d65ed0a47775740943e6e584cf(),
     'www_root/main.dart.wasm': Ab827cb1e3f2b7e7e15b4882a5295bf6e(),
+    'www_root/assets/packages/material_ui/shaders/ink_sparkle.frag':
+        Aba1059aa5a5e1001a7e9a9220e31f989(),
     'www_root/main.dart.js.map': Ababe17c607e66ae3cb4ef118d4c53e23(),
+    'www_root/canvaskit/wimp.js': Abbcf427d662734ff35115a41de4f0fdf(),
+    'www_root/canvaskit/webparagraph/canvaskit.js':
+        Acf77538a217ed8a6f10441b36e60f093(),
     'www_root/canvaskit/skwasm_heavy.js': Ad638aa8ff50cd62a6ea49b75c8c73984(),
+    'www_root/canvaskit/wimp.js.symbols': Ad8486349ebc9dd2919ac420f65d0873f(),
     'www_root/assets/FontManifest.json': Adbf1e04ff8d74b1d1425f128e56f73ad(),
     'www_root/assets/NOTICES': Adc5cfd0f1851af75f39cd605a140c52d(),
     'www_root/canvaskit/skwasm_heavy.wasm': Aeb768bf0cdaca7f18c0d576481423989(),
     'sql/upgrade_scripts/v4.sql': Af12b38aa41ec389294aaace0aa11af56(),
+    'www_root/assets/packages/toastification/assets/fonts/Toastification_icons.ttf':
+        Af4f120b660fcdb42e82ef4a1dc2dd11a(),
     'www_root/assets/shaders/stretch_effect.frag':
         Afd6c13ae9b439af714cbd3c00b4ef1af(),
   };
